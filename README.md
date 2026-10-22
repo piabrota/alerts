@@ -21,7 +21,8 @@ muda o núcleo.
 
 Verificação de 2026-10-22. Cada endpoint foi acessado duas vezes: de dentro do Brasil (`curl`) e
 de fora do Brasil (um cliente HTTP em servidor no exterior). Nenhuma fonte bloqueia acesso por
-país. Nenhuma fonte publica regra sobre acesso estrangeiro.
+país. Nenhuma fonte publica regra sobre acesso estrangeiro. O endpoint, o formato e a autenticação de
+cada fonte estão em [`docs/SOURCES.md`](docs/SOURCES.md).
 
 | Fonte | API oficial | Formato | Autenticação | Fora do Brasil | Versão |
 |---|---|---|---|---|---|

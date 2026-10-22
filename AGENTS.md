@@ -57,7 +57,7 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 
 Dependencies point to `smart-alerts-core`, never the other way.
 
-**Source facts** (checked 2026-10-22; the table and the details are in `README.en.md`):
+**Source facts** (checked 2026-10-22; endpoints and formats in `docs/SOURCES.md`):
 
 - INMET drops the connection without a browser-like User-Agent. Always send one.
 - The IDAP feed keeps about 12 hours: poll it often and store what you read.

@@ -21,7 +21,8 @@ core.
 
 Checked on 2026-10-22. Each endpoint was requested twice: from inside Brazil (`curl`) and from
 outside Brazil (an HTTP client on a server abroad). No source blocks access by country. No source
-publishes a rule about foreign access.
+publishes a rule about foreign access. The endpoint, the format and the authentication of each
+source are in [`docs/SOURCES.md`](docs/SOURCES.md).
 
 | Source | Official API | Format | Authentication | Outside Brazil | Version |
 |---|---|---|---|---|---|
