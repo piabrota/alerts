@@ -1,0 +1,17 @@
+[package]
+name = "smart-alerts-mcp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+rmcp = { version = "3.7.0", features = ["server", "transport-io", "macros"] }
+schemars = "1.2.3"
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+smart-alerts-core = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros", "io-std"] }
