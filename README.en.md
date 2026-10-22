@@ -41,8 +41,9 @@ source are in [`docs/SOURCES.md`](docs/SOURCES.md).
 - **Defesa Civil (IDAP):** the feed `idapfile.mdr.gov.br/idap/api/rss/cap` keeps about 12 hours
   of alerts ⚠ and is about 10 MB. The module must poll the feed often and store the alerts. The
   alerts of PR, SC and RS appear in this feed. The SC Civil Defense also publishes a free-text RSS.
-- **INMET:** `apiprevmet3.inmet.gov.br` drops the connection when the client does not send a
-  browser User-Agent. The RSS declares public domain, with citation of the source.
+- **INMET:** `apiprevmet3.inmet.gov.br` drops the connection when the User-Agent is curl's
+  default (`curl/...`). smart-alerts identifies itself by its own name (`smart-alerts/<version>`),
+  and INMET accepts this name. The RSS declares public domain, with citation of the source.
 - **CEMADEN:** the PED API (`sws.cemaden.gov.br/PED`) gives observations, not alerts. The
   municipal alerts exist only in an undocumented JSON (`painelalertas.cemaden.gov.br/wsAlertas2`).
   The limit is 12 requests per minute for an external user ⚠. CEMADEN requires citation.

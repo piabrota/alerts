@@ -15,7 +15,14 @@ macro_rules! ufs {
         #[serde(rename_all = "UPPERCASE")]
         pub enum Uf { $($v),* }
 
-        impl Uf {
+        /// The User-Agent of every smart-alerts HTTP request: an honest name and a way to reach us.
+pub const USER_AGENT: &str = concat!(
+    "smart-alerts/",
+    env!("CARGO_PKG_VERSION"),
+    " (+https://github.com/h0ffmann/smart-alerts)"
+);
+
+impl Uf {
             pub const ALL: &[Uf] = &[$(Uf::$v),*];
 
             pub fn as_str(self) -> &'static str {

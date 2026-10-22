@@ -42,8 +42,9 @@ cada fonte estão em [`docs/SOURCES.md`](docs/SOURCES.md).
   de alertas ⚠ e tem cerca de 10 MB. O módulo deve consultar o feed com frequência e guardar os
   alertas. Os alertas de PR, SC e RS aparecem nesse feed. A Defesa Civil de SC também publica um
   RSS em texto livre.
-- **INMET:** `apiprevmet3.inmet.gov.br` derruba a conexão quando o cliente não envia um
-  User-Agent de navegador. O RSS declara domínio público, com citação da fonte.
+- **INMET:** `apiprevmet3.inmet.gov.br` derruba a conexão quando o User-Agent é o padrão do curl
+  (`curl/...`). O smart-alerts se identifica com o próprio nome (`smart-alerts/<versão>`), e o
+  INMET aceita esse nome. O RSS declara domínio público, com citação da fonte.
 - **CEMADEN:** a API PED (`sws.cemaden.gov.br/PED`) entrega observações, não alertas. Os alertas
   municipais só existem num JSON sem documentação (`painelalertas.cemaden.gov.br/wsAlertas2`). O
   limite é de 12 requisições por minuto para usuário externo ⚠. O CEMADEN exige citação.

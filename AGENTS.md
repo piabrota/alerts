@@ -19,6 +19,10 @@ sources, filters them, and delivers them.
 
 - **No CI.** Do not add `.github/workflows` or any other CI. `just check` is the gate, run by hand
   before a PR.
+- **Identify honestly.** Every HTTP request sends `smart_alerts_core::USER_AGENT`
+  (`smart-alerts/<version> (+repo URL)`). Never send a browser User-Agent and never copy another
+  client's name, not even as a fallback. When a source refuses the honest name, stop and tell a
+  human: the fix is to ask the agency, not to disguise the client.
 - **FOSS first.** A new dependency must pass `just deny` (license allowlist in `deny.toml`).
   Do not use paid resources or paid APIs without explicit human confirmation.
 - **No secrets in the repo.** The Discord webhook comes from `DISCORD_WEBHOOK_URL`.
@@ -59,7 +63,8 @@ Dependencies point to `smart-alerts-core`, never the other way.
 
 **Source facts** (checked 2026-10-22; endpoints and formats in `docs/SOURCES.md`):
 
-- INMET drops the connection without a browser-like User-Agent. Always send one.
+- INMET drops the connection when the User-Agent is curl's default. The smart-alerts
+  User-Agent works (see the hard rule on honest identification).
 - The IDAP feed keeps about 12 hours: poll it often and store what you read.
 - CPTEC/INPE forbids commercial use without authorization and requires the citation "CPTEC/INPE".
 - No source blocks foreign IPs, but ANA and Epagri/Ciram registration can require a CPF or CNPJ.

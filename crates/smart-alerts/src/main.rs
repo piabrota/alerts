@@ -28,7 +28,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 async fn post(webhook: &str, alert: &Alert) -> Result<(), Box<dyn Error>> {
-    reqwest::Client::new()
+    reqwest::Client::builder()
+        .user_agent(smart_alerts_core::USER_AGENT)
+        .build()?
         .post(webhook)
         .json(&payload(alert))
         .send()

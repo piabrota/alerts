@@ -46,7 +46,9 @@ means that the endpoint works, but the agency does not document it: it can chang
 | `https://apitempo.inmet.gov.br/estacoes/T` | JSON, station list | none | undocumented ⚠ |
 | `https://apitempo.inmet.gov.br/token/estacao/{start}/{end}/{station}/{token}` | JSON, station data | free token by email ⚠ | undocumented ⚠ |
 
-- The host drops the connection when the client does not send a browser-like User-Agent.
+- The host drops the connection when the User-Agent is curl's default (`curl/...`). The honest
+  `smart-alerts/<version> (+repo URL)` gets `200` on `avisos/rss`, `avisos/ativos` and
+  `estacoes/T` (checked 2026-10-22).
 - The RSS declares `public domain`; reproduction is allowed with citation of the source.
 - `alertas2.inmet.gov.br` resets the connection from inside and outside Brazil: do not use it.
 
