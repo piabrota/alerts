@@ -28,6 +28,9 @@ sources, filters them, and delivers them.
 - **`⚠` marks a claim that nobody checked.** Never remove a `⚠` without doing the check.
 - **The GitHub Wiki is deployed only after the repo is public** (issue #1). Until then the pages
   live in `wiki/`.
+- **Citation and licensing follow `REUSE.toml`.** Read its header before you copy, quote or cite
+  anything from this repo. A new file must keep `just reuse` green. To cite the project, use
+  `CITATION.cff` with a commit or a tag.
 
 ## Setup
 
@@ -54,6 +57,15 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 
 Dependencies point to `smart-alerts-core`, never the other way.
 
+**Source facts** (checked 2026-10-22; endpoints and formats in `docs/SOURCES.md`):
+
+- INMET drops the connection without a browser-like User-Agent. Always send one.
+- The IDAP feed keeps about 12 hours: poll it often and store what you read.
+- CPTEC/INPE forbids commercial use without authorization and requires the citation "CPTEC/INPE".
+- No source blocks foreign IPs, but ANA and Epagri/Ciram registration can require a CPF or CNPJ.
+- An undocumented endpoint (CEMADEN `wsAlertas2`, INMET `avisos/ativos`, ClimaRS) can change
+  without notice. A module that uses one must fail loudly, never silently.
+
 **Sources are modular.** Brazilian data is scattered, so each source is its own crate,
 `crates/smart-alerts-source-<id>`, that turns the agency's data into `Alert`s. Adding a source,
 or a state, adds a crate. It does not change the core.
@@ -77,6 +89,21 @@ Specialize by composing a stage. Never add inheritance-like trait hierarchies.
 **LLM inside, later.** Over time some sources (free-text bulletins, messy formats) need a
 language model. Use an open-weight model run locally first. A paid API is an optional plug-in,
 never required.
+
+Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is a `Stage`:
+
+| Runtime | License | Job in smart-alerts | Status |
+|---|---|---|---|
+| Ollama | MIT | Read free text: extract fields (place, time, river level) from a bulletin into an `Alert`. | planned |
+| OLLAYA (`ollaya-dev/ollaya`) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with calibrated probabilities. It never generates text. | soon |
+
+- A model never invents an alert. A model stage can only fill or drop a field that the source
+  text states. When the model is unsure (below a fixed probability), the stage falls back to the
+  deterministic harness and marks the alert for a human.
+- The alert text that reaches Discord still follows `docs-pt-br` (`estrito`). A model does not
+  write it freely.
+- Before adding any NLP tool or model, read `docs/SURVEY_NLP.md`: use the cheapest tier that
+  does the job, and record real alerts as eval cases first.
 
 ## Why Rust
 
