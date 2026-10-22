@@ -102,6 +102,8 @@ Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is
   deterministic harness and marks the alert for a human.
 - The alert text that reaches Discord still follows `docs-pt-br` (`estrito`). A model does not
   write it freely.
+- Before adding any NLP tool or model, read `docs/SURVEY_NLP.md`: use the cheapest tier that
+  does the job, and record real alerts as eval cases first.
 
 ## Why Rust
 
