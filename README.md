@@ -10,7 +10,8 @@ Alertas do século 22.
   filtra os alertas e entrega os alertas.
 - **O primeiro risco é inundação no Brasil.** A v0 atende a Região Sul: Paraná (PR),
   Santa Catarina (SC) e Rio Grande do Sul (RS).
-- **A v0 entrega um serviço para Discord.** O pacote Python `smart-alerts` existe desde o
+- **A v0 entrega um serviço para Discord** e um feed Atom com alertas CAP 1.2, com os mesmos
+  alertas e o mesmo texto. O pacote Python `smart-alerts` existe desde o
   início. Um plugin AstrBot vai usar esse pacote no futuro.
 - **Estado:** bootstrap. Nenhuma fonte está implementada. O serviço só envia uma mensagem de teste.
 
@@ -68,6 +69,18 @@ modelos abertos que rodam na máquina local. Uma API paga nunca é obrigatória.
 Um modelo nunca inventa alerta. Quando o modelo não tem certeza, o alerta volta para o harness
 determinístico e fica marcado para revisão humana.
 
+## canais
+
+| Canal | Padrão | Entrega |
+|---|---|---|
+| Discord | webhook do Discord | push |
+| Feed | Atom (RFC 4287) com CAP 1.2 (OASIS) em cada entrada | pull |
+
+Os dois canais leem a mesma saída do harness: um alerta que chega ao Discord também chega ao
+feed, com o mesmo texto. O feed não depende de empresa: Atom e CAP são padrões abertos. O feed
+tem o mesmo formato do feed nacional da Defesa Civil (IDAP), e qualquer leitor de feed abre o
+arquivo. Um alerta de teste sai com `<status>Test</status>`.
+
 ## arquitetura
 
 ```mermaid
@@ -75,7 +88,8 @@ determinístico e fica marcado para revisão humana.
 %% title: Quais crates existem e quem depende de quem?
 flowchart LR
     S["smart-alerts-source-*<br/>(uma por fonte)"] --> C["smart-alerts-core<br/>Alert, Uf, Harness"]
-    D["smart-alerts<br/>serviço Discord"] --> C
+    D["smart-alerts<br/>serviço"] --> C
+    D --> F["smart-alerts-feed<br/>Atom + CAP 1.2"] --> C
     P["smart-alerts-py<br/>pacote Python"] --> C
     M["smart-alerts-mcp<br/>servidor MCP"] --> C
 ```
@@ -100,6 +114,7 @@ flowchart LR
 nix develop
 just check                                  # formatação, clippy, testes, licenças
 DISCORD_WEBHOOK_URL=... just test-message   # envia uma mensagem de teste ao Discord
+FEED_PATH=alerts.atom just test-message     # grava o feed Atom + CAP 1.2 com um alerta de teste
 just mcp                                    # servidor MCP em stdio
 just py-build                               # gera o pacote Python
 ```

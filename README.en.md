@@ -10,7 +10,8 @@
   the alerts, and delivers the alerts.
 - **The first hazard is floods in Brazil.** v0 serves the South region: Paraná (PR),
   Santa Catarina (SC) and Rio Grande do Sul (RS).
-- **v0 delivers a Discord service.** The Python package `smart-alerts` exists from the start.
+- **v0 delivers a Discord service** and an Atom feed with CAP 1.2 alerts, with the same alerts
+  and the same text. The Python package `smart-alerts` exists from the start.
   An AstrBot plugin will use this package in the future.
 - **Status:** bootstrap. No source is implemented. The service only sends a test message.
 
@@ -67,6 +68,18 @@ models that run on the local machine. A paid API is never required.
 A model never invents an alert. When the model is not sure, the alert goes back to the
 deterministic harness and is marked for human review.
 
+## channels
+
+| Channel | Standard | Delivery |
+|---|---|---|
+| Discord | Discord webhook | push |
+| Feed | Atom (RFC 4287) with CAP 1.2 (OASIS) in each entry | pull |
+
+Both channels read the same harness output: an alert that reaches Discord also reaches the feed,
+with the same text. The feed depends on no company: Atom and CAP are open standards. The feed has
+the same shape as the national Civil Defense feed (IDAP), and any feed reader opens the file. A
+test alert has `<status>Test</status>`.
+
 ## architecture
 
 ```mermaid
@@ -74,7 +87,8 @@ deterministic harness and is marked for human review.
 %% title: Which crates exist, and which crate depends on which?
 flowchart LR
     S["smart-alerts-source-*<br/>(one per source)"] --> C["smart-alerts-core<br/>Alert, Uf, Harness"]
-    D["smart-alerts<br/>Discord service"] --> C
+    D["smart-alerts<br/>service"] --> C
+    D --> F["smart-alerts-feed<br/>Atom + CAP 1.2"] --> C
     P["smart-alerts-py<br/>Python package"] --> C
     M["smart-alerts-mcp<br/>MCP server"] --> C
 ```
@@ -99,6 +113,7 @@ flowchart LR
 nix develop
 just check                                  # formatting, clippy, tests, licenses
 DISCORD_WEBHOOK_URL=... just test-message   # send a test message to Discord
+FEED_PATH=alerts.atom just test-message     # write the Atom + CAP 1.2 feed with a test alert
 just mcp                                    # MCP server on stdio
 just py-build                               # build the Python package
 ```
