@@ -28,6 +28,9 @@ sources, filters them, and delivers them.
 - **`⚠` marks a claim that nobody checked.** Never remove a `⚠` without doing the check.
 - **The GitHub Wiki is deployed only after the repo is public** (issue #1). Until then the pages
   live in `wiki/`.
+- **Citation and licensing follow `REUSE.toml`.** Read its header before you copy, quote or cite
+  anything from this repo. A new file must keep `just reuse` green. To cite the project, use
+  `CITATION.cff` with a commit or a tag.
 
 ## Setup
 

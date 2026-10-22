@@ -4,7 +4,7 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny docs-stale
+check: fmt-check lint test deny reuse docs-stale
 
 fmt:
     cargo fmt --all
@@ -21,6 +21,11 @@ test:
 # FOSS license policy and advisories (deny.toml).
 deny:
     cargo deny check
+
+# Copyright and license of every file (REUSE.toml) and the citation file (CITATION.cff).
+reuse:
+    uvx reuse@6.2.0 lint
+    cffconvert --validate
 
 # Build the smart-alerts Python wheel into target/wheels.
 py-build:

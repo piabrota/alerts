@@ -81,6 +81,11 @@ in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (
 - The English writing follows the model of ASD-STE100.
 - The Japanese follows やさしい日本語 (Easy Japanese).
 
+## how to cite
+
+Use [`CITATION.cff`](CITATION.cff), with the commit or the tag you used. [`REUSE.toml`](REUSE.toml)
+gives the license and the copyright of each file, and the citation rules for agents.
+
 ## license
 
 [MPL-2.0](LICENSE).

@@ -81,6 +81,11 @@ A documentação existe em quatro idiomas: pt-BR, inglês, chinês e japonês. A
 - A escrita em inglês segue o modelo do ASD-STE100.
 - O japonês segue a やさしい日本語 (japonês fácil).
 
+## como citar
+
+Use o [`CITATION.cff`](CITATION.cff), com o commit ou a tag usada. O [`REUSE.toml`](REUSE.toml)
+dá a licença e o copyright de cada arquivo, e as regras de citação para agentes.
+
 ## licença
 
 [MPL-2.0](LICENSE).

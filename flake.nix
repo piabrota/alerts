@@ -13,6 +13,7 @@
           packages = with pkgs; [
             cargo rustc clippy rustfmt rust-analyzer
             cargo-deny maturin python3 just
+            cffconvert uv
           ];
         };
       });
