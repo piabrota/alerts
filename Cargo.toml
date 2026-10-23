@@ -20,4 +20,5 @@ expect_used = "deny"
 serde = "1.0.229"
 serde_json = "1.0.154"
 smart-alerts-core = { path = "crates/smart-alerts-core" }
+smart-alerts-feed = { path = "crates/smart-alerts-feed" }
 tokio = "1.54.1"

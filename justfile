@@ -35,7 +35,7 @@ py-build:
 mcp:
     cargo run -q -p smart-alerts-mcp
 
-# Post one test alert to DISCORD_WEBHOOK_URL.
+# Publish one test alert to every configured channel (DISCORD_WEBHOOK_URL, FEED_PATH).
 test-message:
     cargo run -q -p smart-alerts -- test-message
 

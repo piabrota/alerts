@@ -74,9 +74,29 @@ pub enum Severity {
     Extreme,
 }
 
+impl Severity {
+    /// The pt-BR label every channel shows, so all channels say the same thing.
+    pub fn label_pt_br(self) -> &'static str {
+        match self {
+            Severity::Minor => "menor",
+            Severity::Moderate => "moderada",
+            Severity::Severe => "severa",
+            Severity::Extreme => "extrema",
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Hazard {
     Flood,
+}
+
+impl Hazard {
+    pub fn label_pt_br(self) -> &'static str {
+        match self {
+            Hazard::Flood => "Inundação",
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

@@ -12,6 +12,10 @@ sources, filters them, and delivers them.
 - **v0 scope:** the South region: Paraná (PR), Santa Catarina (SC), Rio Grande do Sul (RS).
 - **v0 sources:** Defesa Civil, INMET, CEMADEN. `README.md` lists the planned sources.
 - **v0 deliverable:** a high-quality Discord service. The Discord server already exists.
+- **Second channel, with parity:** an Atom feed (RFC 4287) whose entries hold CAP 1.2 alerts
+  (OASIS). Open standards, no company attached. Every alert that reaches Discord also reaches the
+  feed, with the same pt-BR text. A new channel reads the same harness output: never filter or
+  rewrite alerts per channel.
 - **Python interface now:** `smart-alerts-py` is a pip package from day one. The long-term
   consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
 
@@ -38,7 +42,7 @@ sources, filters them, and delivers them.
 nix develop        # the toolchain is pinned in flake.lock
 just               # list recipes
 just check         # fmt, clippy, tests, cargo-deny, stale translations
-just test-message  # post one test alert to DISCORD_WEBHOOK_URL
+just test-message  # publish one test alert to DISCORD_WEBHOOK_URL and/or FEED_PATH
 just mcp           # run the MCP server on stdio
 just py-build      # build the Python wheel
 ```
@@ -51,7 +55,8 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | Crate | Kind | Role |
 |---|---|---|
 | `smart-alerts-core` | lib | Domain types (`Alert`, `Uf`, `Severity`, `Hazard`) and the FP harness. Knows nothing about Discord, Python or MCP. |
-| `smart-alerts` | bin | The Discord service. |
+| `smart-alerts` | bin | The service: publishes to Discord and to the feed. |
+| `smart-alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
 | `smart-alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import smart_alerts`. |
 | `smart-alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` (Claude Code) and `opencode.json` (OpenCode). |
 
