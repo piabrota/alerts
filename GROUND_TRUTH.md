@@ -116,6 +116,20 @@ Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is
 - Before adding any NLP tool or model, read `docs/SURVEY_NLP.md`: use the cheapest tier that
   does the job, and record real alerts as eval cases first.
 
+## Apps and maps
+
+An app is one deployment: sources, a harness and channels for one audience. The conventions follow
+[Loco](https://loco.rs) (generators, doctor, scheduler, tasks), without the ORM, the accounts and
+the server-side HTML. Read the skills before you work on these parts:
+
+| Skill | Job |
+|---|---|
+| `apps` | What an app is, where its parts go, the planned `just` recipes |
+| `app-generate` | New app, source crate, stage or channel |
+| `app-doctor` | Check that an app can run |
+| `app-schedule` | Poll rates, delivery once per id, one-off tasks |
+| `maplibre` | Alert areas on a map, CAP 1.2 to GeoJSON, FOSS tiles only |
+
 ## Why Rust
 
 The choice is for a compiler, safety and long-term robustness (antifragility). Rust gives
@@ -134,7 +148,7 @@ Four languages, each with a controlled-language skill in `.claude/skills/`:
 | ZH | `docs-zh` | controlled Simplified Chinese | translated from EN |
 | JA | `docs-ja` | やさしい日本語 (Easy Japanese) | translated from EN |
 
-- `README.md` (pt-BR) and `README.en.md` mirror each other. A change to one changes the other in
+- `README.md` (EN, the landing page) and `README.pt-BR.md` mirror each other. A change to one changes the other in
   the same PR.
 - Wiki pages live in `wiki/<lang>/<Page>-<lang>.md`. GitHub Wiki page names are global, so the
   language suffix keeps them unique.

@@ -1,6 +1,6 @@
 ---
 name: docs-pt-br
-description: Writes or revises smart-alerts text in controlled Brazilian Portuguese — README.md, wiki/pt-BR pages, and the pt-BR text of alert messages. Use for any pt-BR writing in this repository.
+description: Writes or revises smart-alerts text in controlled Brazilian Portuguese — README.pt-BR.md, wiki/pt-BR pages, and the pt-BR text of alert messages. Use for any pt-BR writing in this repository.
 ---
 
 # docs-pt-br
@@ -38,7 +38,7 @@ An alert message is read once, maybe at night, maybe by a frightened person.
 
 ## Pages
 
-- `README.md` (pt-BR) and `README.en.md` mirror each other: same sections, same facts. A change
+- `README.pt-BR.md` and `README.md` (EN) mirror each other: same sections, same facts. A change
   to one changes the other in the same PR.
 - A wiki page lives in `wiki/pt-BR/<Page>-pt-BR.md`. Its English twin is
   `wiki/en/<Page>-en.md`.
