@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="A wave that rings a bell: an original line drawing">
+  <title>A wave that rings a bell: an original line drawing</title>
+  <path fill="none" stroke="#1682D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"
+    d="M12 150 C 52 150, 70 128, 92 104 C 118 74, 150 46, 186 44 C 218 42, 238 62, 234 84
+       C 230 104, 206 112, 194 98 C 184 86, 194 70, 210 74
+       M12 150 C 60 160, 110 140, 150 150 C 190 160, 214 150, 236 138
+       C 236 122, 240 112, 252 104 C 252 96, 262 92, 266 100 C 280 108, 282 122, 282 138
+       C 290 144, 292 148, 284 150 L 236 150 C 228 148, 230 144, 236 138
+       M252 150 C 254 162, 266 162, 268 150
+       M88 112 C 96 120, 104 124, 116 124 M124 92 C 132 100, 140 104, 152 104"/>
+</svg>

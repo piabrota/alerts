@@ -1,9 +1,9 @@
 ---
-name: docs-en
-description: Writes or revises smart-alerts English text in a simplified technical English modeled on ASD-STE100 — README.en.md and wiki/en pages. Use for any English documentation in this repository. The English pages are the source for the zh and ja translations.
+name: write-en
+description: Writes or revises smart-alerts English text in a simplified technical English modeled on ASD-STE100 — README.md and wiki/en pages. Use for any English documentation in this repository. The English pages are the source for the zh and ja translations.
 ---
 
-# docs-en
+# write-en
 
 EN is the second hand-written language of smart-alerts. It mirrors pt-BR, and it is the source
 for the zh and ja pages, so it must translate cleanly.
@@ -25,10 +25,10 @@ for the zh and ja pages, so it must translate cleanly.
 
 ## Pages
 
-- `README.en.md` mirrors `README.md` (pt-BR): same sections, same facts.
+- `README.md` (EN) mirrors `README.pt-BR.md`: same sections, same facts.
 - A wiki page lives in `wiki/en/<Page>-en.md`. Its pt-BR twin is `wiki/pt-BR/<Page>-pt-BR.md`.
 - When an EN wiki page changes, its zh and ja pages become stale. Run `just docs-stale` and tell
-  the user which pages need the `docs-zh` or `docs-ja` skill.
+  the user which pages need the `translate-zh` or `translate-ja` skill.
 
 ## Output
 

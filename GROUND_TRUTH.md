@@ -1,7 +1,11 @@
-# AGENTS.md
+# GROUND_TRUTH.md
 
-Instructions for AI agents working on `smart-alerts`. Claude Code reads this file through
-`CLAUDE.md`. OpenCode reads it directly. Both read the skills in `.claude/skills/`.
+Instructions for agents working on `smart-alerts`. The skills live in `verbs/`: one directory per
+verb, each with a `SKILL.md`. `scripts/link-verbs.sh` makes a local agent read this file and
+`verbs/`, with links that git ignores. `just pack-verbs` writes one zip per verb in
+`target/verbs/`, to upload as a project skill. OpenCode reads this file through `instructions` in
+`opencode.json`. `AGENTS.md` is in `.gitignore`: never commit a file with that name. No file or
+directory name in this repo names an AI product.
 
 ## Goal
 
@@ -18,6 +22,11 @@ sources, filters them, and delivers them.
   rewrite alerts per channel.
 - **Python interface now:** `smart-alerts-py` is a pip package from day one. The long-term
   consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
+- **Codeberg mirror without AI trace:** `codeberg.org/piabrota/ialerts` holds the code with no
+  trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
+  `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
+  only with `python3 -I scripts/export-codeberg.py <out-dir>`: it fails when a trace remains.
+  Commit the result with a plain message as the author. Never push this repo's history there.
 
 ## Hard rules
 
@@ -62,7 +71,7 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `smart-alerts` | bin | The service: publishes to Discord and to the feed. |
 | `smart-alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
 | `smart-alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import smart_alerts`. |
-| `smart-alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` (Claude Code) and `opencode.json` (OpenCode). |
+| `smart-alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
 
 Dependencies point to `smart-alerts-core`, never the other way.
 
@@ -110,10 +119,24 @@ Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is
 - A model never invents an alert. A model stage can only fill or drop a field that the source
   text states. When the model is unsure (below a fixed probability), the stage falls back to the
   deterministic harness and marks the alert for a human.
-- The alert text that reaches Discord still follows `docs-pt-br` (`estrito`). A model does not
+- The alert text that reaches Discord still follows `write-pt-br` (`estrito`). A model does not
   write it freely.
 - Before adding any NLP tool or model, read `docs/SURVEY_NLP.md`: use the cheapest tier that
   does the job, and record real alerts as eval cases first.
+
+## Apps and maps
+
+An app is one deployment: sources, a harness and channels for one audience. The conventions follow
+[Loco](https://loco.rs) (generators, doctor, scheduler, tasks), without the ORM, the accounts and
+the server-side HTML. Read the skills before you work on these parts:
+
+| Skill | Job |
+|---|---|
+| `manage-apps` | What an app is, where its parts go, the planned `just` recipes |
+| `generate` | New app, source crate, stage or channel |
+| `diagnose` | Check that an app can run |
+| `schedule` | Poll rates, delivery once per id, one-off tasks |
+| `map` | Alert areas on a map, CAP 1.2 to GeoJSON, FOSS tiles only |
 
 ## Why Rust
 
@@ -124,22 +147,22 @@ package. Haskell has a thinner library ecosystem for this work.
 
 ## Documentation
 
-Four languages, each with a controlled-language skill in `.claude/skills/`:
+Four languages, each with a controlled-language skill in `verbs/`:
 
 | Language | Skill | Standard | Written by |
 |---|---|---|---|
-| pt-BR | `docs-pt-br` | ptbr-writer rules | the author |
-| EN | `docs-en` | ASD-STE100-style | the author |
-| ZH | `docs-zh` | controlled Simplified Chinese | translated from EN |
-| JA | `docs-ja` | やさしい日本語 (Easy Japanese) | translated from EN |
+| pt-BR | `write-pt-br` | ptbr-writer rules | the author |
+| EN | `write-en` | ASD-STE100-style | the author |
+| ZH | `translate-zh` | controlled Simplified Chinese | translated from EN |
+| JA | `translate-ja` | やさしい日本語 (Easy Japanese) | translated from EN |
 
-- `README.md` (pt-BR) and `README.en.md` mirror each other. A change to one changes the other in
+- `README.md` (EN, the landing page) and `README.pt-BR.md` mirror each other. A change to one changes the other in
   the same PR.
 - Wiki pages live in `wiki/<lang>/<Page>-<lang>.md`. GitHub Wiki page names are global, so the
   language suffix keeps them unique.
 - A zh or ja page starts with `<!-- source: <en page> sha: <git hash-object> reviewed: no -->`.
   `just docs-stale` lists the pages whose EN source changed.
-- Alert messages are pt-BR only in v0, at the `estrito` level of `docs-pt-br`.
+- Alert messages are pt-BR only in v0, at the `estrito` level of `write-pt-br`.
 
 ## Figures
 

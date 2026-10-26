@@ -85,14 +85,14 @@ open. marola has not chosen one of them yet.
 | Delivery | a page and a banner; no push | a push to Discord, and an Atom feed of CAP 1.2 alerts with the same text |
 | Language | Scala (the app), Python (scripts) | Rust, with a Python package |
 | Model | none on the alert path | deterministic harness; a local model only as a `Stage`, later |
-| Issuer text | verbatim, with a link | verbatim, `docs-pt-br` (`estrito`) |
+| Issuer text | verbatim, with a link | verbatim, `write-pt-br` (`estrito`) |
 
 Both projects use the same rules: official sources only, verbatim issuer text, no invented
 field, and loud failure on an undocumented endpoint.
 
 ## Conflict: a failed fetch
 
-`AGENTS.md` says that a module on an undocumented endpoint must fail loudly, never silently.
+`GROUND_TRUTH.md` says that a module on an undocumented endpoint must fail loudly, never silently.
 MIP-0034 task 2 does the opposite for INMET: a failed fetch gives the same output as "no active
 warning". A user then cannot see that a real warning is missing.
 
