@@ -2,6 +2,10 @@
 
 🇬🇧 [Read in English](README.md) · nome de código: `smart-alerts`
 
+| <img alt="Uma onda de Fibonacci e um sino, de @h0ffmann" src="docs/drawings/wave.svg" width="320"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, de Harry Chen, no Desmos" src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a> |
+|:---:|:---:|
+| *Onda de Fibonacci*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026 | [*Ammonite*](https://www.desmos.com/calculator/z7zooq9zsh), Harry Chen ([@harry7557558](https://github.com/harry7557558)), 1º lugar no concurso de arte do Desmos de 2021 |
+
 Alertas do século 22.
 
 ## em um minuto
@@ -147,6 +151,9 @@ A documentação existe em quatro idiomas: pt-BR, inglês, chinês e japonês. A
 ## créditos
 
 - O layout do README em inglês vem do [picasso](https://github.com/h0ffmann/picasso).
+- O desenho é de Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). O render sai das
+  expressões do Desmos. A onda junta a espiral de Fibonacci e *A Grande Onda de Kanagawa*, de Katsushika Hokusai
+  (c. 1831). Outros artistas desenharam ondas de Fibonacci antes: os créditos estão em [`docs/drawings/README.md`](docs/drawings/README.md).
 - As convenções de app (geradores, doctor, agendador, tarefas) seguem o [Loco](https://loco.rs)
   (Apache-2.0). As capturas de tela do bootstrap estão em [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
 - Os mapas de alerta vão usar o [MapLibre](https://maplibre.org) (BSD-3-Clause) e dados do OpenStreetMap (ODbL).
@@ -154,7 +161,8 @@ A documentação existe em quatro idiomas: pt-BR, inglês, chinês e japonês. A
 - O harness funcional traduz o
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) para composição
   de funções.
-- A escrita em pt-BR segue o [ptbr-writer](https://github.com/h0ffmann/ptbr-writer).
+- A escrita em pt-BR segue o [ptbr-writer](https://github.com/h0ffmann/ptbr-writer). O verbo `open-pr` é a skill
+  [`bipr`](https://github.com/h0ffmann/ptbr-writer/blob/main/skills/bipr/SKILL.md) dele, adaptada (MPL-2.0).
 - A escrita em inglês segue o modelo do ASD-STE100.
 - O japonês segue o japonês fácil (Yasashii Nihongo).
 

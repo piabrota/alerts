@@ -1,6 +1,15 @@
 <div align="center">
 
-<img alt="A wave that rings a bell: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
+<table>
+<tr>
+<td align="center"><img alt="A Fibonacci wave and a bell, by @h0ffmann: an original line drawing" src="docs/drawings/wave.svg" width="320"/></td>
+<td align="center"><a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, by Harry Chen, in Desmos" src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a></td>
+</tr>
+<tr>
+<td align="center"><sub><i>Fibonacci wave</i>, Matheus Hoffmann (<a href="https://github.com/h0ffmann">@h0ffmann</a>), 2026</sub></td>
+<td align="center"><sub><a href="https://www.desmos.com/calculator/z7zooq9zsh"><i>Ammonite</i></a>, Harry Chen (<a href="https://github.com/harry7557558">@harry7557558</a>), 1st place, 2021 Desmos Global Math Art Contest</sub></td>
+</tr>
+</table>
 
 # ialerts
 
@@ -157,6 +166,9 @@ in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (
 ## Credits
 
 - The layout of this README comes from [picasso](https://github.com/h0ffmann/picasso).
+- The drawing is by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). It is rendered from its
+  Desmos expressions. The wave joins the Fibonacci spiral and Katsushika Hokusai's *The Great Wave off Kanagawa*
+  (c. 1831). Other artists drew Fibonacci waves before: credits in [`docs/drawings/README.md`](docs/drawings/README.md).
 - The app conventions (generators, doctor, scheduler, tasks) follow [Loco](https://loco.rs)
   (Apache-2.0). Screenshots of its bootstrap are in [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
 - Alert maps will use [MapLibre](https://maplibre.org) (BSD-3-Clause) and OpenStreetMap data (ODbL).
@@ -164,7 +176,8 @@ in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (
 - The functional harness translates the
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) into function
   composition.
-- The pt-BR writing follows [ptbr-writer](https://github.com/h0ffmann/ptbr-writer).
+- The pt-BR writing follows [ptbr-writer](https://github.com/h0ffmann/ptbr-writer). The `open-pr` verb is its
+  [`bipr`](https://github.com/h0ffmann/ptbr-writer/blob/main/skills/bipr/SKILL.md) skill, adapted (MPL-2.0).
 - The English writing follows the model of ASD-STE100.
 - The Japanese follows Easy Japanese (Yasashii Nihongo).
 
@@ -178,7 +191,7 @@ gives the license and the copyright of each file, and the citation rules for age
 | What | Terms |
 |---|---|
 | The code and the documentation | [MPL-2.0](LICENSE) |
-| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository |
+| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository: a Fibonacci spiral that `docs/drawings/wave.py` draws, also as a Desmos file. The idea follows Hokusai's *Great Wave* and earlier Fibonacci waves by other artists: see [`docs/drawings/README.md`](docs/drawings/README.md) |
 | The source data | the terms of each agency ([`docs/SOURCES.md`](docs/SOURCES.md)): INMET is public domain with citation; CPTEC/INPE forbids commercial use without authorization |
 | AstrBot and its plugins | AGPL-3.0, their own repositories; nothing here vendors their code |
 

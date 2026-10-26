@@ -51,6 +51,9 @@ def main() -> None:
             "wiki pages.")
         body = re.sub(r"\bthe user\b", "the reviewer", body)
         (guides / f"{skill.parent.name}.md").write_text(body, encoding="utf-8")
+        for extra in sorted(skill.parent.glob("*.md")):
+            if extra.name != "SKILL.md":
+                shutil.copy(extra, guides / f"{skill.parent.name}-{extra.name}")
 
     for name in DROP:
         p = out / name
@@ -87,6 +90,11 @@ def main() -> None:
         except UnicodeDecodeError:
             continue
         t = t.replace("GROUND_TRUTH.md", "CONTRIBUTING.md")
+        t = t.replace("https://github.com/h0ffmann/ptbr-writer/blob/main/skills/bipr/SKILL.md",
+                      "https://github.com/h0ffmann/ptbr-writer")
+        t = t.replace("`verbs/open-pr/footer.md`", "`docs/guides/open-pr-footer.md`")
+        t = t.replace('path = "verbs/open-pr/**"', 'path = "docs/guides/open-pr*.md"')
+        t = t.replace(", `Co-Authored-By:`)", ")")
         t = re.sub(r"`verbs/([a-z-]+)/`", r"`docs/guides/\1.md`", t)
         t = re.sub(r"`verbs/`", "`docs/guides/`", t)
         t = t.replace("the citation rules for agents", "the citation rules")
