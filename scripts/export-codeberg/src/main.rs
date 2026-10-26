@@ -1,6 +1,7 @@
 //! Build the Codeberg copy of smart-alerts with no trace of AI tools.
 //!
-//! Usage: `just export-codeberg <out-dir> [<git-ref>]`
+//! Usage: `just export-codeberg <out-dir> [<git-ref>]`, or `export-codeberg --check <dir>` to run
+//! only the trace check on a built tree (the site that `just deploy-site` publishes).
 //!
 //! Writes the tree of `<git-ref>` (default `HEAD`) into `<out-dir>`, without the agent files, with
 //! GROUND_TRUTH.md as CONTRIBUTING.md and each skill in verbs/ as `docs/guides/<verb>.md`. The tool
@@ -15,7 +16,7 @@ use regex::Regex;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
-const USAGE: &str = "usage: export-codeberg <out-dir> [<git-ref>]";
+const USAGE: &str = "usage: export-codeberg <out-dir> [<git-ref>]\n       export-codeberg --check <dir>   (only the trace check, for a built site)";
 const DROP: [&str; 4] = ["verbs", "scripts", "opencode.json", ".mcp.json"];
 /// The trace check must name what it looks for. scripts/ is the only place in the repo that names
 /// an AI product, and the export drops scripts/.
@@ -30,6 +31,13 @@ fn main() {
 
 fn run() -> Result<()> {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if let [flag, dir] = args.as_slice()
+        && flag == "--check"
+    {
+        check(Path::new(dir))?;
+        println!("export: no AI trace in {dir}");
+        return Ok(());
+    }
     let (out, git_ref) = match args.as_slice() {
         [out] => (out.clone(), "HEAD".to_string()),
         [out, r] => (out.clone(), r.clone()),

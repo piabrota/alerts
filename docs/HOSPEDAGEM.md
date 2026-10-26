@@ -1,94 +1,97 @@
 <!-- reading-time: 5 min -->
-# Hospedagem: ideias para piabrota.art/alerts
+# Hospedagem: piabrota.art no Codeberg Pages
 
-Esta página reúne ideias para publicar o ialerts no domínio `piabrota.art`. Nenhuma ideia desta
-página foi adotada. O autor comprou o domínio em 2026-10-26.
+Esta página diz onde o site estático do ialerts fica hospedado e como publicar o site. O autor
+comprou o domínio `piabrota.art` em 2026-10-26.
 
 ## O que o autor pediu
 
 - O endereço `piabrota.art/index.html` (a home, em HTTP ou HTTPS) sempre aponta para o site
   estático feito com Gleam.
-- O ialerts fica em `piabrota.art/alerts`.
+- O ialerts fica em `piabrota.art/alerts/`.
 - O site usa pouco código Gleam.
+- A hospedagem é grátis.
 
-## O que o repositório já tem
+## O que o `just site` gera
 
-- O `just site` gera `site/serve/alerts/`: a página `index.html`, o estilo, os desenhos e o grafo
-  do código (`grafo/graph.html`). Todo link da página é relativo, então a pasta funciona em
-  `/alerts/` sem mudança.
-- O código Gleam é um módulo só (`site/src/site.gleam`), sem dependência do Hex. O módulo imprime
-  a página. O Nix constrói o site sem rede.
-- O feed Atom com CAP 1.2 é um arquivo (`FEED_PATH`). Um servidor de arquivos estáticos pode
-  servir o feed, por exemplo em `piabrota.art/alerts/feed.atom`.
-
-## A divisão do domínio
-
-| Caminho | Conteúdo | Origem |
+| Caminho | Conteúdo | Código |
 |---|---|---|
-| `/` e `/index.html` | O site estático em Gleam | um repositório do site (a decidir) |
-| `/alerts/` | A página do ialerts e o grafo do código | `just site` deste repositório |
-| `/alerts/feed.atom` | O feed Atom com CAP 1.2 | o serviço `smart-alerts`, quando existir |
+| `/index.html` | A home de piabrota.art | `site/src/home.gleam` |
+| `/alerts/` | A página do ialerts, a figura e o desenho | `site/src/site.gleam` |
+| `/alerts/grafo/graph.html` | O grafo do código | `code-graph` |
 
-Um domínio aponta para um servidor só. Então a home e o `/alerts/` saem do mesmo servidor, ou
-um servidor encaminha o `/alerts/` para outro.
+O código Gleam são dois módulos pequenos, sem dependência do Hex. Todo link é relativo.
 
-## Ideia 1: Codeberg Pages
+## Comparação das hospedagens grátis
 
-- O Codeberg já guarda o espelho `piabrota/ialerts`. O Codeberg Pages serve arquivos estáticos de
-  um repositório com domínio próprio ⚠ (não conferido nesta página).
-- O site da home fica num repositório de páginas da conta `piabrota`. O `just site` copia
-  `site/serve/alerts/` para a pasta `alerts/` desse repositório.
-- O domínio próprio usa um arquivo `.domains` no repositório e um registro DNS ⚠.
-- O Codeberg Pages emite o certificado HTTPS ⚠.
-- **Limite:** o Codeberg Pages só serve arquivos. O serviço do Discord precisa de outro lugar
-  para rodar. O feed precisa de um commit a cada atualização, ou de outro servidor.
+Conferido em 2026-10-26, nas páginas citadas.
 
-## Ideia 2: um servidor próprio com Caddy
+| Hospedagem | Grátis para este caso | Deploy sem CI | Domínio próprio e HTTPS | Observação |
+|---|---|---|---|---|
+| Codeberg Pages | sim, para um repositório público ([docs](https://docs.codeberg.org/codeberg-pages/)) | sim: um push no branch `pages` e um webhook | sim, com DNS e Let's Encrypt ([docs](https://docs.codeberg.org/codeberg-pages/using-custom-domain/)) | Codeberg e.V., associação sem fins lucrativos; o espelho `piabrota/ialerts` já fica no Codeberg |
+| GitHub Pages | não: o plano Free só publica Pages de repositório público, e `h0ffmann/smart-alerts` é privado ([docs](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)) | só com outro repositório público ou com Actions | sim | o deploy comum usa Actions, e o repositório proíbe CI |
+| Cloudflare Pages | sim, no plano grátis ⚠ | sim, com o CLI `wrangler` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
+| Netlify | sim, no plano grátis ⚠ | sim, com o CLI `netlify` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
 
-- Um servidor pequeno roda o binário `smart-alerts` (o serviço do Discord) e o Caddy (Apache-2.0).
-- O Caddy serve `/` com o site em Gleam e `/alerts/` com `site/serve/alerts/`. O Caddy também
-  serve o feed que o serviço grava.
-- O Caddy pede e renova o certificado HTTPS sozinho, e redireciona HTTP para HTTPS ⚠.
-- **Limite:** um servidor tem custo mensal. Um recurso pago precisa da confirmação explícita do
-  autor.
+**Decisão: Codeberg Pages, só com o domínio piabrota.art.** É grátis, não depende de empresa, não
+pede CI e combina com o espelho no Codeberg. O endereço do site é só `piabrota.art`.
 
-Um `Caddyfile` mínimo para essa ideia ⚠ (não testado):
+## Como publicar
 
+O deploy roda na máquina do autor, porque o repositório não tem CI.
+
+### Uma vez
+
+1. No Codeberg, crie o repositório público `piabrota/pages` (vazio).
+2. Em **Settings → Webhooks → Add webhook → Forgejo**, crie um webhook:
+   - **Target URL:** `http://piabrota.art/` na primeira vez. Depois do primeiro deploy, troque
+     para `https://piabrota.art/`: o Codeberg só emite o certificado de um domínio que já recebeu
+     um deploy.
+   - **Branch filter:** `pages`.
+   - Não use o botão "Test delivery": a documentação diz que o teste falha.
+3. Crie os registros DNS abaixo no registrador de `piabrota.art`.
+
+O site só abre em `piabrota.art`. O endereço `piabrota.codeberg.page` só existe com um webhook
+próprio, e esta configuração não cria esse webhook: nenhum domínio de empresa entra no endereço.
+
+### A cada deploy
+
+```console
+just deploy-site
 ```
-piabrota.art {
-    handle_path /alerts/* {
-        root * /srv/alerts
-        file_server
-    }
-    handle {
-        root * /srv/home
-        file_server
-    }
-}
-```
 
-## Ideia 3: GitHub Pages
+A receita roda o `just site`, confere que o site não tem rastro de IA (`export-codeberg --check`) e
+faz um push forçado de um commit só para o branch `pages` de `piabrota/pages`. O branch guarda só
+o site gerado, nunca o histórico deste repositório. O commit leva a identidade git da máquina.
 
-- O GitHub Pages serve arquivos estáticos com domínio próprio e HTTPS ⚠.
-- **Limite:** o repositório é privado. O GitHub Pages de um repositório privado pode exigir um
-  plano pago ⚠. A regra da Wiki (issue #1) também espera o repositório público.
+## Registros DNS de piabrota.art
 
-## Recomendação do autor desta página
+Fonte: [Using custom domains](https://docs.codeberg.org/codeberg-pages/using-custom-domain/),
+lida em 2026-10-26.
 
-A ideia 1 começa sem custo e combina com o espelho no Codeberg. A ideia 2 entra quando o serviço
-do Discord precisar de um servidor: o mesmo servidor passa a servir o site e o feed. Essa
-recomendação é uma leitura, não um fato conferido.
+| Nome | Tipo | Valor | Quando |
+|---|---|---|---|
+| `piabrota.art` | `ALIAS` (ou CNAME "achatado") | `codeberg.page` | o registrador aceita ALIAS |
+| `piabrota.art` | `A` | `217.197.84.141` | sem ALIAS, ou com DNSSEC |
+| `piabrota.art` | `AAAA` | `2a0a:4580:103f:c0de::2` | sem ALIAS, ou com DNSSEC |
+| `_git-pages-repository.piabrota.art` | `TXT` | `https://codeberg.org/piabrota/pages.git` | sempre |
+| `www.piabrota.art` | `CNAME` | `codeberg.page` | se quiser o `www` |
+| `_git-pages-repository.www.piabrota.art` | `TXT` | `https://codeberg.org/piabrota/pages.git` | se quiser o `www` |
 
-## Próximos passos
+- Use o ALIAS ou o par A e AAAA, não os dois. A documentação avisa que os IPs podem mudar, então
+  o ALIAS é melhor quando o registrador aceita.
+- A palavra `repository` no nome do TXT é literal.
+- Um registro CAA, se existir, precisa liberar o Let's Encrypt. Os valores estão na documentação.
+- O `www` precisa de um webhook próprio, com Target URL `http://www.piabrota.art/`.
 
-1. Escolher onde fica o código da home (`piabrota.art/`).
-2. Escolher a ideia de hospedagem.
-3. Criar os registros DNS no registrador do domínio.
-4. Conferir os ⚠ desta página antes de publicar.
+## Depois: o serviço do Discord
+
+O Codeberg Pages só serve arquivos. O serviço `smart-alerts` (o Discord e o feed que muda a cada
+alerta) precisa de um servidor quando existir. Uma ideia é um servidor pequeno com o Caddy
+(Apache-2.0): o Caddy serve o feed e pode passar a servir o site. Um servidor tem custo mensal, e
+um recurso pago precisa da confirmação explícita do autor.
 
 ## Afirmações ⚠ desta página
 
-- O Codeberg Pages aceita domínio próprio com um arquivo `.domains` e emite HTTPS.
-- O Caddy emite e renova o certificado e redireciona HTTP para HTTPS.
-- O `Caddyfile` acima funciona sem mudança.
-- O GitHub Pages serve domínio próprio com HTTPS, e um repositório privado pode exigir plano pago.
+- Os planos grátis, o deploy por CLI e o HTTPS do Cloudflare Pages e do Netlify (não conferidos
+  nesta data).
