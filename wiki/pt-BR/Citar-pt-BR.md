@@ -1,4 +1,4 @@
-<!-- reading-time: 1 min -->
+<!-- reading-time: 2 min -->
 # Citar
 
 ## Como citar

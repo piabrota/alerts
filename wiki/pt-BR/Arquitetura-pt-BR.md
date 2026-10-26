@@ -1,4 +1,4 @@
-<!-- reading-time: 3 min -->
+<!-- reading-time: 4 min -->
 # Arquitetura
 
 O ialerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`.

@@ -1,3 +1,4 @@
+<!-- reading-time: 7 min -->
 # marola: planned alert work, and what it means for smart-alerts
 
 [marola](https://github.com/marola-dev/marola) is an ocean intelligence layer: it scores the sea

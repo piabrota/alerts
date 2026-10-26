@@ -1,4 +1,4 @@
-<!-- reading-time: 1 min -->
+<!-- reading-time: 3 min -->
 # Usar
 
 ## Preparar o ambiente
@@ -44,3 +44,15 @@ O `just mcp` roda o servidor MCP em stdio. O servidor tem duas ferramentas:
 |---|---|
 | `v0_ufs` | Lista os estados que a versão 0 atende |
 | `check_alert` | Diz se o harness da versão 0 mantém (`kept`) ou descarta (`dropped`) um alerta em JSON |
+
+## Ferramentas do ptbr-writer
+
+| Receita | O que faz |
+|---|---|
+| `just reading-time` | Grava o tempo de leitura de cada arquivo para humanos |
+| `just figure` | Desenha as figuras de `docs/archify/` com o Archify |
+| `just graph` | Gera o grafo do código em `build/graph/graph.html` |
+| `just site` | Gera o site estático em `site/serve/alerts/` |
+
+As ideias para hospedar o site em `piabrota.art/alerts` estão em `docs/HOSPEDAGEM.md`, no
+repositório.

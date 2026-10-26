@@ -1,3 +1,4 @@
+<!-- reading-time: 6 min -->
 # Sources: endpoints and formats
 
 This page lists the concrete endpoint, the format and the authentication of each source.

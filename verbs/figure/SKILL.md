@@ -53,8 +53,8 @@ PNG drawn with Archify. Every diagram has a header and a reading card.
 
 For a flow that a Mermaid fence draws badly, draw a picture.
 
-1. Write the source as `docs/archify/<slug>.json`. Read `verbs/archify/SKILL.md` (the pinned
-   submodule `vendor/archify`; run `just figure-init` once) for the schema.
+1. Write the source as `docs/archify/<slug>.json`. The schema is in the Archify documentation, in
+   the pinned submodule `vendor/archify` (run `just figure-init` once).
 2. Write the English twin `docs/archify/en/<slug>.json`: the same JSON with `meta.locale` `en` and
    only the words translated. If a translated label breaks the layout, shorten the label; never
    move a box.

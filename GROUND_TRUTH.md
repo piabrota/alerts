@@ -54,11 +54,12 @@ sources, filters them, and delivers them.
   anything from this repo. A new file must keep `just reuse` green. To cite the project, use
   `CITATION.cff` with a commit or a tag.
 - **Every file for humans states its reading time as metadata.** A file for humans is a page a
-  person reads: a README, a wiki page, a doc in `docs/`, a guide. The metadata is the first line
-  of the file, as an HTML comment: `<!-- reading-time: <N> min -->`. In a zh or ja page, this line
-  comes directly after the `source` line. N is the count of words divided by 200, rounded up
-  (for zh and ja: the count of characters divided by 400, rounded up ⚠). A change to the text
-  updates N in the same PR. Code, data, licenses and the alert messages are not files for humans.
+  person reads: a README, a wiki page, a doc in `docs/`. The metadata is the first line of the
+  file, as an HTML comment: `<!-- reading-time: <N> min -->`. In a zh or ja page, this line comes
+  directly after the `source` line, and N is the N of its English source. `just reading-time`
+  writes the line with the calculator of ptbr-writer (`ptbr reading-time`), and
+  `just reading-time-check` (in `just check`) fails on a file without it. Code, data, licenses,
+  agent files and the alert messages are not files for humans.
 
 ## Setup
 
@@ -177,6 +178,27 @@ Four languages, each with a controlled-language skill in `verbs/`:
 
 ## Figures
 
-A diagram is a ```` ```mermaid ```` fence in the page it illustrates, followed by a
-*How to read this figure* card (*Como ler esta figura* in pt-BR): takeaway, how to read, not
+A diagram is a ```` ```mermaid ```` fence in the page it illustrates, or a PNG drawn with Archify
+(`just figure`, the `figure` verb), followed by a *How to read this figure* card (*Como ler esta figura* in pt-BR): takeaway, how to read, not
 shown, evidence. Where a figure and its prose disagree, the figure is the bug.
+
+## Tools from ptbr-writer
+
+These tools come from `h0ffmann/ptbr-writer` and from picasso's labs, at the revision that
+ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs differ.
+
+| Tool | Recipe | What it does |
+|---|---|---|
+| ptbr-tools (`ptbr reading-time`) | `just reading-time` | Writes the reading time of every file for humans |
+| Archify (`vendor/archify`, MIT, pinned `2ab3cae`) | `just figure-init`, `just figure`, `just figure-check` | Draws `docs/archify/<slug>.json` to `docs/img/<slug>.png`, with picasso's look |
+| code-graph (graphify's schema) | `just graph` | The code graph of this repo: `build/graph/graph.html` |
+| gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve` | The static site in `site/`, served under `/alerts/` |
+
+- The Desmos support stays: `docs/drawings/wave.py` writes `wave.svg` and `wave.desmos.json`.
+  Archify draws diagrams; it does not replace the drawing.
+- Every Archify figure has an English twin, `docs/archify/en/<slug>.json`, with the same lanes,
+  nodes and edges. `README.pt-BR.md` embeds `docs/img/<slug>.png`; `README.md` embeds
+  `docs/img/en/<slug>.png`.
+- Commit the JSON, `docs/archify/figures.lock` and the PNG. Never commit `build/`.
+- The site keeps its Gleam code small: one module that prints the page. Hosting ideas for
+  `piabrota.art/alerts` are in `docs/HOSPEDAGEM.md`.

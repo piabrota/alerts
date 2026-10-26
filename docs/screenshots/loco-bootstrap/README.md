@@ -1,3 +1,4 @@
+<!-- reading-time: 2 min -->
 # Loco bootstrap: frontend screenshots
 
 These screenshots show the frontend that the [Loco](https://loco.rs) bootstrap generates. Nothing

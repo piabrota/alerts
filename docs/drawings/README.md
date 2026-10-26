@@ -1,3 +1,4 @@
+<!-- reading-time: 4 min -->
 # Drawings
 
 ## `wave.svg`

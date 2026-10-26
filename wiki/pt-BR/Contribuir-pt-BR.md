@@ -1,4 +1,4 @@
-<!-- reading-time: 3 min -->
+<!-- reading-time: 2 min -->
 # Contribuir
 
 ## Antes de um PR

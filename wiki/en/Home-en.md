@@ -1,3 +1,4 @@
+<!-- reading-time: 1 min -->
 # smart-alerts
 
 smart-alerts sends official flood alerts for Brazil to Discord.

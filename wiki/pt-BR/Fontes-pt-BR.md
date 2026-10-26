@@ -1,4 +1,4 @@
-<!-- reading-time: 3 min -->
+<!-- reading-time: 2 min -->
 # Fontes
 
 Os dados do Brasil estão espalhados. No ialerts, cada fonte é um crate próprio,

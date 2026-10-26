@@ -1,4 +1,5 @@
-<!-- source: wiki/en/Home-en.md sha: 591a044085399f1bcf4b4c60db27fc9e7673a61a reviewed: no -->
+<!-- source: wiki/en/Home-en.md sha: 88524f121464169eea2b754b5208ffd0d70731e9 reviewed: no -->
+<!-- reading-time: 1 min -->
 > ⚠ この ページは 英語の ページから 翻訳（ほんやく）しました。日本語を 話す 人が まだ チェックしていません。
 
 # smart-alerts
