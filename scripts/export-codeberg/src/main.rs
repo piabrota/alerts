@@ -58,11 +58,15 @@ fn run() -> Result<()> {
             fs::remove_file(&p)?;
         }
     }
+    // The recipes lose the export and the lines that run it: scripts/ is not in the copy.
     edit(&out.join("justfile"), |t| {
         cut_recipe(
             &cut_recipe(t, "# Zip each skill in verbs/"),
             "# Build the Codeberg copy",
         )
+        .split_inclusive('\n')
+        .filter(|l| !l.contains("scripts/export-codeberg/"))
+        .collect()
     })?;
     edit(&out.join(".gitignore"), |t| {
         t.replace(
