@@ -1,4 +1,4 @@
-//! Push the Codeberg copy of smart-alerts: `just sync-codeberg [flags]`.
+//! Push the Codeberg copy of alerts: `just sync-codeberg [flags]`.
 //!
 //! Builds the clean tree of a git ref (as `export-codeberg` does) on top of the Codeberg branch,
 //! commits it with a plain message as the author, checks the commit for AI traces and pushes it.
@@ -13,7 +13,7 @@ use export_codeberg::{Result, check, check_text, export};
 const USAGE: &str = "usage: sync-codeberg [--remote <url>] [--branch <name>] [--ref <git-ref>]
                      [--author \"Name <email>\"] [--message <text>] [--sign] [--dry-run]
 
-  --remote   default https://codeberg.org/piabrota/ialerts.git
+  --remote   default https://codeberg.org/piabrota/alerts.git
   --branch   default main
   --ref      the commit of this repo to copy, default HEAD
   --author   default user.name and user.email of this repo
@@ -112,7 +112,7 @@ fn run() -> Result<()> {
 
 fn parse(mut it: impl Iterator<Item = String>) -> Result<Args> {
     let mut a = Args {
-        remote: "https://codeberg.org/piabrota/ialerts.git".into(),
+        remote: "https://codeberg.org/piabrota/alerts.git".into(),
         branch: "main".into(),
         git_ref: "HEAD".into(),
         author: None,
@@ -238,7 +238,7 @@ mod tests {
     #[test]
     fn parse_keeps_the_defaults() {
         let a = parse(["--dry-run".to_string()].into_iter()).unwrap();
-        assert_eq!(a.remote, "https://codeberg.org/piabrota/ialerts.git");
+        assert_eq!(a.remote, "https://codeberg.org/piabrota/alerts.git");
         assert!(a.dry_run && !a.sign);
     }
 }

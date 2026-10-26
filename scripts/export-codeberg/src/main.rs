@@ -1,4 +1,4 @@
-//! Build the Codeberg copy of smart-alerts with no trace of AI tools.
+//! Build the Codeberg copy of alerts with no trace of AI tools.
 //!
 //! Usage: `just export-codeberg <out-dir> [<git-ref>]`, or `export-codeberg --check <dir>` to run
 //! only the trace check on a built tree (the site that `just deploy-site` publishes).

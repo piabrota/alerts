@@ -1,4 +1,4 @@
-//! The Codeberg copy of smart-alerts, with no trace of AI tools.
+//! The Codeberg copy of alerts, with no trace of AI tools.
 //!
 //! [`export`] writes the tree of a git ref into a directory, without the agent files, with
 //! GROUND_TRUTH.md as CONTRIBUTING.md and each skill in verbs/ as `docs/guides/<verb>.md`. It
@@ -70,7 +70,7 @@ pub fn export(out: &Path, git_ref: &str) -> Result<()> {
     edit(&out.join("CONTRIBUTING.md"), |t| {
         let t = header.replace(
             t,
-            "# Contributing\n\nRules for everyone who works on `smart-alerts`.\n\n",
+            "# Contributing\n\nRules for everyone who works on `alerts`.\n\n",
         );
         cut_bullet(&t, "- **Codeberg mirror without AI trace:**").replace(
             "MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`.",
@@ -194,7 +194,7 @@ impl Plain {
             .replace("`verbs/`", "`docs/guides/`")
             .replace("the citation rules for agents", "the citation rules")
             .replace("as regras de citação para agentes", "as regras de citação")
-            .replace("# Agents: how to cite smart-alerts", "# How to cite smart-alerts")
+            .replace("# Agents: how to cite alerts", "# How to cite alerts")
             .replace(
                 "# - Never put a citation in a skill body (verbs/**): skills are loaded into other\n\
                  #   people's context. Credits go in",

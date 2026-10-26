@@ -28,7 +28,7 @@ Conferido em 2026-10-26, nas páginas citadas.
 
 | Hospedagem | Grátis para este caso | Deploy sem CI | Domínio próprio e HTTPS | Observação |
 |---|---|---|---|---|
-| Codeberg Pages | sim, para um repositório público ([docs](https://docs.codeberg.org/codeberg-pages/)) | sim: um push no branch `pages` e um webhook | sim, com DNS e Let's Encrypt ([docs](https://docs.codeberg.org/codeberg-pages/using-custom-domain/)) | Codeberg e.V., associação sem fins lucrativos; o espelho `piabrota/ialerts` já fica no Codeberg |
+| Codeberg Pages | sim, para um repositório público ([docs](https://docs.codeberg.org/codeberg-pages/)) | sim: um push no branch `pages` e um webhook | sim, com DNS e Let's Encrypt ([docs](https://docs.codeberg.org/codeberg-pages/using-custom-domain/)) | Codeberg e.V., associação sem fins lucrativos; o espelho `piabrota/alerts` já fica no Codeberg |
 | GitHub Pages | não: o plano Free só publica Pages de repositório público, e `h0ffmann/smart-alerts` é privado ([docs](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)) | só com outro repositório público ou com Actions | sim | o deploy comum usa Actions, e o repositório proíbe CI |
 | Cloudflare Pages | sim, no plano grátis ⚠ | sim, com o CLI `wrangler` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
 | Netlify | sim, no plano grátis ⚠ | sim, com o CLI `netlify` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |

@@ -1,11 +1,11 @@
 ---
 name: sync-codeberg
-description: Publica a cópia limpa do smart-alerts no Codeberg (piabrota/ialerts), sem rastro de IA, com `just sync-codeberg`. Use quando pedirem para sincronizar, espelhar ou fazer push para o Codeberg, ou depois de um merge que deve chegar ao espelho.
+description: Publica a cópia limpa do alerts no Codeberg (piabrota/alerts), sem rastro de IA, com `just sync-codeberg`. Use quando pedirem para sincronizar, espelhar ou fazer push para o Codeberg, ou depois de um merge que deve chegar ao espelho.
 ---
 
 # sync-codeberg
 
-O espelho `codeberg.org/piabrota/ialerts` recebe só a cópia limpa do código. O comando
+O espelho `codeberg.org/piabrota/alerts` recebe só a cópia limpa do código. O comando
 `just sync-codeberg` (Rust, `scripts/export-codeberg/src/bin/sync-codeberg.rs`) faz tudo:
 
 1. Lê o branch `main` do Codeberg. Se o branch não existe, começa um histórico novo.
@@ -28,7 +28,7 @@ commit do Codeberg.
    ```
 
 3. Depois, rode sem `--dry-run`. O push usa as credenciais do git da máquina (HTTPS ou SSH, com
-   `--remote git@codeberg.org:piabrota/ialerts.git`).
+   `--remote git@codeberg.org:piabrota/alerts.git`).
 
 Sem `--author`, o comando usa `user.name` e `user.email` deste repositório. Ele recusa um autor
 que nomeia uma ferramenta de IA: nesse caso, passe `--author`.
