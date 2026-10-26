@@ -1,9 +1,9 @@
 ---
-name: docs-zh
+name: translate-zh
 description: Translates a smart-alerts English wiki page into controlled Simplified Chinese (wiki/zh). Use when a zh page is missing or `just docs-stale` reports it stale, or when the user asks for Chinese documentation.
 ---
 
-# docs-zh
+# translate-zh
 
 The zh pages are translations of the EN pages. Never write a zh page from the pt-BR text or from
 scratch, and never add a fact that the EN page does not state.

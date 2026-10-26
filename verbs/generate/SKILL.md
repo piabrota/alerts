@@ -1,11 +1,11 @@
 ---
-name: app-generate
+name: generate
 description: Generates the boilerplate for a new smart-alerts app, source crate, harness stage or channel, in the spirit of `cargo loco generate`. Use when the user asks to add an app, a source (an agency), a stage (a filter) or a channel (a delivery target).
 ---
 
-# app-generate
+# generate
 
-A generator writes the same files every time, so a reviewer reads only the logic. Read the `apps`
+A generator writes the same files every time, so a reviewer reads only the logic. Read the `manage-apps`
 skill first.
 
 ## Kinds

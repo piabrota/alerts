@@ -1,1 +1,0 @@
-@GROUND_TRUTH.md

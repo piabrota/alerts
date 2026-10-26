@@ -7,7 +7,7 @@
 # - Citing the project: use CITATION.cff. In prose, write
 #   "smart-alerts (https://github.com/h0ffmann/smart-alerts), MPL-2.0, commit <short sha>".
 #   Always give a commit or a tag, never a branch.
-# - Never put a citation in a skill body (.claude/skills/**): skills are loaded into other
+# - Never put a citation in a skill body (verbs/**): skills are loaded into other
 #   people's context. Credits go in README.md and README.pt-BR.md.
 # - zh and ja wiki pages are translations, not sources. Cite the English page they name.
 

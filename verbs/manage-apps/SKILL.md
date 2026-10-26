@@ -1,9 +1,9 @@
 ---
-name: apps
+name: manage-apps
 description: Manages smart-alerts apps — one deployment that joins sources, a harness and channels for one audience — with Loco-style conventions (new, generate, doctor, schedule, task). Use when the user wants to create, change, run, check or remove an app, or asks where an app's parts go.
 ---
 
-# apps
+# manage-apps
 
 The layout copies the idea of [Loco](https://loco.rs) ("Rust on Rails"): convention over
 configuration, one command per job, and generators that write the boilerplate. It keeps only what
@@ -53,11 +53,11 @@ environment.
 
 | Job | Recipe | Skill |
 |---|---|---|
-| New app | `just app-new <app>` | `app-generate` |
-| New source, stage or channel | `just generate <kind> <name>` | `app-generate` |
-| Check an app | `just app-doctor <app>` | `app-doctor` |
-| Poll the sources | `just app-start <app>` | `app-schedule` |
-| One-off job | `just app-task <app> <task>` | `app-schedule` |
+| New app | `just app-new <app>` | `generate` |
+| New source, stage or channel | `just generate <kind> <name>` | `generate` |
+| Check an app | `just diagnose <app>` | `diagnose` |
+| Poll the sources | `just app-start <app>` | `schedule` |
+| One-off job | `just app-task <app> <task>` | `schedule` |
 
 Until a recipe exists, do the steps of its skill by hand, and say so in the PR.
 

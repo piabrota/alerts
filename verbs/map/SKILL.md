@@ -1,9 +1,9 @@
 ---
-name: maplibre
+name: map
 description: Draws smart-alerts alert areas on a map with MapLibre (GL JS on the web, MapLibre Native in apps), with FOSS tiles and no API key. Use when a page, a frontend, a Discord image or a feed preview must show where an alert applies, or when CAP 1.2 areas must become GeoJSON.
 ---
 
-# maplibre
+# map
 
 A map shows where an alert applies. The map never adds an area, a time or a severity that the
 source does not state. The rules below come from `GROUND_TRUTH.md` (official sources only, FOSS
@@ -48,7 +48,7 @@ type in `smart-alerts-core`, and keep the conversion in a `Stage` or in the chan
 - Fill at 30% opacity and draw a 2 px outline, so the base map stays readable.
 - Put the severity in text too (the label and the legend). Color is never the only signal.
 - Fit the view to the alert bounds, with padding. Never zoom past the precision of the source.
-- Write the map text in pt-BR, at the `estrito` level of `docs-pt-br`.
+- Write the map text in pt-BR, at the `estrito` level of `write-pt-br`.
 
 ## Minimal page
 

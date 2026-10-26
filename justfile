@@ -31,6 +31,17 @@ reuse:
 py-build:
     maturin build --release -m crates/smart-alerts-py/Cargo.toml
 
+# Zip each skill in verbs/ into target/verbs/<verb>.zip, to upload as a project skill.
+pack-verbs:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rm -rf target/verbs && mkdir -p target/verbs
+    for dir in verbs/*/; do
+        verb=$(basename "$dir")
+        python3 -m zipfile -c "target/verbs/$verb.zip" "verbs/$verb"
+    done
+    ls target/verbs
+
 # Run the MCP server on stdio.
 mcp:
     cargo run -q -p smart-alerts-mcp

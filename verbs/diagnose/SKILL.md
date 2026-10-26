@@ -1,9 +1,9 @@
 ---
-name: app-doctor
+name: diagnose
 description: Checks that a smart-alerts app can run — toolchain, environment, source reachability with the honest User-Agent, rate limits and channel output — in the spirit of `cargo loco doctor`. Use before the first run of an app, after a source fails, or when the user asks why an app sends nothing.
 ---
 
-# app-doctor
+# diagnose
 
 The doctor reads and reports. It never sends a real alert and never changes a file.
 

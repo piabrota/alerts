@@ -1,7 +1,7 @@
 # Loco bootstrap: frontend screenshots
 
 These screenshots show the frontend that the [Loco](https://loco.rs) bootstrap generates. Nothing
-in this directory is adopted. The `apps` skill (`.claude/skills/apps/`) takes the Loco conventions,
+in this directory is adopted. The `manage-apps` skill (`verbs/manage-apps/`) takes the Loco conventions,
 not this code.
 
 Taken on 2026-10-26, with Chromium (Playwright) at 960 × 400 pixels.
@@ -30,9 +30,9 @@ email was sent.
 
 | Loco part | ialerts | Why |
 |---|---|---|
-| Generators, `doctor`, scheduler, tasks | keep, as `just` recipes (skills `app-generate`, `app-doctor`, `app-schedule`) | one command per job |
+| Generators, `doctor`, scheduler, tasks | keep, as `just` recipes (skills `generate`, `diagnose`, `schedule`) | one command per job |
 | Users, JWT auth, sign-up pages | drop in v0 | the v0 channels (Discord, Atom feed) have no accounts |
 | ORM (SeaORM) and migrations | drop in v0 | the service stores only the ids of delivered alerts |
-| Client-side frontend | later, for a MapLibre alert map (skill `maplibre`) | a map is not a v0 deliverable |
+| Client-side frontend | later, for a MapLibre alert map (skill `map`) | a map is not a v0 deliverable |
 
 Loco is under the Apache-2.0 license.

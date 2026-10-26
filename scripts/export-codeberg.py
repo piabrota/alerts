@@ -4,7 +4,7 @@
 Usage: python3 -I scripts/export-codeberg.py <out-dir> [<git-ref>]
 
 Writes the tree of <git-ref> (default HEAD) into <out-dir>, without the agent files, and with
-GROUND_TRUTH.md as CONTRIBUTING.md and each skill as docs/guides/<name>.md. The script fails when a
+GROUND_TRUTH.md as CONTRIBUTING.md and each skill in verbs/ as docs/guides/<verb>.md. The script fails when a
 trace remains. It never writes git history: commit the result with a plain message and no
 co-author trailer.
 """
@@ -17,9 +17,11 @@ import sys
 import tarfile
 from pathlib import Path
 
-DROP = ["CLAUDE.md", ".claude", "opencode.json", ".mcp.json", "scripts/export-codeberg.py"]
+DROP = ["verbs", "scripts", "opencode.json", ".mcp.json"]
+# The trace check must name what it looks for. scripts/ is the only place in the repo that names
+# an AI product (here and in link-verbs.sh), and the export drops scripts/.
 TRACE = re.compile(r"claude|anthropic|opencode|AGENTS\.md|GROUND_TRUTH|\bAI agents?\b|co-authored-by|"
-                   r"SKILL\.md|\bskills?\b", re.IGNORECASE)
+                   r"SKILL\.md|\bskills?\b|\bverbs/", re.IGNORECASE)
 
 
 def main() -> None:
@@ -39,7 +41,7 @@ def main() -> None:
     # Each skill becomes a plain guide: docs/guides/<name>.md.
     guides = out / "docs" / "guides"
     guides.mkdir(parents=True, exist_ok=True)
-    for skill in sorted((out / ".claude" / "skills").glob("*/SKILL.md")):
+    for skill in sorted((out / "verbs").glob("*/SKILL.md")):
         body = skill.read_text(encoding="utf-8").split("---\n", 2)[2].lstrip()
         body = body.replace(
             "If the `ptbr-writer` skill is available, apply it, and stop reading here. Use level `estrito`\n"
@@ -56,9 +58,10 @@ def main() -> None:
             shutil.rmtree(p)
         elif p.exists():
             p.unlink()
-    scripts = out / "scripts"
-    if scripts.is_dir() and not any(scripts.iterdir()):
-        scripts.rmdir()
+    justfile = out / "justfile"
+    justfile.write_text(re.sub(r"# Zip each skill in verbs/.*?\n\n(?=# )", "",
+                               justfile.read_text(encoding="utf-8"), count=1, flags=re.S),
+                        encoding="utf-8")
 
     gitignore = out / ".gitignore"
     gitignore.write_text(re.sub(r"\n# Agent instructions live in GROUND_TRUTH\.md\nAGENTS\.md\n", "\n",
@@ -71,8 +74,8 @@ def main() -> None:
                   "`smart-alerts`.\n\n", text, count=1, flags=re.S)
     text = re.sub(r"^- \*\*Codeberg mirror without AI trace:\*\*.*?(?=^- |^\n|^## )", "", text,
                   flags=re.M | re.S)
-    text = text.replace("MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` (Claude Code) "
-                        "and `opencode.json` (OpenCode).", "MCP server (rmcp, stdio): `just mcp`.")
+    text = text.replace("MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and "
+                        "`opencode.json`.", "MCP server (rmcp, stdio): `just mcp`.")
     contributing.write_text(text, encoding="utf-8")
 
     # Text files: the agent names and the skill vocabulary become plain names.
@@ -84,12 +87,12 @@ def main() -> None:
         except UnicodeDecodeError:
             continue
         t = t.replace("GROUND_TRUTH.md", "CONTRIBUTING.md")
-        t = re.sub(r"`?\.claude/skills/(\*\*)?`?", "`docs/guides/`", t)
-        t = re.sub(r"`docs/guides/`([a-z-]+)/`?", r"`docs/guides/\1.md`", t)
+        t = re.sub(r"`verbs/([a-z-]+)/`", r"`docs/guides/\1.md`", t)
+        t = re.sub(r"`verbs/`", "`docs/guides/`", t)
         t = t.replace("the citation rules for agents", "the citation rules")
         t = t.replace("as regras de citação para agentes", "as regras de citação")
         t = t.replace("# Agents: how to cite smart-alerts", "# How to cite smart-alerts")
-        t = t.replace("# - Never put a citation in a skill body (`docs/guides/`): skills are loaded into other\n"
+        t = t.replace("# - Never put a citation in a skill body (verbs/**): skills are loaded into other\n"
                       "#   people's context. Credits go in", "# - Credits go in")
         t = re.sub(r"\bskills\b", "guides", t)
         t = re.sub(r"\bskill\b", "guide", t)

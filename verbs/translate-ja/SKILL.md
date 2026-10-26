@@ -1,9 +1,9 @@
 ---
-name: docs-ja
+name: translate-ja
 description: Translates a smart-alerts English wiki page into Easy Japanese (やさしい日本語) (wiki/ja). Use when a ja page is missing or `just docs-stale` reports it stale, or when the user asks for Japanese documentation.
 ---
 
-# docs-ja
+# translate-ja
 
 The ja pages are translations of the EN pages into やさしい日本語 (Easy Japanese): plain Japanese
 for readers who are not fluent. Never write a ja page from the pt-BR text or from scratch, and

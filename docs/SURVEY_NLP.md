@@ -125,13 +125,13 @@ still checks that every value appears in the source text: a model never invents 
 | Tool | License | Size | Form | Use | Verdict |
 |---|---|---|---|---|---|
 | Templates (`format!`) | — | — | Rust | the alert text, from the `Alert` fields | use: no model writes alert text |
-| [Vale](https://github.com/vale-cli/vale) | MIT | 12 MB (3.25.1, Linux) | single binary | check the pt-BR text against `docs-pt-br` rules written as Vale styles | use, in `just check` for the templates |
+| [Vale](https://github.com/vale-cli/vale) | MIT | 12 MB (3.25.1, Linux) | single binary | check the pt-BR text against `write-pt-br` rules written as Vale styles | use, in `just check` for the templates |
 | [Harper](https://github.com/Automattic/harper) | Apache-2.0 | 12 MB (2.13.0 CLI) | single binary | grammar check | English only ⚠: docs in EN only |
 | [translateLocally](https://github.com/XapaJIaMnu/translateLocally) | MIT | — | desktop and CLI | offline translation (Bergamot models) | later: EN, ZH, JA alerts ⚠ model coverage not checked |
 | [Argos Translate](https://github.com/argosopentech/argos-translate) | MIT | — | Python on CTranslate2 | offline translation | later, the same job |
 | [CTranslate2](https://github.com/OpenNMT/CTranslate2) | MIT | — | C++ library | fast CPU inference for translation models | under Argos |
 
-Vale is the cheapest publishing win: one 12 MB binary turns the `docs-pt-br` rules into a check
+Vale is the cheapest publishing win: one 12 MB binary turns the `write-pt-br` rules into a check
 that runs on every template, with no model.
 
 ## Excluded
