@@ -25,9 +25,10 @@ sources, filters them, and delivers them.
 - **Codeberg mirror without AI trace:** `codeberg.org/piabrota/ialerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
   `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
-  only with `just export-codeberg <out-dir>` (Rust, `scripts/export-codeberg/`): it fails when a
-  trace remains.
-  Commit the result with a plain message as the author. Never push this repo's history there.
+  only with `just export-codeberg <out-dir>` (Rust, `scripts/export-codeberg/`), and publish it
+  only with `just sync-codeberg` (the `sync-codeberg` verb): both fail when a trace remains. The
+  sync commits the copy with a plain message as the author, on top of the Codeberg branch. Never
+  push this repo's history there.
 
 ## Hard rules
 
