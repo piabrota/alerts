@@ -8,19 +8,24 @@ check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-
 
 fmt:
     cargo fmt --all
+    cargo fmt --manifest-path scripts/export-codeberg/Cargo.toml
 
 fmt-check:
     cargo fmt --all --check
+    cargo fmt --manifest-path scripts/export-codeberg/Cargo.toml --check
 
 lint:
     cargo clippy --workspace --all-targets -- -D warnings
+    cargo clippy --manifest-path scripts/export-codeberg/Cargo.toml --all-targets -- -D warnings
 
 test:
     cargo test --workspace
+    cargo test --manifest-path scripts/export-codeberg/Cargo.toml
 
 # FOSS license policy and advisories (deny.toml).
 deny:
     cargo deny check
+    cargo deny --manifest-path scripts/export-codeberg/Cargo.toml check
 
 # Copyright and license of every file (REUSE.toml) and the citation file (CITATION.cff).
 reuse:
@@ -38,7 +43,7 @@ pack-verbs:
     rm -rf target/verbs && mkdir -p target/verbs
     for dir in verbs/*/; do
         verb=$(basename "$dir")
-        python3 -m zipfile -c "target/verbs/$verb.zip" "verbs/$verb"
+        (cd verbs && zip -qr "../target/verbs/$verb.zip" "$verb")
     done
     ls target/verbs
 
@@ -173,7 +178,7 @@ site:
 
 # Build the site and serve it on http://localhost:8000/alerts/.
 site-serve: site
-    nix develop --no-update-lock-file .#site --command python3 -m http.server 8000 --directory site/serve
+    miniserve site/serve --index index.html --port 8000
 
 # The three picasso pins in flake.lock (gleam-website, code-graph, ptbr-tools) are one revision.
 pins:
@@ -182,3 +187,17 @@ pins:
     revs=$(jq -r '.nodes | ["gleam-website","code-graph","ptbr-tools"] as $k | [$k[] as $n | .[$n].locked.rev] | unique | .[]' flake.lock)
     [ "$(wc -l <<<"$revs")" = 1 ] || { echo "pins: picasso revisions differ: $revs" >&2; exit 1; }
     echo "pins: picasso ${revs:0:7}"
+
+# Write the README drawing (docs/drawings/wave.svg) and its Desmos state (wave.desmos.json).
+wave:
+    cargo run -q -p smart-alerts-drawings --bin wave > docs/drawings/wave.svg
+    cargo run -q -p smart-alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json
+
+# Record Ammonite by Harry Chen (Desmos) as docs/drawings/ammonite-harry-chen.gif. Needs Chrome or
+# Chromium (CHROME names the binary) and access to desmos.com.
+desmos-gif *args:
+    cargo run -q --release -p smart-alerts-desmos -- --out docs/drawings/ammonite-harry-chen.gif {{ args }}
+
+# Build the Codeberg copy without AI trace into OUT (empty, or only .git). Commit it as the author.
+export-codeberg out ref="HEAD":
+    cargo run -q --manifest-path scripts/export-codeberg/Cargo.toml -- {{ out }} {{ ref }}

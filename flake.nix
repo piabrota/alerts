@@ -25,10 +25,12 @@
             cargo-deny maturin python3 just
             cffconvert uv
             jq
+            zip # `just pack-verbs`
+            miniserve # `just site-serve`
             nodejs # vendor/archify (`just figure`); Chrome comes from the host
             ptbr-tools.packages.${system}.default # `just reading-time`
             code-graph.packages.${system}.default # `just graph`
-          ];
+          ] ++ pkgs.lib.optional pkgs.stdenv.hostPlatform.isLinux pkgs.chromium; # `just desmos-gif`; on macOS, CHROME names Chrome
         };
         # `just site`: the Gleam site in site/.
         site = pkgs.mkShell {

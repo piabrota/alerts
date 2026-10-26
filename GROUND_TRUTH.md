@@ -25,11 +25,16 @@ sources, filters them, and delivers them.
 - **Codeberg mirror without AI trace:** `codeberg.org/piabrota/ialerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
   `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
-  only with `python3 -I scripts/export-codeberg.py <out-dir>`: it fails when a trace remains.
+  only with `just export-codeberg <out-dir>` (Rust, `scripts/export-codeberg/`): it fails when a
+  trace remains.
   Commit the result with a plain message as the author. Never push this repo's history there.
 
 ## Hard rules
 
+- **Full Rust.** Every program, script and tool written for this repo is Rust. Python enters
+  only as a third-party dependency: maturin builds the pip package, `uvx reuse` checks the
+  licenses, and the pip package itself is Rust (PyO3). Never commit a `.py` file. A shell recipe
+  in the `justfile` may call tools, but a recipe that needs logic becomes a Rust binary.
 - **No CI.** Do not add `.github/workflows` or any other CI. `just check` is the gate, run by hand
   before a PR.
 - **Every PR uses the `open-pr` verb.** The title is pt-BR. The body is bilingual, pt-BR first, at
@@ -84,6 +89,8 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `smart-alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
 | `smart-alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import smart_alerts`. |
 | `smart-alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
+| `smart-alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
+| `smart-alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
 
 Dependencies point to `smart-alerts-core`, never the other way.
 
@@ -194,7 +201,9 @@ ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs diff
 | code-graph (graphify's schema) | `just graph` | The code graph of this repo: `build/graph/graph.html` |
 | gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve` | The static site in `site/`, served under `/alerts/` |
 
-- The Desmos support stays: `docs/drawings/wave.py` writes `wave.svg` and `wave.desmos.json`.
+- The Desmos support stays: `just wave` (the Rust binary `wave`, crate `smart-alerts-drawings`)
+  writes `wave.svg` and `wave.desmos.json`, and `just desmos-gif` records a Desmos animation
+  as a GIF (crate `smart-alerts-desmos`).
   Archify draws diagrams; it does not replace the drawing.
 - Every Archify figure has an English twin, `docs/archify/en/<slug>.json`, with the same lanes,
   nodes and edges. `README.pt-BR.md` embeds `docs/img/<slug>.png`; `README.md` embeds
