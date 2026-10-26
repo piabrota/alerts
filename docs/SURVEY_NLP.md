@@ -1,3 +1,4 @@
+<!-- reading-time: 10 min -->
 # Survey: small FOSS NLP tools for alert ingestion and publishing
 
 This survey lists free and open-source NLP tools that are small enough to run on one cheap

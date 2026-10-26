@@ -4,7 +4,7 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny reuse docs-stale
+check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-check
 
 fmt:
     cargo fmt --all
@@ -77,3 +77,108 @@ wiki-sync:
     git -C "$tmp" add -A
     git -C "$tmp" commit -qm "sync wiki/ from $(git rev-parse --short HEAD)" || echo "wiki: nothing to sync"
     git -C "$tmp" push -q
+
+# The pinned Archify (vendor/archify, sparse to archify/): once per clone.
+figure-init:
+    git submodule update --init --depth 1 vendor/archify
+    git -C vendor/archify sparse-checkout set --no-cone /archify/
+    @echo "figure-init: $(git -C vendor/archify rev-parse --short HEAD)"
+
+# Draw every docs/archify/<slug>.json to docs/img/<slug>.png, and its English twin docs/archify/en/<slug>.json
+# to docs/img/en/<slug>.png: Archify validates and checks it, picasso's look (docs/archify/picasso.css) goes
+# over it, headless Chrome takes the picture. Needs node and Chrome (CHROME names another). From ptbr-writer.
+figure: figure-init
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p build/figure docs/img/en
+    for src in docs/archify/*.json docs/archify/en/*.json; do
+        slug="${src#docs/archify/}"; slug="${slug%.json}"; out="build/figure/$slug"
+        rm -rf "$out"; mkdir -p "$out"
+        ARCHIFY_UPDATE_CHECK_DISABLED=1 node vendor/archify/archify/bin/archify.mjs finalize "$(jq -r .diagram_type "$src")" "$src" "$out/page.html" --out-dir "$out/receipts" --quality showcase
+        read -r w h < <(grep -o '<svg viewBox="[^"]*"' "$out/page.html" | head -1 | sed -E 's/.*0 0 ([0-9.]+) ([0-9.]+)"/\1 \2/')
+        crop="$(awk -F'\t' -v s="$(basename "$slug")" '$1==s {print $2}' docs/archify/crop.tsv)"; h="${crop:-$h}"
+        FONTS='<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Inter:wght@400;600&display=block">' CSS="$(cat docs/archify/picasso.css)" W="$w" H="$h" \
+            perl -0pe 's|</head>|$ENV{FONTS}<style>$ENV{CSS}</style></head>|; s|<svg viewBox="0 0 [0-9.]+ [0-9.]+"|<svg viewBox="0 0 $ENV{W} $ENV{H}"|' "$out/page.html" > "$out/frame.html"
+        "${CHROME:-google-chrome}" --headless --disable-gpu --hide-scrollbars --force-dark-mode --force-device-scale-factor=2 --user-data-dir="$PWD/$out/profile" --window-size="$w,$h" --virtual-time-budget=3000 --screenshot="$PWD/docs/img/$slug.png" "file://$PWD/$out/frame.html" 2>/dev/null
+        echo "figure: docs/img/$slug.png"
+    done
+    just _figure-lock > docs/archify/figures.lock
+
+# The inputs of each figure (its source, the look, the crop, the Archify pin), one line per slug.
+_figure-lock:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    pin="$(git ls-files -s vendor/archify | cut -d' ' -f2)"
+    for src in docs/archify/*.json docs/archify/en/*.json; do
+        slug="${src#docs/archify/}"
+        printf '%s\t%s\n' "${slug%.json}" "$(cat "$src" docs/archify/picasso.css docs/archify/crop.tsv | sha256sum | cut -c1-16)-${pin:0:7}"
+    done
+
+# Offline: each figure has its PNG and its English twin (the same drawing, only the words changed), both
+# match the last `just figure`, README.pt-BR.md embeds the pt-BR PNG and README.md the English one.
+figure-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    shape='{d: .diagram_type, l: [.lanes[].id], m: .mainPath, n: [.nodes[] | del(.label, .sublabel, .tag)], e: [.edges[] | del(.label)]}'
+    for src in docs/archify/*.json; do
+        s="$(basename "$src" .json)"; en="docs/archify/en/$s.json"
+        test -s "docs/img/$s.png" || { echo "figure-check: no PNG for $src; run just figure" >&2; exit 1; }
+        test -s "$en" && test -s "docs/img/en/$s.png" || { echo "figure-check: no English twin $en or its PNG" >&2; exit 1; }
+        test "$(jq -r .meta.locale "$en")" = en || { echo "figure-check: $en is not meta.locale en" >&2; exit 1; }
+        cmp -s <(jq -S "$shape" "$src") <(jq -S "$shape" "$en") || { echo "figure-check: $en is not the same drawing as $src" >&2; exit 1; }
+        ! grep -qF "docs/img/$s.png" README.md || { echo "figure-check: README.md embeds the pt-BR PNG; use docs/img/en/$s.png" >&2; exit 1; }
+        ! grep -qF "docs/img/en/$s.png" README.pt-BR.md || { echo "figure-check: README.pt-BR.md embeds the English PNG; use docs/img/$s.png" >&2; exit 1; }
+    done
+    for en in docs/archify/en/*.json; do test -s "docs/archify/$(basename "$en")" || { echo "figure-check: $en has no pt-BR source" >&2; exit 1; }; done
+    just _figure-lock | cmp -s - docs/archify/figures.lock || { echo "figure-check: a source, the look or the Archify pin changed since the PNG; run just figure" >&2; exit 1; }
+    echo "figure-check: ok"
+
+# The files for humans: READMEs, docs/ and wiki/ pages (not the agent files, not the licenses).
+_human-files:
+    @git ls-files 'README*.md' 'docs/**.md' 'docs/*.md' 'wiki/**.md' | grep -v '/_Sidebar.md$' | sort -u
+
+# Write `<!-- reading-time: N min -->` in every file for humans, with ptbr-writer's calculator (`ptbr
+# reading-time`). A zh or ja page takes the N of its English source, after its `source` line.
+reading-time:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    n_of() { local lang=en; case "$1" in *pt-BR*|docs/REFERENCES.md) lang=pt-BR;; esac
+        grep -v "^<!-- reading-time:" "$1" | ptbr reading-time --lang "$lang" | sed -E 's/^[^~]*~([0-9]+) min.*/\1/; s/^[^:]+: <? ?([0-9]+).*/\1/'; }
+    for f in $(just _human-files); do
+        case "$f" in wiki/zh/*|wiki/ja/*)
+            src=$(sed -nE '1,3s/^<!-- source: ([^ ]+) .*/\1/p' "$f"); n=$(n_of "$src")
+            grep -v '^<!-- reading-time:' "$f" | awk -v n="$n" 'NR==1{print; print "<!-- reading-time: " n " min -->"; next} {print}' > "$f.tmp";;
+        *)  n=$(n_of "$f")
+            { echo "<!-- reading-time: $n min -->"; grep -v '^<!-- reading-time:' "$f"; } > "$f.tmp";;
+        esac
+        mv "$f.tmp" "$f"; echo "$f: $n min"
+    done
+
+# Every file for humans states its reading time (`just reading-time` writes it).
+reading-time-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    bad=0
+    for f in $(just _human-files); do grep -qm1 '^<!-- reading-time: [0-9]\+ min -->$' "$f" || { echo "reading-time-check: $f has no reading time; run just reading-time" >&2; bad=1; }; done
+    exit $bad
+
+# The code graph of this repository (picasso's code-graph, graphify's schema): build/graph/graph.html.
+graph:
+    code-graph extract . --out build/graph --exclude vendor --exclude target --exclude build --exclude scripts --exclude verbs --title smart-alerts
+    @echo "graph: build/graph/graph.html"
+
+# Build the static site into site/dist/ (Gleam on JavaScript, picasso's gleam-website toolchain).
+site:
+    nix develop --no-update-lock-file .#site --command just --justfile site/justfile --working-directory site build
+
+# Build the site and serve it on http://localhost:8000/alerts/.
+site-serve: site
+    nix develop --no-update-lock-file .#site --command python3 -m http.server 8000 --directory site/serve
+
+# The three picasso pins in flake.lock (gleam-website, code-graph, ptbr-tools) are one revision.
+pins:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    revs=$(jq -r '.nodes | ["gleam-website","code-graph","ptbr-tools"] as $k | [$k[] as $n | .[$n].locked.rev] | unique | .[]' flake.lock)
+    [ "$(wc -l <<<"$revs")" = 1 ] || { echo "pins: picasso revisions differ: $revs" >&2; exit 1; }
+    echo "pins: picasso ${revs:0:7}"

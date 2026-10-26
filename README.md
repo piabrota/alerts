@@ -1,3 +1,4 @@
+<!-- reading-time: 13 min -->
 <div align="center">
 
 <table>
@@ -8,6 +9,10 @@
 <tr>
 <td align="center"><sub><i>Fibonacci wave</i>, Matheus Hoffmann (<a href="https://github.com/h0ffmann">@h0ffmann</a>), 2026</sub></td>
 <td align="center"><sub><a href="https://www.desmos.com/calculator/z7zooq9zsh"><i>Ammonite</i></a>, Harry Chen (<a href="https://github.com/harry7557558">@harry7557558</a>), 1st place, 2021 Desmos Global Math Art Contest</sub></td>
+</tr>
+<tr>
+<td align="center"><sub>Desmos source: <a href="docs/drawings/wave.desmos.json"><code>wave.desmos.json</code></a></sub></td>
+<td align="center"><sub>Desmos source: <a href="https://www.desmos.com/calculator/z7zooq9zsh"><code>desmos.com/calculator/z7zooq9zsh</code></a></sub></td>
 </tr>
 </table>
 
@@ -147,6 +152,25 @@ flowchart LR
 
 </details>
 
+### The path of an alert
+
+![How an official alert reaches Discord and the feed: three official sources, a source crate, the Alert type, the harness, then Discord and the Atom feed with the same text](docs/img/en/fluxo-alerta.png)
+
+<details open>
+<summary>How to read this figure</summary>
+
+**Takeaway.** An official alert goes through one path, and Discord and the feed get the same text.
+
+**How to read.** Left to right. An orange box is an official source. Each arrow is labelled with
+what happens.
+
+**Not shown.** The planned sources, the local models and the alerts that the harness drops.
+
+**Evidence.** The Sources, Channels and Architecture sections of this README. No source crate
+exists yet. The source: [`docs/archify/en/fluxo-alerta.json`](docs/archify/en/fluxo-alerta.json).
+
+</details>
+
 ## Use
 
 ```console
@@ -156,15 +180,24 @@ DISCORD_WEBHOOK_URL=... just test-message   # send a test message to Discord
 FEED_PATH=alerts.atom just test-message     # write the Atom + CAP 1.2 feed with a test alert
 just mcp                                    # MCP server on stdio
 just py-build                               # build the Python package
+just reading-time                           # write the reading time of every file for humans
+just figure                                 # draw docs/archify/*.json with Archify
+just graph                                  # the code graph: build/graph/graph.html
+just site                                   # the static site for piabrota.art/alerts/
 ```
 
 ## Documentation
 
 The documentation exists in four languages: pt-BR, English, Chinese and Japanese. The pages are
-in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (issue #1).
+in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (issue #1). Ideas
+to host the site at `piabrota.art/alerts` are in [`docs/HOSPEDAGEM.md`](docs/HOSPEDAGEM.md) (pt-BR).
 
 ## Credits
 
+- The reading-time calculator, the figure workflow and the site toolchain come from
+  [ptbr-writer](https://github.com/h0ffmann/ptbr-writer) and picasso's labs (ptbr-tools,
+  code-graph, gleam-website). Figures are drawn with [Archify](https://github.com/tt-a1i/archify),
+  by @tt-a1i (MIT). The code graph uses the schema of [graphify](https://github.com/Graphify-Labs/graphify).
 - The layout of this README comes from [picasso](https://github.com/h0ffmann/picasso).
 - The drawing is by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). It is rendered from its
   Desmos expressions. The wave joins the Fibonacci spiral and Katsushika Hokusai's *The Great Wave off Kanagawa*

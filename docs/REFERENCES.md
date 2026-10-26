@@ -1,3 +1,4 @@
+<!-- reading-time: 5 min -->
 # Referências: ferramentas e serviços externos
 
 Esta página lista ferramentas e serviços externos que alguém propôs para o smart-alerts. Esta

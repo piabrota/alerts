@@ -1,3 +1,4 @@
+<!-- reading-time: 12 min -->
 # ialerts
 
 🇬🇧 [Read in English](README.md) · nome de código: `smart-alerts`
@@ -5,6 +6,7 @@
 | <img alt="Uma onda de Fibonacci e um sino, de @h0ffmann" src="docs/drawings/wave.svg" width="320"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, de Harry Chen, no Desmos" src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a> |
 |:---:|:---:|
 | *Onda de Fibonacci*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026 | [*Ammonite*](https://www.desmos.com/calculator/z7zooq9zsh), Harry Chen ([@harry7557558](https://github.com/harry7557558)), 1º lugar no concurso de arte do Desmos de 2021 |
+| Fonte Desmos: [`wave.desmos.json`](docs/drawings/wave.desmos.json) | Fonte Desmos: [`desmos.com/calculator/z7zooq9zsh`](https://www.desmos.com/calculator/z7zooq9zsh) |
 
 Alertas do século 22.
 
@@ -132,6 +134,25 @@ flowchart LR
 
 </details>
 
+### o caminho de um alerta
+
+![Como um alerta oficial chega ao Discord e ao feed: três fontes oficiais, um crate de fonte, o tipo Alert, o harness, e então o Discord e o feed Atom com o mesmo texto](docs/img/fluxo-alerta.png)
+
+<details open>
+<summary>Como ler esta figura</summary>
+
+**Em uma frase.** Um alerta oficial segue um caminho só, e o Discord e o feed recebem o mesmo texto.
+
+**Como ler.** Da esquerda para a direita. Uma caixa laranja é uma fonte oficial. Cada seta diz o
+que acontece.
+
+**Fora da figura.** As fontes planejadas, os modelos locais e os alertas que o harness descarta.
+
+**Evidência.** As seções fontes, canais e arquitetura deste README. Nenhum crate de fonte existe
+ainda. A fonte: [`docs/archify/fluxo-alerta.json`](docs/archify/fluxo-alerta.json).
+
+</details>
+
 ## usar
 
 ```console
@@ -141,15 +162,24 @@ DISCORD_WEBHOOK_URL=... just test-message   # envia uma mensagem de teste ao Dis
 FEED_PATH=alerts.atom just test-message     # grava o feed Atom + CAP 1.2 com um alerta de teste
 just mcp                                    # servidor MCP em stdio
 just py-build                               # gera o pacote Python
+just reading-time                           # grava o tempo de leitura de cada arquivo para humanos
+just figure                                 # desenha docs/archify/*.json com o Archify
+just graph                                  # o grafo do código: build/graph/graph.html
+just site                                   # o site estático de piabrota.art/alerts/
 ```
 
 ## documentação
 
 A documentação existe em quatro idiomas: pt-BR, inglês, chinês e japonês. As páginas estão em
 `wiki/`. A Wiki do GitHub só recebe as páginas depois que o repositório for público (issue #1).
+As ideias para hospedar o site em `piabrota.art/alerts` estão em [`docs/HOSPEDAGEM.md`](docs/HOSPEDAGEM.md).
 
 ## créditos
 
+- A calculadora de tempo de leitura, o fluxo de figuras e as ferramentas do site vêm do
+  [ptbr-writer](https://github.com/h0ffmann/ptbr-writer) e dos labs do picasso (ptbr-tools,
+  code-graph, gleam-website). As figuras são desenhadas com o [Archify](https://github.com/tt-a1i/archify),
+  de @tt-a1i (MIT). O grafo do código usa o esquema do [graphify](https://github.com/Graphify-Labs/graphify).
 - O layout do README em inglês vem do [picasso](https://github.com/h0ffmann/picasso).
 - O desenho é de Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). O render sai das
   expressões do Desmos. A onda junta a espiral de Fibonacci e *A Grande Onda de Kanagawa*, de Katsushika Hokusai

@@ -1,4 +1,5 @@
-<!-- source: wiki/en/Home-en.md sha: 591a044085399f1bcf4b4c60db27fc9e7673a61a reviewed: no -->
+<!-- source: wiki/en/Home-en.md sha: 88524f121464169eea2b754b5208ffd0d70731e9 reviewed: no -->
+<!-- reading-time: 1 min -->
 > ⚠ 本页由英文页面翻译。母语者尚未审校。
 
 # smart-alerts

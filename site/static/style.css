@@ -1,0 +1,11 @@
+/* picasso's palette (dark, orange accent), as in docs/archify/picasso.css. */
+:root { color-scheme: dark; --bg: #0B0D12; --fg: #EDEFF3; --muted: #9AA3B2; --accent: #FF4F00; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 Inter, system-ui, sans-serif; }
+main { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem; }
+h1 { font: 400 3rem 'Fjalla One', sans-serif; margin: 0.5rem 0 0; }
+.lead { color: var(--muted); margin-top: 0; }
+.wave { width: 12rem; }
+.figure { width: 100%; height: auto; margin: 1.5rem 0; }
+a { color: var(--accent); }
+nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+footer { color: var(--muted); margin-top: 3rem; font-size: 0.875rem; }

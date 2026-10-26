@@ -1,3 +1,4 @@
+<!-- reading-time: 1 min -->
 # smart-alerts
 
 - [Português (Brasil)](Home-pt-BR)

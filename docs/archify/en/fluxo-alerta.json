@@ -1,0 +1,152 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "How an official alert reaches Discord and the feed",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    },
+    "output": "fluxo-alerta.html"
+  },
+  "lanes": [
+    {
+      "id": "topo",
+      "label": "Sources and channels"
+    },
+    {
+      "id": "nucleo",
+      "label": "smart-alerts"
+    },
+    {
+      "id": "base",
+      "label": "Sources and channels"
+    }
+  ],
+  "mainPath": [
+    "idap",
+    "modulo",
+    "alerta",
+    "harness",
+    "discord"
+  ],
+  "nodes": [
+    {
+      "id": "idap",
+      "lane": "topo",
+      "col": 0,
+      "type": "external",
+      "label": "Defesa Civil",
+      "sublabel": "IDAP: Atom with CAP 1.2",
+      "width": 150
+    },
+    {
+      "id": "inmet",
+      "lane": "nucleo",
+      "col": 0,
+      "type": "external",
+      "label": "INMET",
+      "sublabel": "RSS and CAP 1.2",
+      "width": 150
+    },
+    {
+      "id": "cemaden",
+      "lane": "base",
+      "col": 0,
+      "type": "external",
+      "label": "CEMADEN",
+      "sublabel": "JSON",
+      "width": 150
+    },
+    {
+      "id": "modulo",
+      "lane": "nucleo",
+      "col": 1,
+      "type": "backend",
+      "label": "source crate",
+      "sublabel": "one per source",
+      "width": 150
+    },
+    {
+      "id": "alerta",
+      "lane": "nucleo",
+      "col": 2,
+      "type": "database",
+      "label": "Alert",
+      "sublabel": "UF, severity, area",
+      "width": 150
+    },
+    {
+      "id": "harness",
+      "lane": "nucleo",
+      "col": 3,
+      "type": "backend",
+      "label": "harness",
+      "sublabel": "stages: pass or drop",
+      "width": 150
+    },
+    {
+      "id": "discord",
+      "lane": "topo",
+      "col": 5,
+      "type": "frontend",
+      "label": "Discord",
+      "sublabel": "webhook, push",
+      "width": 150
+    },
+    {
+      "id": "feed",
+      "lane": "base",
+      "col": 5,
+      "type": "frontend",
+      "label": "Atom feed",
+      "sublabel": "CAP 1.2, pull",
+      "width": 150
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "idap",
+      "to": "modulo",
+      "label": "reads"
+    },
+    {
+      "id": "e2",
+      "from": "inmet",
+      "to": "modulo",
+      "label": "reads"
+    },
+    {
+      "id": "e3",
+      "from": "cemaden",
+      "to": "modulo",
+      "label": "reads"
+    },
+    {
+      "id": "e4",
+      "from": "modulo",
+      "to": "alerta",
+      "label": "converts"
+    },
+    {
+      "id": "e5",
+      "from": "alerta",
+      "to": "harness"
+    },
+    {
+      "id": "e6",
+      "from": "harness",
+      "to": "discord",
+      "label": "same text"
+    },
+    {
+      "id": "e7",
+      "from": "harness",
+      "to": "feed",
+      "label": "same text",
+      "role": "branch"
+    }
+  ]
+}
