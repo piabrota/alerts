@@ -2,6 +2,10 @@
 
 🇬🇧 [Read in English](README.md) · nome de código: `smart-alerts`
 
+| <img alt="Uma onda de Fibonacci e um sino, de @h0ffmann" src="docs/drawings/wave.svg" width="320"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, de Harry Chen, no Desmos" src="https://www.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a> |
+|:---:|:---:|
+| *Onda de Fibonacci*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026 | [*Ammonite*](https://www.desmos.com/calculator/z7zooq9zsh), Harry Chen ([@harry7557558](https://github.com/harry7557558)), 1º lugar no concurso de arte do Desmos de 2021 |
+
 Alertas do século 22.
 
 ## em um minuto

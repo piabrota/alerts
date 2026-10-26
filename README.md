@@ -1,6 +1,15 @@
 <div align="center">
 
-<img alt="A Fibonacci wave and a bell, by @h0ffmann: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
+<table>
+<tr>
+<td align="center"><img alt="A Fibonacci wave and a bell, by @h0ffmann: an original line drawing" src="docs/drawings/wave.svg" width="320"/></td>
+<td align="center"><a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, by Harry Chen, in Desmos" src="https://www.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a></td>
+</tr>
+<tr>
+<td align="center"><sub><i>Fibonacci wave</i>, Matheus Hoffmann (<a href="https://github.com/h0ffmann">@h0ffmann</a>), 2026</sub></td>
+<td align="center"><sub><a href="https://www.desmos.com/calculator/z7zooq9zsh"><i>Ammonite</i></a>, Harry Chen (<a href="https://github.com/harry7557558">@harry7557558</a>), 1st place, 2021 Desmos Global Math Art Contest</sub></td>
+</tr>
+</table>
 
 # ialerts
 
