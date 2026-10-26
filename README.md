@@ -1,6 +1,6 @@
 <div align="center">
 
-<img alt="A Fibonacci wave that rings a bell: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
+<img alt="A Fibonacci wave and a bell: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
 
 # ialerts
 

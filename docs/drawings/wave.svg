@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="A Fibonacci wave that rings a bell: an original line drawing">
-  <title>A Fibonacci wave that rings a bell: an original line drawing</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="A Fibonacci wave and a bell: an original line drawing">
+  <title>A Fibonacci wave and a bell: an original line drawing</title>
   <desc>The wave is a Fibonacci spiral: eight quarter-circle arcs with radii 5 x (21, 13, 8, 5, 3, 2, 1, 1).</desc>
   <g fill="none" stroke="#1682D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M20 164 A 105 105 0 0 1 125 59 A 65 65 0 0 1 190 124 A 40 40 0 0 1 150 164 A 25 25 0 0 1 125 139 A 15 15 0 0 1 140 124 A 10 10 0 0 1 150 134 A 5 5 0 0 1 145 139 A 5 5 0 0 1 140 134"/>
-    <path d="M8 164 L 312 164"/>
-    <path d="M230 164 C 238 160, 238 154, 238 142 C 238 126, 244 118, 254 116 C 264 118, 270 126, 270 142 C 270 154, 270 160, 278 164 Z M254 116 L 254 110 M247 164 C 248 174, 260 174, 261 164"/>
+    <path d="M258 46 A 14 14 0 0 1 286 46 M253 46 L 291 46 M246 26 A 18 18 0 0 0 246 52 M298 26 A 18 18 0 0 1 298 52"/>
+    <circle cx="272" cy="53" r="2.6" fill="#1682D4" stroke="none"/>
   </g>
 </svg>
