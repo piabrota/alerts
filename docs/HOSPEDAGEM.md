@@ -1,4 +1,4 @@
-<!-- reading-time: 4 min -->
+<!-- reading-time: 5 min -->
 # Hospedagem: piabrota.art no Codeberg Pages
 
 Esta página diz onde o site estático do ialerts fica hospedado e como publicar o site. O autor
@@ -33,8 +33,8 @@ Conferido em 2026-10-26, nas páginas citadas.
 | Cloudflare Pages | sim, no plano grátis ⚠ | sim, com o CLI `wrangler` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
 | Netlify | sim, no plano grátis ⚠ | sim, com o CLI `netlify` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
 
-**Decisão: Codeberg Pages.** É grátis, não depende de empresa, não pede CI e combina com o
-espelho no Codeberg.
+**Decisão: Codeberg Pages, só com o domínio piabrota.art.** É grátis, não depende de empresa, não
+pede CI e combina com o espelho no Codeberg. O endereço do site é só `piabrota.art`.
 
 ## Como publicar
 
@@ -49,9 +49,10 @@ O deploy roda na máquina do autor, porque o repositório não tem CI.
      um deploy.
    - **Branch filter:** `pages`.
    - Não use o botão "Test delivery": a documentação diz que o teste falha.
-3. Para o site também abrir em `https://piabrota.codeberg.page/`, crie um segundo webhook com
-   esse Target URL.
-4. Crie os registros DNS abaixo no registrador de `piabrota.art`.
+3. Crie os registros DNS abaixo no registrador de `piabrota.art`.
+
+O site só abre em `piabrota.art`. O endereço `piabrota.codeberg.page` só existe com um webhook
+próprio, e esta configuração não cria esse webhook: nenhum domínio de empresa entra no endereço.
 
 ### A cada deploy
 
