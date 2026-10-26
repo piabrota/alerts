@@ -53,6 +53,12 @@ sources, filters them, and delivers them.
 - **Citation and licensing follow `REUSE.toml`.** Read its header before you copy, quote or cite
   anything from this repo. A new file must keep `just reuse` green. To cite the project, use
   `CITATION.cff` with a commit or a tag.
+- **Every file for humans states its reading time as metadata.** A file for humans is a page a
+  person reads: a README, a wiki page, a doc in `docs/`, a guide. The metadata is the first line
+  of the file, as an HTML comment: `<!-- reading-time: <N> min -->`. In a zh or ja page, this line
+  comes directly after the `source` line. N is the count of words divided by 200, rounded up
+  (for zh and ja: the count of characters divided by 400, rounded up ⚠). A change to the text
+  updates N in the same PR. Code, data, licenses and the alert messages are not files for humans.
 
 ## Setup
 
