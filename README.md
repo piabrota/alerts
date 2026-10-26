@@ -164,7 +164,8 @@ in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (
 - The functional harness translates the
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) into function
   composition.
-- The pt-BR writing follows [ptbr-writer](https://github.com/h0ffmann/ptbr-writer).
+- The pt-BR writing follows [ptbr-writer](https://github.com/h0ffmann/ptbr-writer). The `open-pr` verb is its
+  [`bipr`](https://github.com/h0ffmann/ptbr-writer/blob/main/skills/bipr/SKILL.md) skill, adapted (MPL-2.0).
 - The English writing follows the model of ASD-STE100.
 - The Japanese follows Easy Japanese (Yasashii Nihongo).
 

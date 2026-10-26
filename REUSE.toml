@@ -24,3 +24,9 @@ path = "docs/screenshots/loco-bootstrap/*.png"
 precedence = "override"
 SPDX-FileCopyrightText = "2026 M.Hoffmann and the smart-alerts contributors; the pictured interface is the Loco bootstrap, © the Loco authors"
 SPDX-License-Identifier = "MPL-2.0 AND Apache-2.0"
+
+[[annotations]]
+path = "verbs/open-pr/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the ptbr-writer contributors (h0ffmann/ptbr-writer@46d3a0a, skills/bipr)"
+SPDX-License-Identifier = "MPL-2.0"

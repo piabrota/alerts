@@ -154,7 +154,8 @@ A documentação existe em quatro idiomas: pt-BR, inglês, chinês e japonês. A
 - O harness funcional traduz o
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) para composição
   de funções.
-- A escrita em pt-BR segue o [ptbr-writer](https://github.com/h0ffmann/ptbr-writer).
+- A escrita em pt-BR segue o [ptbr-writer](https://github.com/h0ffmann/ptbr-writer). O verbo `open-pr` é a skill
+  [`bipr`](https://github.com/h0ffmann/ptbr-writer/blob/main/skills/bipr/SKILL.md) dele, adaptada (MPL-2.0).
 - A escrita em inglês segue o modelo do ASD-STE100.
 - O japonês segue o japonês fácil (Yasashii Nihongo).
 

@@ -32,6 +32,9 @@ sources, filters them, and delivers them.
 
 - **No CI.** Do not add `.github/workflows` or any other CI. `just check` is the gate, run by hand
   before a PR.
+- **Every PR uses the `open-pr` verb.** The title is pt-BR. The body is bilingual, pt-BR first, at
+  the `estrito` level of `write-pt-br`, and ends with `verbs/open-pr/footer.md`. One PR per request:
+  new work for an open PR goes into that PR.
 - **Identify honestly.** Every HTTP request sends `smart_alerts_core::USER_AGENT`
   (`smart-alerts/<version> (+repo URL)`). Never send a browser User-Agent and never copy another
   client's name, not even as a fallback. When a source refuses the honest name, stop and tell a
