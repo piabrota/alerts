@@ -1,0 +1,24 @@
+[package]
+name = "alerts-desmos"
+description = "Records a Desmos animation (one slider, frame by frame) as a looping GIF"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "desmos-gif"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0.104"
+base64 = "0.23.1"
+gif = "0.14.2"
+png = "0.18.1"
+serde_json.workspace = true
+alerts-core = { workspace = true }
+tungstenite = { version = "0.30.0", default-features = false, features = ["handshake"] }

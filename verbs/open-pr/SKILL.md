@@ -5,7 +5,7 @@ description: Abre ou atualiza o PR do branch atual com título e corpo bilíngue
 
 # open-pr
 
-Este verbo é o `bipr` do ptbr-writer, adaptado ao smart-alerts. Todo PR deste repositório usa este
+Este verbo é o `bipr` do ptbr-writer, adaptado ao alerts. Todo PR deste repositório usa este
 verbo: o título e o corpo seguem as regras abaixo.
 
 Do último commit a um PR publicado, com o corpo em pt-BR e o espelho em inglês. Argumentos: `--dry-run` (mostra o título e o corpo, não muda nada), `--base <branch>` (padrão: o branch padrão do repositório) e um número de PR (`#84`), que atualiza esse PR.
@@ -67,7 +67,7 @@ Sem `--dry-run`:
 2. Grave o corpo num arquivo temporário. Se não há PR aberto para o branch, `gh pr create --base <base> --title <título> --body-file <arquivo>`; se há, `gh pr edit <n> --title <título> --body-file <arquivo>`. Sem o `gh`, use a API do GitHub com o mesmo título e o mesmo corpo.
 3. Mostre a URL do PR (`gh pr view --json url -q .url`).
 
-## 6. Regras do smart-alerts
+## 6. Regras do alerts
 
 - Rode `just check` antes do PR. Não há CI. Escreva o resultado em **Testado**.
 - Um PR só por pedido. Uma mudança nova num PR aberto entra nesse PR; um PR mergeado nunca recebe commit novo.

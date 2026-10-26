@@ -1,10 +1,10 @@
 <!-- reading-time: 7 min -->
-# marola: planned alert work, and what it means for smart-alerts
+# marola: planned alert work, and what it means for alerts
 
 [marola](https://github.com/marola-dev/marola) is an ocean intelligence layer: it scores the sea
 for swimmers on the Brazilian coast. Its design documents are MIPs (Marola Improvement Proposals)
 in `docs/MIPs/`. Several MIPs plan alert work. This page lists them, compares them with
-smart-alerts, and lists what each project can take from the other.
+alerts, and lists what each project can take from the other.
 
 Read on 2026-10-22, from these versions:
 
@@ -59,7 +59,7 @@ open. marola has not chosen one of them yet.
   Task 3 prints `⚠ INMET — no active warning for this area` when the list is empty. So the CLI
   shows a failed fetch as "no warning". MIP-0071 is better here: it records the last error per UF
   in `status.json`, and the page shows the time of the last successful ingest. This conflicts
-  with smart-alerts (see "Conflict: a failed fetch").
+  with alerts (see "Conflict: a failed fetch").
 - No language model is on the alert path. The alert text is the issuer's text, with a source link.
 - An alert does not change the swim score. A score change needs its own MIP.
 - No push to Telegram or e-mail. A proactive alert waits for the human gate of
@@ -76,9 +76,9 @@ open. marola has not chosen one of them yet.
 | Retention | forever | forever |
 | First state | RJ, backfilled for September 2026 | RJ |
 
-## Overlap with smart-alerts
+## Overlap with alerts
 
-| Topic | marola | smart-alerts |
+| Topic | marola | alerts |
 |---|---|---|
 | Hazard | the sea: wind, storms, ressaca | floods |
 | Region | the coast, RJ first; all 27 UFs in the store | PR, SC, RS |
@@ -97,41 +97,41 @@ field, and loud failure on an undocumented endpoint.
 MIP-0034 task 2 does the opposite for INMET: a failed fetch gives the same output as "no active
 warning". A user then cannot see that a real warning is missing.
 
-**Decision (maintainer, 2026-10-22): the smart-alerts rule wins.** It applies when the two
-projects connect: shared code, a shared fixture set, or smart-alerts alerts sent to marola.
+**Decision (maintainer, 2026-10-22): the alerts rule wins.** It applies when the two
+projects connect: shared code, a shared fixture set, or alerts alerts sent to marola.
 
 - A fetch error is never an empty list. It is an error that a human sees: a log line, a status
   record, and a status message where the alerts go.
-- "No active alert" is a claim. smart-alerts makes it only after a successful fetch, and it states
+- "No active alert" is a claim. alerts makes it only after a successful fetch, and it states
   the source and the fetch time.
 - This applies to every source, documented or not. An official endpoint can fail too.
-- smart-alerts does not take MIP-0034 task 2's fail-soft rule. MIP-0071's per-UF `status.json`
+- alerts does not take MIP-0034 task 2's fail-soft rule. MIP-0071's per-UF `status.json`
   is compatible, if its error reaches a human.
 
-## What smart-alerts can take from marola
+## What alerts can take from marola
 
 1. **Two severity vocabularies.** Keep the CAP value for order and the INMET label for display.
-   Never derive one from the other. `Severity` in `smart-alerts-core` must keep both.
+   Never derive one from the other. `Severity` in `alerts-core` must keep both.
 2. **CAP polygon, not area names.** Match a place against the CAP `<polygon>`. Route to a `Uf`
    by the IBGE code prefix. Keep an "unrouted" bucket so that a gap is visible.
 3. **The INMET id walk.** It can give years of real alerts for PR, SC and RS ⚠. These are the
    eval cases that `docs/SURVEY_NLP.md` asks for before any model stage.
 4. **An append-only store with a version hash.** The IDAP feed keeps about 12 hours ⚠, so
-   smart-alerts must store what it reads. MIP-0071 §5.2–§5.3 is a complete, reviewed design for
+   alerts must store what it reads. MIP-0071 §5.2–§5.3 is a complete, reviewed design for
    this: dedup key, `supersedes`, `Cancel`, one file per UF.
 5. **Test cases.** MIP-0034 tasks 1–2 and MIP-0071 task 2 list tests that apply here too: an
    expired alert is absent, one failed CAP fetch does not lose the other alerts, a document
    without a polygon parses, and a point exactly on a vertex.
 
-## What marola can take from smart-alerts
+## What marola can take from alerts
 
-These are facts that smart-alerts checked on 2026-10-22 (see `docs/SOURCES.md`). They answer
+These are facts that alerts checked on 2026-10-22 (see `docs/SOURCES.md`). They answer
 some of the open items in MIP-0071 §4.1.
 
 1. **An honest User-Agent works at INMET.** INMET drops curl's default User-Agent. The
-   smart-alerts User-Agent (`smart-alerts/<version> (+repo URL)`) gets `200` on `avisos/rss` and
-   `avisos/ativos`. MIP-0071 §4.1 item 5 asks if only a browser-like User-Agent works. The
-   smart-alerts result says no, but marola's own User-Agent (`marola/0.1 (+…)`) is not checked ⚠.
+   alerts User-Agent (`piabrota-alerts/<version> (+repo URL)`) gets `200` on `avisos/rss` and
+   `avisos/ativos` (checked with the former project name; nobody checked the new name ⚠). MIP-0071 §4.1 item 5 asks if only a browser-like User-Agent works. The
+   alerts result says no, but marola's own User-Agent (`marola/0.1 (+…)`) is not checked ⚠.
 2. **`alertas2.inmet.gov.br` resets the connection**, from inside and outside Brazil. MIP-0071
    §4.1 item 6 lists it as a candidate human page per alert.
 3. **IDAP is a second official CAP source.** `https://idapfile.mdr.gov.br/idap/api/rss/cap` is an
@@ -140,7 +140,7 @@ some of the open items in MIP-0071 §4.1.
    (not seen in a sample). It can replace part of MIP-0071 §4.3.
 4. **Fail loudly.** A failed fetch must not look like "no warning" (see "Conflict: a failed
    fetch"). This is a proposal to marola. marola has not accepted it.
-5. **A reusable library.** `smart-alerts-py` is a pip package. A marola Python script can use it
+5. **A reusable library.** `alerts-py` is a pip package. A marola Python script can use it
    to read official alerts, if marola wants that. Nobody decided this.
 
 ## Open questions

@@ -1,7 +1,7 @@
 <!-- reading-time: 5 min -->
 # Referências: ferramentas e serviços externos
 
-Esta página lista ferramentas e serviços externos que alguém propôs para o smart-alerts. Esta
+Esta página lista ferramentas e serviços externos que alguém propôs para o alerts. Esta
 página não lista fontes de alerta: as fontes estão em `docs/SOURCES.md`.
 
 Uma entrada desta página não foi adotada. Cada entrada diz o que o recurso é, a licença, o custo e
@@ -12,7 +12,7 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
 
 | Recurso | O que é | Licença e custo | Relevância | Situação |
 |---|---|---|---|---|
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot com agente, para apps de mensagem | AGPL-3.0, gratuito | Vai receber os alertas do smart-alerts por um plugin | consumidor planejado |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot com agente, para apps de mensagem | AGPL-3.0, gratuito | Vai receber os alertas do alerts por um plugin | consumidor planejado |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | Plugin de alertas de desastre para o AstrBot | AGPL-3.0, gratuito | É o exemplo de consumidor citado no `GROUND_TRUTH.md` | consumidor planejado |
 | [Onyx](https://docs.onyx.app/deployment/getting_started/quickstart) | Plataforma de chat e busca com IA, auto-hospedada ([`onyx-dot-app/onyx`](https://github.com/onyx-dot-app/onyx)) | MIT, exceto os diretórios `ee` (Onyx Enterprise License) | Pode indexar a documentação e as fontes deste repositório para busca | não adotado |
 | [Seabase](https://seabase.ai/infrastructure) | Data centers submarinos para IA | comercial ⚠ (a página não mostra preço) | Só hospedagem; a v0 não precisa | não adotado |
@@ -25,8 +25,8 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
 - **Plugins.** O AstrBot tem um mercado com mais de 1000 plugins, instalados com um clique. Um
   plugin é escrito em Python. O AstrBot pede Python 3.12 ou mais novo.
 - **Licença.** O arquivo `LICENSE` do repositório é a AGPL-3.0.
-- **Relação com o smart-alerts.** O pacote `smart-alerts-py` existe para um plugin do AstrBot
-  usar. O plugin chama o pacote: o smart-alerts não copia código do AstrBot. A licença AGPL-3.0
+- **Relação com o alerts.** O pacote `alerts-py` existe para um plugin do AstrBot
+  usar. O plugin chama o pacote: o alerts não copia código do AstrBot. A licença AGPL-3.0
   não é compatível com uma cópia de código dentro de um repositório MPL-2.0.
 - **Não conferido:** como um plugin publica uma mensagem no Discord pelo AstrBot ⚠.
 
@@ -44,16 +44,16 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
   de texto no README).
 - **Licença.** O arquivo `LICENSE` é a AGPL-3.0. A descrição de alguns forks diz que o plugin foi
   feito com IA.
-- **Relação com o smart-alerts.** O plugin pode receber alertas do Sul do Brasil pelo
-  `smart-alerts-py` ou pelo feed Atom com CAP 1.2. O texto do alerta continua em pt-BR, igual ao
-  texto do Discord. O smart-alerts não reescreve um alerta para um canal.
+- **Relação com o alerts.** O plugin pode receber alertas do Sul do Brasil pelo
+  `alerts-py` ou pelo feed Atom com CAP 1.2. O texto do alerta continua em pt-BR, igual ao
+  texto do Discord. O alerts não reescreve um alerta para um canal.
 - **Não conferido:** se o plugin aceita uma fonte nova sem mudança no código do plugin ⚠.
 
 ## Onyx
 
 - **Licença.** O arquivo `LICENSE` da raiz coloca todo o conteúdo fora dos diretórios `ee` sob a
   licença MIT (Expat). Os diretórios `ee` (`backend/ee`, `web/src/app/ee`, `web/src/ee`) estão sob a
-  Onyx Enterprise License. Uma instalação para o smart-alerts usa só a parte MIT ⚠ (não conferido:
+  Onyx Enterprise License. Uma instalação para o alerts usa só a parte MIT ⚠ (não conferido:
   quais funções estão no `ee`).
 - **Instalação** (da página de início rápido):
 
@@ -78,9 +78,9 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
   "Modular coastal and marine AI infrastructure designed for high-density GPU clusters, regional
   placement, and incremental expansion near demand."
 - A página não mostra preço, API, licença nem opção de auto-hospedagem ⚠.
-- A v0 do smart-alerts é um binário estático e não precisa de GPU. Um serviço de hospedagem pago
+- A v0 do alerts é um binário estático e não precisa de GPU. Um serviço de hospedagem pago
   precisa da confirmação explícita de um humano.
-- Uso possível: o marola (trabalho no oceano), não o smart-alerts ⚠. Ninguém decidiu isso.
+- Uso possível: o marola (trabalho no oceano), não o alerts ⚠. Ninguém decidiu isso.
 
 ## Afirmações ⚠ desta página
 

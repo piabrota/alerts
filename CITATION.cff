@@ -1,12 +1,12 @@
 cff-version: 1.2.0
-message: "If you use or cite smart-alerts, please cite it as below. Give the commit or the tag you used."
-title: "smart-alerts"
+message: "If you use or cite alerts, please cite it as below. Give the commit or the tag you used."
+title: "alerts"
 abstract: "A generic alert engine. It collects alerts from official sources, filters the alerts, and delivers the alerts. The first hazard is floods in Brazil."
 type: software
 authors:
   - given-names: "M."
     family-names: "Hoffmann"
-repository-code: "https://github.com/h0ffmann/smart-alerts"
+repository-code: "https://github.com/piabrota/alerts"
 license: MPL-2.0
 version: "0.0.0"
 keywords:

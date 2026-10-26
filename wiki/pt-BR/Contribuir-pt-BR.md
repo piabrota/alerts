@@ -20,7 +20,7 @@
 
 - O código não usa `unwrap` nem `expect` fora dos testes. O `unsafe` é proibido.
 - Nenhum segredo entra no repositório. O webhook do Discord vem de `DISCORD_WEBHOOK_URL`.
-- Toda requisição HTTP envia `smart_alerts_core::USER_AGENT`. O código nunca envia o User-Agent
+- Toda requisição HTTP envia `alerts_core::USER_AGENT`. O código nunca envia o User-Agent
   de um navegador. Quando uma fonte recusa esse nome, a pessoa autora pede acesso ao órgão.
 - Um recurso pago precisa da confirmação explícita de uma pessoa.
 - O símbolo ⚠ marca uma afirmação que ninguém conferiu. Ninguém remove um ⚠ sem fazer a

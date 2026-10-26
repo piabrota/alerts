@@ -1,6 +1,6 @@
 ---
 name: map
-description: Draws smart-alerts alert areas on a map with MapLibre (GL JS on the web, MapLibre Native in apps), with FOSS tiles and no API key. Use when a page, a frontend, a Discord image or a feed preview must show where an alert applies, or when CAP 1.2 areas must become GeoJSON.
+description: Draws alerts alert areas on a map with MapLibre (GL JS on the web, MapLibre Native in apps), with FOSS tiles and no API key. Use when a page, a frontend, a Discord image or a feed preview must show where an alert applies, or when CAP 1.2 areas must become GeoJSON.
 ---
 
 # map
@@ -35,11 +35,11 @@ A CAP `<area>` can hold `<polygon>`, `<circle>` and `<geocode>`. Convert each on
    with a 64-point polygon. Keep the center and the radius in the feature properties.
 4. **Geocode.** A geocode names an area without a shape (for example, an IBGE municipality code ⚠).
    Get the shape from the IBGE malhas API and cache it. Never draw a guessed shape.
-5. **No area.** When the alert has only text (`area` in `smart_alerts_core::Alert`), draw no
+5. **No area.** When the alert has only text (`area` in `alerts_core::Alert`), draw no
    shape. Show the UF borders and the area text instead.
 
 Today `Alert` keeps only `area: String`. A geometry field is a core change: propose it as a new
-type in `smart-alerts-core`, and keep the conversion in a `Stage` or in the channel crate.
+type in `alerts-core`, and keep the conversion in a `Stage` or in the channel crate.
 
 ## Style
 

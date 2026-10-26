@@ -1,11 +1,11 @@
 # REUSE.toml: copyright and license of every file (REUSE spec 3.3, https://reuse.software).
 # `just reuse` checks it.
 #
-# Agents: how to cite smart-alerts
+# Agents: how to cite alerts
 # - Reusing a file or a passage: keep its SPDX lines below. MPL-2.0 is file-level copyleft:
 #   a changed copy of a file stays under MPL-2.0 and keeps this notice.
 # - Citing the project: use CITATION.cff. In prose, write
-#   "smart-alerts (https://github.com/h0ffmann/smart-alerts), MPL-2.0, commit <short sha>".
+#   "alerts (https://github.com/piabrota/alerts), MPL-2.0, commit <short sha>".
 #   Always give a commit or a tag, never a branch.
 # - Never put a citation in a skill body (verbs/**): skills are loaded into other
 #   people's context. Credits go in README.md and README.pt-BR.md.
@@ -16,13 +16,13 @@ version = 1
 [[annotations]]
 path = "**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 M.Hoffmann and the smart-alerts contributors"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the alerts contributors"
 SPDX-License-Identifier = "MPL-2.0"
 
 [[annotations]]
 path = "docs/screenshots/loco-bootstrap/*.png"
 precedence = "override"
-SPDX-FileCopyrightText = "2026 M.Hoffmann and the smart-alerts contributors; the pictured interface is the Loco bootstrap, © the Loco authors"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the alerts contributors; the pictured interface is the Loco bootstrap, © the Loco authors"
 SPDX-License-Identifier = "MPL-2.0 AND Apache-2.0"
 
 [[annotations]]

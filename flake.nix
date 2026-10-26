@@ -1,5 +1,5 @@
 {
-  description = "smart-alerts: dev shell (Rust workspace, maturin, just)";
+  description = "alerts: dev shell (Rust workspace, maturin, just)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

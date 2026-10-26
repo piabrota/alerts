@@ -1,10 +1,10 @@
-# Not a member of the smart-alerts workspace: scripts/ names the agent files, so the Codeberg
+# Not a member of the alerts workspace: scripts/ names the agent files, so the Codeberg
 # copy drops it, and this tool with it.
 [workspace]
 
 [package]
 name = "export-codeberg"
-description = "Builds the Codeberg copy of smart-alerts with no trace of AI tools"
+description = "Builds the Codeberg copy of alerts with no trace of AI tools"
 version = "0.0.0"
 edition = "2024"
 license = "MPL-2.0"

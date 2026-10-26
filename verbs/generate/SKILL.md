@@ -1,6 +1,6 @@
 ---
 name: generate
-description: Generates the boilerplate for a new smart-alerts app, source crate, harness stage or channel, in the spirit of `cargo loco generate`. Use when the user asks to add an app, a source (an agency), a stage (a filter) or a channel (a delivery target).
+description: Generates the boilerplate for a new alerts app, source crate, harness stage or channel, in the spirit of `cargo loco generate`. Use when the user asks to add an app, a source (an agency), a stage (a filter) or a channel (a delivery target).
 ---
 
 # generate
@@ -13,20 +13,20 @@ skill first.
 | Kind | Writes | Must not touch |
 |---|---|---|
 | `app <app>` | `apps/<app>/app.toml`, `README.md`, `evals/` | any crate |
-| `source <id>` | `crates/smart-alerts-source-<id>/` (lib), workspace member, `docs/SOURCES.md` row | `smart-alerts-core` |
+| `source <id>` | `crates/alerts-source-<id>/` (lib), workspace member, `docs/SOURCES.md` row | `alerts-core` |
 | `stage <name>` | one function `pub fn <name>(...) -> Stage` and its tests | the other stages |
-| `channel <id>` | `crates/smart-alerts-<id>/` (lib), workspace member | the harness output |
+| `channel <id>` | `crates/alerts-<id>/` (lib), workspace member | the harness output |
 
 ## Source crate
 
 ```text
-crates/smart-alerts-source-<id>/
+crates/alerts-source-<id>/
   Cargo.toml      # version, edition, lints, license from the workspace
   src/lib.rs      # pub fn fetch(client) -> Result<Vec<Alert>, Error>
   tests/fixtures/ # one recorded real response per format
 ```
 
-1. Send `smart_alerts_core::USER_AGENT` on every request. Never send another User-Agent.
+1. Send `alerts_core::USER_AGENT` on every request. Never send another User-Agent.
 2. Parse into `Alert`. Fill only the fields that the source states.
 3. An undocumented endpoint must fail loudly: return an error on an unknown shape, never an empty
    list.

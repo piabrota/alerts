@@ -4,17 +4,17 @@
 ## `wave.svg`
 
 A wave and an abstract bell, by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026.
-The Rust binary `wave` (crate `smart-alerts-drawings`) writes the drawing in two formats from one
+The Rust binary `wave` (crate `alerts-drawings`) writes the drawing in two formats from one
 geometry. `just wave` writes both files:
 
 | File | Command | What it is |
 |---|---|---|
-| `wave.svg` | `cargo run -q -p smart-alerts-drawings --bin wave > docs/drawings/wave.svg` | The README drawing |
-| `wave.desmos.json` | `cargo run -q -p smart-alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json` | The same drawing as a Desmos graph state |
+| `wave.svg` | `cargo run -q -p alerts-drawings --bin wave > docs/drawings/wave.svg` | The README drawing |
+| `wave.desmos.json` | `cargo run -q -p alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json` | The same drawing as a Desmos graph state |
 
 **The wave is a Fibonacci spiral.** It has eight quarter-circle arcs. The radii are
 5 × (21, 13, 8, 5, 3, 2, 1, 1). Each arc fills one square of side 5 × Fₙ:
-`cargo run -q -p smart-alerts-drawings --bin wave squares` draws the squares. A test checks that
+`cargo run -q -p alerts-drawings --bin wave squares` draws the squares. A test checks that
 the committed `wave.svg` and `wave.desmos.json` are the output of the binary.
 
 **The bell** is a half circle (radius 14), a rim, a clapper dot and two sound arcs (radius 18).
@@ -25,7 +25,7 @@ agree, the orange line runs inside the blue line.
 
 ### Side by side
 
-| ialerts wave | Ammonite |
+| alerts wave | Ammonite |
 |---|---|
 | <img src="wave.svg" width="320" alt="A Fibonacci wave and a bell"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320" alt="Ammonite, by Harry Chen, in Desmos"/></a> |
 | *Fibonacci wave*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026. MPL-2.0. | *Ammonite*, Harry Chen ([@harry7557558](https://github.com/harry7557558)), [Desmos graph](https://www.desmos.com/calculator/z7zooq9zsh). 1st place, 2021 Desmos Global Math Art Contest. |
@@ -53,7 +53,7 @@ y up, so each y value is `180 - y` of the SVG.
 ⚠ Not checked: the Desmos page could not be opened when this file was made. The check was a
 local one: `docs/screenshots/wave/desmos-overlay.png` draws each Desmos expression (orange) over
 the SVG (blue), and the two match. Desmos is a free service but not FOSS: the file is data, and
-smart-alerts does not depend on Desmos.
+alerts does not depend on Desmos.
 
 ### Credits
 

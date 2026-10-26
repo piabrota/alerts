@@ -16,9 +16,9 @@
 </tr>
 </table>
 
-# ialerts
+# alerts
 
-<sub>22nd century alerts · code name <code>smart-alerts</code> · <a href="#in-one-minute">in one minute</a> · <a href="#sources">sources</a> · <a href="#channels">channels</a> · <a href="#who-will-use-ialerts">who uses it</a> · <a href="#architecture">architecture</a> · <a href="#how-to-cite">cite</a> · <a href="README.pt-BR.md">português</a></sub>
+<sub>22nd century alerts · <a href="#in-one-minute">in one minute</a> · <a href="#sources">sources</a> · <a href="#channels">channels</a> · <a href="#who-will-use-alerts">who uses it</a> · <a href="#architecture">architecture</a> · <a href="#how-to-cite">cite</a> · <a href="README.pt-BR.md">português</a></sub>
 
 [![status: bootstrap](https://img.shields.io/badge/status-bootstrap-FF4F00?style=flat-square)](#in-one-minute)
 [![hazard: floods](https://img.shields.io/badge/first%20hazard-floods-1682D4?style=flat-square)](#in-one-minute)
@@ -31,21 +31,19 @@
 
 ## In one minute
 
-- **ialerts is a generic alert platform.** It collects alerts from official sources, filters
+- **alerts is a generic alert platform.** It collects alerts from official sources, filters
   the alerts, and delivers the alerts. A hazard, a region or a channel is a module: the core does
   not change when a module is added.
-- **Only official sources.** An alert comes from an authoritative agency. ialerts never invents an
+- **Only official sources.** An alert comes from an authoritative agency. alerts never invents an
   alert, an area, a time or an action that the source does not state.
 - **The first hazard is floods in Brazil.** v0 serves the South region: Paraná (PR),
   Santa Catarina (SC) and Rio Grande do Sul (RS).
 - **v0 delivers a Discord service** and an Atom feed with CAP 1.2 alerts, with the same alerts
-  and the same text. The Python package `smart-alerts` exists from the start, for an
-  [AstrBot](#who-will-use-ialerts) plugin.
+  and the same text. The Python package `piabrota-alerts` exists from the start, for an
+  [AstrBot](#who-will-use-alerts) plugin.
 - **Open by design.** Open standards (Atom, CAP 1.2), FOSS dependencies only, local models only.
   A paid API is never required.
 - **Status:** bootstrap. No source is implemented. The service only sends a test message.
-
-The code, the crates and the binary still use the code name `smart-alerts`.
 
 ## Sources
 
@@ -75,8 +73,9 @@ source are in [`docs/SOURCES.md`](docs/SOURCES.md).
   of alerts ⚠ and is about 10 MB. The module must poll the feed often and store the alerts. The
   alerts of PR, SC and RS appear in this feed. The SC Civil Defense also publishes a free-text RSS.
 - **INMET:** `apiprevmet3.inmet.gov.br` drops the connection when the User-Agent is curl's
-  default (`curl/...`). smart-alerts identifies itself by its own name (`smart-alerts/<version>`),
-  and INMET accepts this name. The RSS declares public domain, with citation of the source.
+  default (`curl/...`). alerts identifies itself by its own name (`piabrota-alerts/<version>`).
+  INMET accepted this User-Agent with the former project name on 2026-10-22. Nobody checked the
+  new name ⚠. The RSS declares public domain, with citation of the source.
 - **CEMADEN:** the PED API (`sws.cemaden.gov.br/PED`) gives observations, not alerts. The
   municipal alerts exist only in an undocumented JSON (`painelalertas.cemaden.gov.br/wsAlertas2`).
   The limit is 12 requests per minute for an external user ⚠. CEMADEN requires citation.
@@ -90,10 +89,10 @@ source are in [`docs/SOURCES.md`](docs/SOURCES.md).
 
 ## Local models
 
-Some sources publish free text (bulletins, PDFs). For these sources, smart-alerts will use open
+Some sources publish free text (bulletins, PDFs). For these sources, alerts will use open
 models that run on the local machine. A paid API is never required.
 
-| Runtime | License | Use in smart-alerts | Status |
+| Runtime | License | Use in alerts | Status |
 |---|---|---|---|
 | [Ollama](https://github.com/ollama/ollama) | MIT | Read free text and extract fields (place, time, river level) into an `Alert`. | planned |
 | [OLLAYA](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with a calibrated probability. It does not generate text. | soon |
@@ -113,16 +112,16 @@ with the same text. The feed depends on no company: Atom and CAP are open standa
 the same shape as the national Civil Defense feed (IDAP), and any feed reader opens the file. A
 test alert has `<status>Test</status>`.
 
-## Who will use ialerts
+## Who will use alerts
 
-| Consumer | What it is | How it reads ialerts | Status |
+| Consumer | What it is | How it reads alerts | Status |
 |---|---|---|---|
 | [Discord](https://discord.com/developers/docs/resources/webhook) | The v0 server, which already exists | webhook (push) | v0 |
 | Any feed reader | Atom (RFC 4287) with CAP 1.2 in each entry | the feed file (pull) | v0 |
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | An open-source chatbot platform for messaging apps (AGPL-3.0) | the Python package `smart-alerts` in a plugin | planned |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | An open-source chatbot platform for messaging apps (AGPL-3.0) | the Python package `piabrota-alerts` in a plugin | planned |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | A disaster warning plugin for AstrBot: earthquakes, tsunamis, weather (AGPL-3.0) | the Python package or the feed, for alerts from Brazil | planned |
 
-A plugin calls the package: ialerts copies no AGPL code. More in
+A plugin calls the package: alerts copies no AGPL code. More in
 [`docs/REFERENCES.md`](docs/REFERENCES.md) (pt-BR).
 
 ## Architecture
@@ -131,17 +130,17 @@ A plugin calls the package: ialerts copies no AGPL code. More in
 %% figure: crates
 %% title: Which crates exist, and which crate depends on which?
 flowchart LR
-    S["smart-alerts-source-*<br/>(one per source)"] --> C["smart-alerts-core<br/>Alert, Uf, Harness"]
-    D["smart-alerts<br/>service"] --> C
-    D --> F["smart-alerts-feed<br/>Atom + CAP 1.2"] --> C
-    P["smart-alerts-py<br/>Python package"] --> C
-    M["smart-alerts-mcp<br/>MCP server"] --> C
+    S["alerts-source-*<br/>(one per source)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
+    D["alerts<br/>service"] --> C
+    D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
+    P["alerts-py<br/>Python package"] --> C
+    M["alerts-mcp<br/>MCP server"] --> C
 ```
 
 <details open>
 <summary>How to read this figure</summary>
 
-**In one sentence.** Every crate depends on `smart-alerts-core`. The core depends on no crate.
+**In one sentence.** Every crate depends on `alerts-core`. The core depends on no crate.
 
 **How to read.** Each arrow goes from the crate that uses to the crate that is used.
 

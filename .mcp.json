@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "smart-alerts": {
+    "alerts": {
       "command": "nix",
-      "args": ["develop", "--command", "cargo", "run", "-q", "-p", "smart-alerts-mcp"]
+      "args": ["develop", "--command", "cargo", "run", "-q", "-p", "alerts-mcp"]
     }
   }
 }
