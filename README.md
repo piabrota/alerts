@@ -9,6 +9,10 @@
 <td align="center"><sub><i>Fibonacci wave</i>, Matheus Hoffmann (<a href="https://github.com/h0ffmann">@h0ffmann</a>), 2026</sub></td>
 <td align="center"><sub><a href="https://www.desmos.com/calculator/z7zooq9zsh"><i>Ammonite</i></a>, Harry Chen (<a href="https://github.com/harry7557558">@harry7557558</a>), 1st place, 2021 Desmos Global Math Art Contest</sub></td>
 </tr>
+<tr>
+<td align="center"><sub>Desmos source: <a href="docs/drawings/wave.desmos.json"><code>wave.desmos.json</code></a></sub></td>
+<td align="center"><sub>Desmos source: <a href="https://www.desmos.com/calculator/z7zooq9zsh"><code>desmos.com/calculator/z7zooq9zsh</code></a></sub></td>
+</tr>
 </table>
 
 # ialerts
