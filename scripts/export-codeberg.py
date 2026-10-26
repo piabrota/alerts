@@ -94,6 +94,7 @@ def main() -> None:
                       "https://github.com/h0ffmann/ptbr-writer")
         t = t.replace("`verbs/open-pr/footer.md`", "`docs/guides/open-pr-footer.md`")
         t = t.replace('path = "verbs/open-pr/**"', 'path = "docs/guides/open-pr*.md"')
+        t = t.replace('path = "verbs/figure/**"', 'path = "docs/guides/figure.md"')
         t = t.replace(", `Co-Authored-By:`)", ")")
         t = re.sub(r"`verbs/([a-z-]+)/`", r"`docs/guides/\1.md`", t)
         t = re.sub(r"`verbs/`", "`docs/guides/`", t)

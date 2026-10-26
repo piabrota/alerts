@@ -32,7 +32,13 @@ SPDX-FileCopyrightText = "2026 M.Hoffmann and the ptbr-writer contributors (h0ff
 SPDX-License-Identifier = "MPL-2.0"
 
 [[annotations]]
-path = ["docs/archify/picasso.css", "verbs/figure/**"]
+path = "docs/archify/picasso.css"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the ptbr-writer contributors (h0ffmann/ptbr-writer, 46d3a0a)"
+SPDX-License-Identifier = "MPL-2.0"
+
+[[annotations]]
+path = "verbs/figure/**"
 precedence = "override"
 SPDX-FileCopyrightText = "2026 M.Hoffmann and the ptbr-writer contributors (h0ffmann/ptbr-writer, 46d3a0a)"
 SPDX-License-Identifier = "MPL-2.0"
