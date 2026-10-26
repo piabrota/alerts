@@ -1,0 +1,18 @@
+[package]
+name = "smart-alerts-drawings"
+description = "Writes the README drawing: a Fibonacci-spiral wave and a bell, as SVG and as a Desmos state"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "wave"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { workspace = true }

@@ -65,4 +65,4 @@ For a flow that a Mermaid fence draws badly, draw a picture.
 5. Look at the PNG at full size and at 800 px wide: every label must read. Commit the JSON, the
    lock and the PNG, never `build/`. `just figure-check` runs in `just check`.
 
-The Desmos drawing (`docs/drawings/`) is not a diagram: `docs/drawings/wave.py` keeps drawing it.
+The Desmos drawing (`docs/drawings/`) is not a diagram: `just wave` keeps drawing it.

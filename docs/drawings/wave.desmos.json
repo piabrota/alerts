@@ -1,158 +1,158 @@
 {
-  "version": 11,
-  "graph": {
-    "viewport": {
-      "xmin": 0,
-      "xmax": 320,
-      "ymin": 0,
-      "ymax": 180
-    },
-    "showGrid": false,
-    "showXAxis": false,
-    "showYAxis": false
-  },
   "expressions": {
     "list": [
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "1",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(125+105\\cos(t),16+105\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "1.570796",
-          "max": "3.141593"
-        }
+          "max": "3.141593",
+          "min": "1.570796"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "2",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(125+65\\cos(t),56+65\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "0.000000",
-          "max": "1.570796"
-        }
+          "max": "1.570796",
+          "min": "0.000000"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "3",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(150+40\\cos(t),56+40\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "-1.570796",
-          "max": "0.000000"
-        }
+          "max": "0.000000",
+          "min": "-1.570796"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "4",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(150+25\\cos(t),41+25\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "-3.141593",
-          "max": "-1.570796"
-        }
+          "max": "-1.570796",
+          "min": "-3.141593"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "5",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(140+15\\cos(t),41+15\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "1.570796",
-          "max": "3.141593"
-        }
+          "max": "3.141593",
+          "min": "1.570796"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "6",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(140+10\\cos(t),46+10\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "0.000000",
-          "max": "1.570796"
-        }
+          "max": "1.570796",
+          "min": "0.000000"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "7",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(145+5\\cos(t),46+5\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "-1.570796",
-          "max": "0.000000"
-        }
+          "max": "0.000000",
+          "min": "-1.570796"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "8",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(145+5\\cos(t),46+5\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "-3.141593",
-          "max": "-1.570796"
-        }
+          "max": "-1.570796",
+          "min": "-3.141593"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "9",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(272+14\\cos(t),134+14\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "0.000000",
-          "max": "3.141593"
-        }
+          "max": "3.141593",
+          "min": "0.000000"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "10",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(253+38t,134\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "0",
-          "max": "1"
-        }
+          "max": "1",
+          "min": "0"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "11",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(258.4499+18\\cos(t),141+18\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "2.334583",
-          "max": "3.948602"
-        }
+          "max": "3.948602",
+          "min": "2.334583"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
+        "color": "#1682D4",
         "id": "12",
-        "color": "#1682D4",
-        "lineWidth": "3.2",
         "latex": "\\left(285.5501+18\\cos(t),141+18\\sin(t)\\right)",
+        "lineWidth": "3.2",
         "parametricDomain": {
-          "min": "-0.807010",
-          "max": "0.807010"
-        }
+          "max": "0.807010",
+          "min": "-0.807010"
+        },
+        "type": "expression"
       },
       {
-        "type": "expression",
-        "id": "13",
         "color": "#1682D4",
-        "lineWidth": "3.2",
+        "id": "13",
         "latex": "\\left(272,127\\right)",
-        "pointSize": "8"
+        "lineWidth": "3.2",
+        "pointSize": "8",
+        "type": "expression"
       }
     ]
-  }
+  },
+  "graph": {
+    "showGrid": false,
+    "showXAxis": false,
+    "showYAxis": false,
+    "viewport": {
+      "xmax": 320,
+      "xmin": 0,
+      "ymax": 180,
+      "ymin": 0
+    }
+  },
+  "version": 11
 }
