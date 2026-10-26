@@ -18,6 +18,11 @@ sources, filters them, and delivers them.
   rewrite alerts per channel.
 - **Python interface now:** `smart-alerts-py` is a pip package from day one. The long-term
   consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
+- **Codeberg mirror without AI trace:** `codeberg.org/piabrota/ialerts` holds the code with no
+  trace of AI tools. No agent file (`AGENTS.md`, `CLAUDE.md`, `.claude/`, `opencode.json`,
+  `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
+  only with `python3 -I scripts/export-codeberg.py <out-dir>`: it fails when a trace remains.
+  Commit the result with a plain message as the author. Never push this repo's history there.
 
 ## Hard rules
 
