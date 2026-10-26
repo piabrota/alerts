@@ -199,7 +199,7 @@ ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs diff
 | ptbr-tools (`ptbr reading-time`) | `just reading-time` | Writes the reading time of every file for humans |
 | Archify (`vendor/archify`, MIT, pinned `2ab3cae`) | `just figure-init`, `just figure`, `just figure-check` | Draws `docs/archify/<slug>.json` to `docs/img/<slug>.png`, with picasso's look |
 | code-graph (graphify's schema) | `just graph` | The code graph of this repo: `build/graph/graph.html` |
-| gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve` | The static site in `site/`, served under `/alerts/` |
+| gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve`, `just deploy-site` | The static site in `site/`: the home of piabrota.art and ialerts under `/alerts/`, on Codeberg Pages |
 
 - The Desmos support stays: `just wave` (the Rust binary `wave`, crate `smart-alerts-drawings`)
   writes `wave.svg` and `wave.desmos.json`, and `just desmos-gif` records a Desmos animation
@@ -209,5 +209,5 @@ ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs diff
   nodes and edges. `README.pt-BR.md` embeds `docs/img/<slug>.png`; `README.md` embeds
   `docs/img/en/<slug>.png`.
 - Commit the JSON, `docs/archify/figures.lock` and the PNG. Never commit `build/`.
-- The site keeps its Gleam code small: one module that prints the page. Hosting ideas for
-  `piabrota.art/alerts` are in `docs/HOSPEDAGEM.md`.
+- The site keeps its Gleam code small: one module that prints the page. The hosting
+  (Codeberg Pages, the DNS of `piabrota.art`) is in `docs/HOSPEDAGEM.md`.

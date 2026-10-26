@@ -176,6 +176,22 @@ graph:
 site:
     nix develop --no-update-lock-file .#site --command just --justfile site/justfile --working-directory site build
 
+# Publish the site to Codeberg Pages: build it, check it has no AI trace, and push it as one
+# commit to the `pages` branch of REMOTE (default: the public repository piabrota/pages). The
+# branch holds only the built site, never this repository's history. See docs/HOSPEDAGEM.md.
+deploy-site remote="https://codeberg.org/piabrota/pages.git": site
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cargo run -q --manifest-path scripts/export-codeberg/Cargo.toml -- --check site/serve
+    tmp=$(mktemp -d)
+    cp -r site/serve/. "$tmp/"
+    git -C "$tmp" init -q -b pages
+    git -C "$tmp" add -A
+    git -C "$tmp" commit -qm "site $(git rev-parse --short HEAD)"
+    git -C "$tmp" push -f "{{ remote }}" pages
+    rm -rf "$tmp"
+    echo "deploy-site: pushed to {{ remote }} (branch pages)"
+
 # Build the site and serve it on http://localhost:8000/alerts/.
 site-serve: site
     miniserve site/serve --index index.html --port 8000
