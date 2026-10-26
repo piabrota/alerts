@@ -22,17 +22,18 @@ agree, the orange line runs inside the blue line.
 
 ### Side by side
 
-| ialerts wave | Ocean in Desmos |
+| ialerts wave | Ammonite |
 |---|---|
-| <img src="wave.svg" width="320" alt="A Fibonacci wave and a bell"/> | <a href="https://www.desmos.com/calculator/2yzcas3kwf"><img src="https://www.desmos.com/calc_thumbs/production/2yzcas3kwf.png" width="320" alt="dog the narwhal, by Diana A., in Desmos"/></a> |
-| *Fibonacci wave*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026. MPL-2.0. | *dog the narwhal*, Diana A., 2022, [Desmos graph](https://www.desmos.com/calculator/2yzcas3kwf). |
+| <img src="wave.svg" width="320" alt="A Fibonacci wave and a bell"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img src="https://www.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320" alt="Ammonite, by Harry Chen, in Desmos"/></a> |
+| *Fibonacci wave*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026. MPL-2.0. | *Ammonite*, Harry Chen ([@harry7557558](https://github.com/harry7557558)), [Desmos graph](https://www.desmos.com/calculator/z7zooq9zsh). 1st place, 2021 Desmos Global Math Art Contest. |
 
-- Desmos shows no likes or view counts, so "the most popular" ocean graph cannot be measured ⚠.
-  This graph is the sea-themed work that Desmos itself featured in the
-  [2024 Desmos Studio Math Art Expo](https://blog.desmos.com/tag/art-contest/) post. The post
-  names the artist as "Diana A." and the year as 2022.
-- This repository does not copy the graph or its picture. The table loads the picture from
-  Desmos, and the work stays under the terms of its author and of Desmos.
+- *Ammonite* is "a creature with a spiral shell and tentacles moving underwater", in the words
+  of its author. It won the 2021 Desmos Global Math Art Contest, so it is a well-known sea graph.
+  Desmos shows no likes or view counts, so "the most popular" cannot be measured ⚠.
+- Source: [the list of Harry Chen's Desmos graphs](https://harry7557558.github.io/desmos/). The
+  list says: "you are free to share and adapt graphs listed on this page, as long as appropriate
+  attribution is given".
+- This repository does not copy the graph or its picture. The table loads the picture from Desmos.
 - ⚠ Not checked: the picture at the Desmos URL (Desmos could not be opened from the machine that
   wrote this page).
 
