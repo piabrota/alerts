@@ -217,3 +217,8 @@ desmos-gif *args:
 # Build the Codeberg copy without AI trace into OUT (empty, or only .git). Commit it as the author.
 export-codeberg out ref="HEAD":
     cargo run -q --manifest-path scripts/export-codeberg/Cargo.toml -- {{ out }} {{ ref }}
+
+# Sync the Codeberg copy: build it on top of the Codeberg branch, commit it as the author and push.
+# Flags: --remote, --branch, --ref, --author "Name <email>", --message, --sign, --dry-run.
+sync-codeberg *args:
+    cargo run -q --manifest-path scripts/export-codeberg/Cargo.toml --bin sync-codeberg -- {{ args }}
