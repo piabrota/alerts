@@ -7,6 +7,7 @@ Usage: python3 docs/drawings/wave.py > docs/drawings/wave.svg
 """
 import json
 import math
+import re
 import sys
 s=5; fib=[1,1,2,3,5,8,13,21]; radii=[s*f for f in reversed(fib)]  # 105..5, outside in
 x0,y0=20,164
@@ -58,15 +59,39 @@ def desmos_state():
 if sys.argv[1:] == ["desmos"]:
     print(json.dumps(desmos_state(), indent=2))
     sys.exit(0)
+def desmos_layer(state):
+    """Sample each Desmos expression of the state into SVG: the orange line of the default render."""
+    H, out = 180, []
+    for e in state["expressions"]["list"]:
+        inner = e["latex"][len("\\left("):-len("\\right)")]
+        fx, fy = inner.split(",", 1)
+        def ev(expr, t):
+            expr = expr.replace("\\cos", "*math.cos").replace("\\sin", "*math.sin")
+            expr = re.sub(r"(?<=\d)t\b", "*t", expr)
+            return eval(expr, {"math": math, "t": t})  # only the expressions written above
+        if "parametricDomain" in e:
+            lo, hi = float(e["parametricDomain"]["min"]), float(e["parametricDomain"]["max"])
+            n = 64
+            pts = " ".join(f"{ev(fx, lo + (hi - lo) * i / n):.2f},{H - ev(fy, lo + (hi - lo) * i / n):.2f}"
+                           for i in range(n + 1))
+            out.append(f'<polyline points="{pts}"/>')
+        else:
+            out.append(f'<circle cx="{ev(fx, 0)}" cy="{H - ev(fy, 0)}" r="1.4" fill="#FF4F00"/>')
+    return "\n    ".join(out)
+
+
 debug=len(sys.argv)>1
 sq="".join(f'<rect x="{x}" y="{y}" width="{r}" height="{r}" fill="none" stroke="#FF4F00" stroke-width="0.8" stroke-dasharray="2 2"/>' for x,y,r in squares) if debug else ""
-label="A Fibonacci wave and a bell: an original line drawing"
+label="A Fibonacci wave and a bell, by @h0ffmann: an original line drawing, rendered from its Desmos expressions"
 print(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="{label}">
   <title>{label}</title>
-  <desc>The wave is a Fibonacci spiral: eight quarter-circle arcs with radii 5 x (21, 13, 8, 5, 3, 2, 1, 1).</desc>{sq}
+  <desc>The wave is a Fibonacci spiral: eight quarter-circle arcs with radii 5 x (21, 13, 8, 5, 3, 2, 1, 1). The blue line is the geometry; the orange line is each expression of wave.desmos.json, sampled.</desc>{sq}
   <g fill="none" stroke="#1682D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="{spiral}"/>
     <path d="{bell}"/>
     {clapper}
+  </g>
+  <g fill="none" stroke="#FF4F00" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    {desmos_layer(desmos_state())}
   </g>
 </svg>''')

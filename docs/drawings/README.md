@@ -2,7 +2,8 @@
 
 ## `wave.svg`
 
-A wave and an abstract bell. `wave.py` writes the drawing in two formats from one geometry:
+A wave and an abstract bell, by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026.
+`wave.py` writes the drawing in two formats from one geometry:
 
 | File | Command | What it is |
 |---|---|---|
@@ -14,6 +15,26 @@ A wave and an abstract bell. `wave.py` writes the drawing in two formats from on
 `python3 docs/drawings/wave.py squares` draws the squares.
 
 **The bell** is a half circle (radius 14), a rim, a clapper dot and two sound arcs (radius 18).
+
+**The default render is the Desmos render.** `wave.svg` draws the geometry in blue. On top, in
+orange, it draws each expression of `wave.desmos.json`, sampled at 65 points. Where the two lines
+agree, the orange line runs inside the blue line.
+
+### Side by side
+
+| ialerts wave | Ocean in Desmos |
+|---|---|
+| <img src="wave.svg" width="320" alt="A Fibonacci wave and a bell"/> | <a href="https://www.desmos.com/calculator/2yzcas3kwf"><img src="https://www.desmos.com/calc_thumbs/production/2yzcas3kwf.png" width="320" alt="dog the narwhal, by Diana A., in Desmos"/></a> |
+| *Fibonacci wave*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026. MPL-2.0. | *dog the narwhal*, Diana A., 2022, [Desmos graph](https://www.desmos.com/calculator/2yzcas3kwf). |
+
+- Desmos shows no likes or view counts, so "the most popular" ocean graph cannot be measured ⚠.
+  This graph is the sea-themed work that Desmos itself featured in the
+  [2024 Desmos Studio Math Art Expo](https://blog.desmos.com/tag/art-contest/) post. The post
+  names the artist as "Diana A." and the year as 2022.
+- This repository does not copy the graph or its picture. The table loads the picture from
+  Desmos, and the work stays under the terms of its author and of Desmos.
+- ⚠ Not checked: the picture at the Desmos URL (Desmos could not be opened from the machine that
+  wrote this page).
 
 ### Open the Desmos file
 

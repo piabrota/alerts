@@ -1,6 +1,6 @@
 <div align="center">
 
-<img alt="A Fibonacci wave and a bell: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
+<img alt="A Fibonacci wave and a bell, by @h0ffmann: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
 
 # ialerts
 
@@ -157,7 +157,8 @@ in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (
 ## Credits
 
 - The layout of this README comes from [picasso](https://github.com/h0ffmann/picasso).
-- The wave joins the Fibonacci spiral and Katsushika Hokusai's *The Great Wave off Kanagawa*
+- The drawing is by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). It is rendered from its
+  Desmos expressions. The wave joins the Fibonacci spiral and Katsushika Hokusai's *The Great Wave off Kanagawa*
   (c. 1831). Other artists drew Fibonacci waves before: credits in [`docs/drawings/README.md`](docs/drawings/README.md).
 - The app conventions (generators, doctor, scheduler, tasks) follow [Loco](https://loco.rs)
   (Apache-2.0). Screenshots of its bootstrap are in [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
