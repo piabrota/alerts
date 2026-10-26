@@ -1,13 +1,13 @@
 ---
 name: manage-apps
-description: Manages smart-alerts apps — one deployment that joins sources, a harness and channels for one audience — with Loco-style conventions (new, generate, doctor, schedule, task). Use when the user wants to create, change, run, check or remove an app, or asks where an app's parts go.
+description: Manages alerts apps — one deployment that joins sources, a harness and channels for one audience — with Loco-style conventions (new, generate, doctor, schedule, task). Use when the user wants to create, change, run, check or remove an app, or asks where an app's parts go.
 ---
 
 # manage-apps
 
 The layout copies the idea of [Loco](https://loco.rs) ("Rust on Rails"): convention over
 configuration, one command per job, and generators that write the boilerplate. It keeps only what
-smart-alerts needs. There is no ORM, no mailer and no server-side HTML in v0.
+alerts needs. There is no ORM, no mailer and no server-side HTML in v0.
 
 ## What an app is
 
@@ -16,9 +16,9 @@ and RS. An app joins three parts. Each part already exists as a crate or a funct
 
 | Part | Where it lives | Loco equivalent |
 |---|---|---|
-| Sources | `crates/smart-alerts-source-<id>` | models (the data comes in) |
-| Harness | stages in `smart-alerts-core`, composed with `Harness::then` | controller logic |
-| Channels | `crates/smart-alerts` (Discord), `crates/smart-alerts-feed` (Atom + CAP 1.2) | views |
+| Sources | `crates/alerts-source-<id>` | models (the data comes in) |
+| Harness | stages in `alerts-core`, composed with `Harness::then` | controller logic |
+| Channels | `crates/alerts` (Discord), `crates/alerts-feed` (Atom + CAP 1.2) | views |
 | Schedule | `apps/<app>/app.toml`, `[schedule]` | scheduler |
 | Tasks | `apps/<app>/tasks/` (replay, eval, backfill) | tasks |
 
@@ -64,7 +64,7 @@ Until a recipe exists, do the steps of its skill by hand, and say so in the PR.
 ## Rules for every app
 
 1. Every channel of an app reads the same harness output. Never filter or rewrite per channel.
-2. A new app changes no other app and does not change `smart-alerts-core`.
+2. A new app changes no other app and does not change `alerts-core`.
 3. A new hazard or UF needs a source that states it. Do not widen `ufs` without one.
 4. An app has eval cases before its first real message.
 5. `just check` passes before a PR. There is no CI.

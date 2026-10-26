@@ -1,6 +1,6 @@
 ---
 name: schedule
-description: Plans how a smart-alerts app polls its sources and runs one-off tasks (replay, eval, backfill), in the spirit of the Loco scheduler and tasks. Use when the user asks how often to poll, why alerts arrive late or twice, or wants to replay recorded alerts.
+description: Plans how a alerts app polls its sources and runs one-off tasks (replay, eval, backfill), in the spirit of the Loco scheduler and tasks. Use when the user asks how often to poll, why alerts arrive late or twice, or wants to replay recorded alerts.
 ---
 
 # schedule

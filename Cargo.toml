@@ -6,7 +6,7 @@ members = ["crates/*"]
 version = "0.0.0"
 edition = "2024"
 license = "MPL-2.0"
-repository = "https://github.com/h0ffmann/smart-alerts"
+repository = "https://github.com/piabrota/alerts"
 
 [workspace.lints.rust]
 unsafe_code = "deny"
@@ -19,6 +19,6 @@ expect_used = "deny"
 [workspace.dependencies]
 serde = "1.0.229"
 serde_json = "1.0.154"
-smart-alerts-core = { path = "crates/smart-alerts-core" }
-smart-alerts-feed = { path = "crates/smart-alerts-feed" }
+alerts-core = { path = "crates/alerts-core" }
+alerts-feed = { path = "crates/alerts-feed" }
 tokio = "1.54.1"

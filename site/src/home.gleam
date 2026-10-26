@@ -9,7 +9,7 @@ pub fn page() -> String {
   <> "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
   <> "<title>piabrota</title><link rel=\"stylesheet\" href=\"alerts/style.css\"></head><body><main>"
   <> "<h1>piabrota</h1>"
-  <> "<ul><li><a href=\"alerts/\">ialerts</a>: alertas oficiais de inundação no Sul do Brasil.</li></ul>"
+  <> "<ul><li><a href=\"alerts/\">alerts</a>: alertas oficiais de inundação no Sul do Brasil.</li></ul>"
   <> "</main></body></html>"
 }
 

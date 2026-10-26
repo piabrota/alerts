@@ -1,7 +1,7 @@
 <!-- reading-time: 12 min -->
-# ialerts
+# alerts
 
-🇬🇧 [Read in English](README.md) · nome de código: `smart-alerts`
+🇬🇧 [Read in English](README.md)
 
 | <img alt="Uma onda de Fibonacci e um sino, de @h0ffmann" src="docs/drawings/wave.svg" width="320"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, de Harry Chen, no Desmos" src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a> |
 |:---:|:---:|
@@ -12,21 +12,19 @@ Alertas do século 22.
 
 ## em um minuto
 
-- **O ialerts é uma plataforma de alertas genérica.** Ele coleta alertas de fontes oficiais,
+- **O alerts é uma plataforma de alertas genérica.** Ele coleta alertas de fontes oficiais,
   filtra os alertas e entrega os alertas. Um risco, uma região ou um canal é um módulo: o núcleo
   não muda quando alguém adiciona um módulo.
-- **Só fontes oficiais.** Um alerta vem de um órgão oficial. O ialerts nunca inventa um alerta,
+- **Só fontes oficiais.** Um alerta vem de um órgão oficial. O alerts nunca inventa um alerta,
   uma área, um horário ou uma ação que a fonte não diz.
 - **O primeiro risco é inundação no Brasil.** A v0 atende a Região Sul: Paraná (PR),
   Santa Catarina (SC) e Rio Grande do Sul (RS).
 - **A v0 entrega um serviço para Discord** e um feed Atom com alertas CAP 1.2, com os mesmos
-  alertas e o mesmo texto. O pacote Python `smart-alerts` existe desde o
+  alertas e o mesmo texto. O pacote Python `piabrota-alerts` existe desde o
   início. Um plugin AstrBot vai usar esse pacote no futuro.
 - **Aberto por princípio.** Padrões abertos (Atom, CAP 1.2), só dependências FOSS, só modelos
   locais. Uma API paga nunca é obrigatória.
 - **Estado:** bootstrap. Nenhuma fonte está implementada. O serviço só envia uma mensagem de teste.
-
-O código, os crates e o binário ainda usam o nome de código `smart-alerts`.
 
 ## fontes
 
@@ -57,8 +55,9 @@ cada fonte estão em [`docs/SOURCES.md`](docs/SOURCES.md).
   alertas. Os alertas de PR, SC e RS aparecem nesse feed. A Defesa Civil de SC também publica um
   RSS em texto livre.
 - **INMET:** `apiprevmet3.inmet.gov.br` derruba a conexão quando o User-Agent é o padrão do curl
-  (`curl/...`). O smart-alerts se identifica com o próprio nome (`smart-alerts/<versão>`), e o
-  INMET aceita esse nome. O RSS declara domínio público, com citação da fonte.
+  (`curl/...`). O alerts se identifica com o próprio nome (`piabrota-alerts/<versão>`).
+  O INMET aceitou esse User-Agent com o nome antigo do projeto em 2026-10-22. Ninguém conferiu o
+  nome novo ⚠. O RSS declara domínio público, com citação da fonte.
 - **CEMADEN:** a API PED (`sws.cemaden.gov.br/PED`) entrega observações, não alertas. Os alertas
   municipais só existem num JSON sem documentação (`painelalertas.cemaden.gov.br/wsAlertas2`). O
   limite é de 12 requisições por minuto para usuário externo ⚠. O CEMADEN exige citação.
@@ -72,10 +71,10 @@ cada fonte estão em [`docs/SOURCES.md`](docs/SOURCES.md).
 
 ## modelos locais
 
-Algumas fontes publicam texto livre (boletins, PDFs). Para essas fontes, o smart-alerts vai usar
+Algumas fontes publicam texto livre (boletins, PDFs). Para essas fontes, o alerts vai usar
 modelos abertos que rodam na máquina local. Uma API paga nunca é obrigatória.
 
-| Runtime | Licença | Uso no smart-alerts | Estado |
+| Runtime | Licença | Uso no alerts | Estado |
 |---|---|---|---|
 | [Ollama](https://github.com/ollama/ollama) | MIT | Ler texto livre e extrair campos (local, hora, nível do rio) para um `Alert`. | planejado |
 | [OLLAYA](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decidir: perguntas tipadas (é alerta de inundação? qual severidade?) com probabilidade calibrada. Não gera texto. | em breve |
@@ -95,16 +94,16 @@ feed, com o mesmo texto. O feed não depende de empresa: Atom e CAP são padrõe
 tem o mesmo formato do feed nacional da Defesa Civil (IDAP), e qualquer leitor de feed abre o
 arquivo. Um alerta de teste sai com `<status>Test</status>`.
 
-## quem vai usar o ialerts
+## quem vai usar o alerts
 
-| Consumidor | O que é | Como lê o ialerts | Situação |
+| Consumidor | O que é | Como lê o alerts | Situação |
 |---|---|---|---|
 | Discord | O servidor da v0, que já existe | webhook (push) | v0 |
 | Qualquer leitor de feed | Atom (RFC 4287) com CAP 1.2 em cada entrada | o arquivo do feed (pull) | v0 |
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot para apps de mensagem (AGPL-3.0) | o pacote Python `smart-alerts` num plugin | planejado |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot para apps de mensagem (AGPL-3.0) | o pacote Python `piabrota-alerts` num plugin | planejado |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | Plugin de alertas de desastre para o AstrBot: terremoto, tsunami, tempo (AGPL-3.0) | o pacote Python ou o feed, para alertas do Brasil | planejado |
 
-Um plugin chama o pacote: o ialerts não copia código AGPL. Mais em
+Um plugin chama o pacote: o alerts não copia código AGPL. Mais em
 [`docs/REFERENCES.md`](docs/REFERENCES.md).
 
 ## arquitetura
@@ -113,17 +112,17 @@ Um plugin chama o pacote: o ialerts não copia código AGPL. Mais em
 %% figure: crates
 %% title: Quais crates existem e quem depende de quem?
 flowchart LR
-    S["smart-alerts-source-*<br/>(uma por fonte)"] --> C["smart-alerts-core<br/>Alert, Uf, Harness"]
-    D["smart-alerts<br/>serviço"] --> C
-    D --> F["smart-alerts-feed<br/>Atom + CAP 1.2"] --> C
-    P["smart-alerts-py<br/>pacote Python"] --> C
-    M["smart-alerts-mcp<br/>servidor MCP"] --> C
+    S["alerts-source-*<br/>(uma por fonte)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
+    D["alerts<br/>serviço"] --> C
+    D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
+    P["alerts-py<br/>pacote Python"] --> C
+    M["alerts-mcp<br/>servidor MCP"] --> C
 ```
 
 <details open>
 <summary>Como ler esta figura</summary>
 
-**Em uma frase.** Todo crate depende do `smart-alerts-core`. O núcleo não depende de nenhum crate.
+**Em uma frase.** Todo crate depende do `alerts-core`. O núcleo não depende de nenhum crate.
 
 **Como ler.** Cada seta vai do crate que usa para o crate usado.
 

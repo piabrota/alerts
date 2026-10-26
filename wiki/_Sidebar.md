@@ -1,5 +1,5 @@
 <!-- reading-time: 1 min -->
-**ialerts**
+**alerts**
 
 - [Início](Home-pt-BR)
 - [Fontes](Fontes-pt-BR)

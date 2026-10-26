@@ -1,14 +1,14 @@
 <!-- reading-time: 5 min -->
 # Hospedagem: piabrota.art no Codeberg Pages
 
-Esta página diz onde o site estático do ialerts fica hospedado e como publicar o site. O autor
+Esta página diz onde o site estático do alerts fica hospedado e como publicar o site. O autor
 comprou o domínio `piabrota.art` em 2026-10-26.
 
 ## O que o autor pediu
 
 - O endereço `piabrota.art/index.html` (a home, em HTTP ou HTTPS) sempre aponta para o site
   estático feito com Gleam.
-- O ialerts fica em `piabrota.art/alerts/`.
+- O alerts fica em `piabrota.art/alerts/`.
 - O site usa pouco código Gleam.
 - A hospedagem é grátis.
 
@@ -17,7 +17,7 @@ comprou o domínio `piabrota.art` em 2026-10-26.
 | Caminho | Conteúdo | Código |
 |---|---|---|
 | `/index.html` | A home de piabrota.art | `site/src/home.gleam` |
-| `/alerts/` | A página do ialerts, a figura e o desenho | `site/src/site.gleam` |
+| `/alerts/` | A página do alerts, a figura e o desenho | `site/src/site.gleam` |
 | `/alerts/grafo/graph.html` | O grafo do código | `code-graph` |
 
 O código Gleam são dois módulos pequenos, sem dependência do Hex. Todo link é relativo.
@@ -29,7 +29,7 @@ Conferido em 2026-10-26, nas páginas citadas.
 | Hospedagem | Grátis para este caso | Deploy sem CI | Domínio próprio e HTTPS | Observação |
 |---|---|---|---|---|
 | Codeberg Pages | sim, para um repositório público ([docs](https://docs.codeberg.org/codeberg-pages/)) | sim: um push no branch `pages` e um webhook | sim, com DNS e Let's Encrypt ([docs](https://docs.codeberg.org/codeberg-pages/using-custom-domain/)) | Codeberg e.V., associação sem fins lucrativos; o espelho `piabrota/alerts` já fica no Codeberg |
-| GitHub Pages | não: o plano Free só publica Pages de repositório público, e `h0ffmann/smart-alerts` é privado ([docs](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)) | só com outro repositório público ou com Actions | sim | o deploy comum usa Actions, e o repositório proíbe CI |
+| GitHub Pages | sim: o plano Free publica Pages de repositório público, e `piabrota/alerts` é público (conferido em 2026-10-26) ([docs](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)) | sim, de um branch, ou com Actions | sim | o deploy comum usa Actions, e o repositório proíbe CI |
 | Cloudflare Pages | sim, no plano grátis ⚠ | sim, com o CLI `wrangler` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
 | Netlify | sim, no plano grátis ⚠ | sim, com o CLI `netlify` ⚠ | sim ⚠ | empresa; pede conta e o CLI do npm |
 
@@ -86,7 +86,7 @@ lida em 2026-10-26.
 
 ## Depois: o serviço do Discord
 
-O Codeberg Pages só serve arquivos. O serviço `smart-alerts` (o Discord e o feed que muda a cada
+O Codeberg Pages só serve arquivos. O serviço `alerts` (o Discord e o feed que muda a cada
 alerta) precisa de um servidor quando existir. Uma ideia é um servidor pequeno com o Caddy
 (Apache-2.0): o Caddy serve o feed e pode passar a servir o site. Um servidor tem custo mensal, e
 um recurso pago precisa da confirmação explícita do autor.

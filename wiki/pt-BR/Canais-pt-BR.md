@@ -39,9 +39,9 @@ Na versão 0, o texto dos alertas é só em pt-BR, no nível `estrito` do ptbr-w
 
 ## Consumidores planejados
 
-| Consumidor | Como lê o ialerts |
+| Consumidor | Como lê o alerts |
 |---|---|
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | o pacote Python `smart-alerts` num plugin |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | o pacote Python `piabrota-alerts` num plugin |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | o pacote Python ou o feed, para alertas do Brasil |
 
-Um plugin chama o pacote. O ialerts não copia código AGPL-3.0.
+Um plugin chama o pacote. O alerts não copia código AGPL-3.0.

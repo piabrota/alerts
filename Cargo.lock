@@ -9,6 +9,76 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 
 [[package]]
+name = "alerts"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "alerts-feed",
+ "reqwest",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "alerts-core"
+version = "0.0.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "alerts-desmos"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "anyhow",
+ "base64",
+ "gif",
+ "png",
+ "serde_json",
+ "tungstenite",
+]
+
+[[package]]
+name = "alerts-drawings"
+version = "0.0.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
+name = "alerts-feed"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "quick-xml",
+]
+
+[[package]]
+name = "alerts-mcp"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "rmcp",
+ "schemars",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "alerts-py"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "pyo3",
+]
+
+[[package]]
+name = "alerts-trilhas"
+version = "0.0.0"
+
+[[package]]
 name = "android_system_properties"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1492,76 +1562,6 @@ name = "smallvec"
 version = "1.16.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b3dc8af474f516a851ff4bd12db780f948b9250ad37211e4eec0bccea54e01b"
-
-[[package]]
-name = "smart-alerts"
-version = "0.0.0"
-dependencies = [
- "reqwest",
- "serde_json",
- "smart-alerts-core",
- "smart-alerts-feed",
- "tokio",
-]
-
-[[package]]
-name = "smart-alerts-core"
-version = "0.0.0"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "smart-alerts-desmos"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "gif",
- "png",
- "serde_json",
- "smart-alerts-core",
- "tungstenite",
-]
-
-[[package]]
-name = "smart-alerts-drawings"
-version = "0.0.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "smart-alerts-feed"
-version = "0.0.0"
-dependencies = [
- "quick-xml",
- "smart-alerts-core",
-]
-
-[[package]]
-name = "smart-alerts-mcp"
-version = "0.0.0"
-dependencies = [
- "rmcp",
- "schemars",
- "serde",
- "serde_json",
- "smart-alerts-core",
- "tokio",
-]
-
-[[package]]
-name = "smart-alerts-py"
-version = "0.0.0"
-dependencies = [
- "pyo3",
- "smart-alerts-core",
-]
-
-[[package]]
-name = "smart-alerts-trilhas"
-version = "0.0.0"
 
 [[package]]
 name = "socket2"

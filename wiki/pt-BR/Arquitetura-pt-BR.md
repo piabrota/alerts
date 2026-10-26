@@ -1,31 +1,31 @@
 <!-- reading-time: 4 min -->
 # Arquitetura
 
-O ialerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`.
+O alerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`.
 
 | Crate | Tipo | Papel |
 |---|---|---|
-| `smart-alerts-core` | lib | Os tipos do domínio (`Alert`, `Uf`, `Severity`, `Hazard`) e o harness. O núcleo não conhece Discord, Python nem MCP. |
-| `smart-alerts` | bin | O serviço: publica no Discord e no feed. |
-| `smart-alerts-feed` | lib | O canal Atom com CAP 1.2. |
-| `smart-alerts-py` | cdylib | O pacote Python (PyO3 e maturin): `import smart_alerts`. |
-| `smart-alerts-mcp` | bin | O servidor MCP (rmcp, stdio). |
+| `alerts-core` | lib | Os tipos do domínio (`Alert`, `Uf`, `Severity`, `Hazard`) e o harness. O núcleo não conhece Discord, Python nem MCP. |
+| `alerts` | bin | O serviço: publica no Discord e no feed. |
+| `alerts-feed` | lib | O canal Atom com CAP 1.2. |
+| `alerts-py` | cdylib | O pacote Python (PyO3 e maturin): `import piabrota_alerts`. |
+| `alerts-mcp` | bin | O servidor MCP (rmcp, stdio). |
 
 ```mermaid
 %% figure: crates
 %% title: Quais crates existem e quem depende de quem?
 flowchart LR
-    S["smart-alerts-source-*<br/>(uma por fonte)"] --> C["smart-alerts-core<br/>Alert, Uf, Harness"]
-    D["smart-alerts<br/>serviço"] --> C
-    D --> F["smart-alerts-feed<br/>Atom + CAP 1.2"] --> C
-    P["smart-alerts-py<br/>pacote Python"] --> C
-    M["smart-alerts-mcp<br/>servidor MCP"] --> C
+    S["alerts-source-*<br/>(uma por fonte)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
+    D["alerts<br/>serviço"] --> C
+    D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
+    P["alerts-py<br/>pacote Python"] --> C
+    M["alerts-mcp<br/>servidor MCP"] --> C
 ```
 
 <details open>
 <summary>Como ler esta figura</summary>
 
-**Em uma frase.** Todo crate depende do `smart-alerts-core`. O núcleo não depende de nenhum crate.
+**Em uma frase.** Todo crate depende do `alerts-core`. O núcleo não depende de nenhum crate.
 
 **Como ler.** Cada seta vai do crate que usa para o crate usado.
 
@@ -46,10 +46,10 @@ O desenho segue o artigo [Object-Oriented Harness](https://arxiv.org/abs/2610.28
   `try_fold`.
 - O núcleo tem dois estágios: `only_ufs` (mantém os alertas de certos estados) e `min_severity`
   (mantém os alertas a partir de uma severidade).
-- Uma especialização compõe um estágio novo. O ialerts não usa hierarquias de traits parecidas com
+- Uma especialização compõe um estágio novo. O alerts não usa hierarquias de traits parecidas com
   herança.
 
-| Harness orientado a objetos | ialerts |
+| Harness orientado a objetos | alerts |
 |---|---|
 | Uma subclasse sobrescreve um método | Um `Stage` novo envolve o pipeline: `Harness::then` |
 | `super()` | Os estágios anteriores na composição |
@@ -59,7 +59,7 @@ O desenho segue o artigo [Object-Oriented Harness](https://arxiv.org/abs/2610.28
 
 ## Modelos locais, no futuro
 
-Algumas fontes publicam texto livre (boletins, PDFs). Para essas fontes, o ialerts vai usar modelos
+Algumas fontes publicam texto livre (boletins, PDFs). Para essas fontes, o alerts vai usar modelos
 abertos que rodam na máquina local. Cada modelo é um estágio.
 
 | Runtime | Licença | Uso | Estado |

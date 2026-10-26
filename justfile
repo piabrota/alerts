@@ -32,9 +32,9 @@ reuse:
     uvx reuse@6.2.0 lint
     cffconvert --validate
 
-# Build the smart-alerts Python wheel into target/wheels.
+# Build the alerts Python wheel into target/wheels.
 py-build:
-    maturin build --release -m crates/smart-alerts-py/Cargo.toml
+    maturin build --release -m crates/alerts-py/Cargo.toml
 
 # Zip each skill in verbs/ into target/verbs/<verb>.zip, to upload as a project skill.
 pack-verbs:
@@ -49,11 +49,11 @@ pack-verbs:
 
 # Run the MCP server on stdio.
 mcp:
-    cargo run -q -p smart-alerts-mcp
+    cargo run -q -p alerts-mcp
 
 # Publish one test alert to every configured channel (DISCORD_WEBHOOK_URL, FEED_PATH).
 test-message:
-    cargo run -q -p smart-alerts -- test-message
+    cargo run -q -p alerts -- test-message
 
 # List zh/ja wiki pages whose English source changed after translation.
 docs-stale:
@@ -72,12 +72,12 @@ docs-stale:
 wiki-sync:
     #!/usr/bin/env bash
     set -euo pipefail
-    if [ "$(gh api repos/h0ffmann/smart-alerts --jq .private)" = "true" ]; then
+    if [ "$(gh api repos/piabrota/alerts --jq .private)" = "true" ]; then
         echo "The repo is private: the Wiki is deployed only after it is public (issue #1)." >&2
         exit 1
     fi
     tmp=$(mktemp -d)
-    git clone -q https://github.com/h0ffmann/smart-alerts.wiki.git "$tmp"
+    git clone -q https://github.com/piabrota/alerts.wiki.git "$tmp"
     rsync -a --delete --exclude .git wiki/ "$tmp/"
     git -C "$tmp" add -A
     git -C "$tmp" commit -qm "sync wiki/ from $(git rev-parse --short HEAD)" || echo "wiki: nothing to sync"
@@ -169,7 +169,7 @@ reading-time-check:
 
 # The code graph of this repository (picasso's code-graph, graphify's schema): build/graph/graph.html.
 graph:
-    code-graph extract . --out build/graph --exclude vendor --exclude target --exclude build --exclude scripts --exclude verbs --title smart-alerts
+    code-graph extract . --out build/graph --exclude vendor --exclude target --exclude build --exclude scripts --exclude verbs --title alerts
     @echo "graph: build/graph/graph.html"
 
 # Build the static site into site/dist/ (Gleam on JavaScript, picasso's gleam-website toolchain).
@@ -206,13 +206,13 @@ pins:
 
 # Write the README drawing (docs/drawings/wave.svg) and its Desmos state (wave.desmos.json).
 wave:
-    cargo run -q -p smart-alerts-drawings --bin wave > docs/drawings/wave.svg
-    cargo run -q -p smart-alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json
+    cargo run -q -p alerts-drawings --bin wave > docs/drawings/wave.svg
+    cargo run -q -p alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json
 
 # Record Ammonite by Harry Chen (Desmos) as docs/drawings/ammonite-harry-chen.gif. Needs Chrome or
 # Chromium (CHROME names the binary) and access to desmos.com.
 desmos-gif *args:
-    cargo run -q --release -p smart-alerts-desmos -- --out docs/drawings/ammonite-harry-chen.gif {{ args }}
+    cargo run -q --release -p alerts-desmos -- --out docs/drawings/ammonite-harry-chen.gif {{ args }}
 
 # Build the Codeberg copy without AI trace into OUT (empty, or only .git). Commit it as the author.
 export-codeberg out ref="HEAD":
