@@ -1,7 +1,7 @@
 <!-- reading-time: 2 min -->
 # alerts
 
-O alerts é uma plataforma de alertas genérica. O nome de código do projeto é `smart-alerts`.
+O alerts é uma plataforma de alertas genérica.
 
 O alerts coleta alertas de fontes oficiais, filtra os alertas e entrega os alertas. Um risco, uma
 região ou um canal é um módulo. O núcleo não muda quando alguém adiciona um módulo.
@@ -14,7 +14,7 @@ região ou um canal é um módulo. O núcleo não muda quando alguém adiciona u
 - **Fontes:** Defesa Civil, INMET e CEMADEN.
 - **Canais:** um serviço para Discord e um feed Atom com alertas CAP 1.2. Os dois canais recebem os
   mesmos alertas, com o mesmo texto em pt-BR.
-- **Pacote Python:** o pacote `smart-alerts` existe desde o início. Um plugin do AstrBot vai usar
+- **Pacote Python:** o pacote `alerts` existe desde o início. Um plugin do AstrBot vai usar
   esse pacote no futuro.
 
 ## Estado
@@ -26,7 +26,7 @@ mensagem de teste.
 
 - **Só fontes oficiais.** Um alerta vem de um órgão oficial. O alerts nunca inventa um alerta,
   uma área, um horário ou uma ação que a fonte não diz.
-- **Identificação honesta.** Toda requisição HTTP envia o User-Agent `smart-alerts/<versão>`. O
+- **Identificação honesta.** Toda requisição HTTP envia o User-Agent `piabrota-alerts/<versão>`. O
   alerts nunca se passa por um navegador.
 - **Aberto por princípio.** O alerts usa padrões abertos (Atom, CAP 1.2), só dependências FOSS e
   só modelos locais. Uma API paga nunca é obrigatória.

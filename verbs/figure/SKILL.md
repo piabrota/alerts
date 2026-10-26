@@ -5,7 +5,7 @@ description: Add, change or explain a diagram in this repo's Markdown (README.md
 
 # figure
 
-This verb is the `figure` skill of ptbr-writer, adapted to smart-alerts.
+This verb is the `figure` skill of ptbr-writer, adapted to alerts.
 
 A diagram is a ```` ```mermaid ```` fence in the page it illustrates (GitHub draws it there), or a
 PNG drawn with Archify. Every diagram has a header and a reading card.

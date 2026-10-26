@@ -1,6 +1,6 @@
 # GROUND_TRUTH.md
 
-Instructions for agents working on `smart-alerts`. The skills live in `verbs/`: one directory per
+Instructions for agents working on `alerts`. The skills live in `verbs/`: one directory per
 verb, each with a `SKILL.md`. `scripts/link-verbs.sh` makes a local agent read this file and
 `verbs/`, with links that git ignores. `just pack-verbs` writes one zip per verb in
 `target/verbs/`, to upload as a project skill. OpenCode reads this file through `instructions` in
@@ -9,7 +9,7 @@ directory name in this repo names an AI product.
 
 ## Goal
 
-`smart-alerts` is a generic alert engine. It collects alerts from official, authoritative
+`alerts` is a generic alert engine. It collects alerts from official, authoritative
 sources, filters them, and delivers them.
 
 - **First hazard:** floods in Brazil.
@@ -20,7 +20,7 @@ sources, filters them, and delivers them.
   (OASIS). Open standards, no company attached. Every alert that reaches Discord also reaches the
   feed, with the same pt-BR text. A new channel reads the same harness output: never filter or
   rewrite alerts per channel.
-- **Python interface now:** `smart-alerts-py` is a pip package from day one. The long-term
+- **Python interface now:** `alerts-py` is a pip package from day one. The long-term
   consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
 - **Codeberg mirror without AI trace:** `codeberg.org/piabrota/alerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
@@ -42,8 +42,8 @@ sources, filters them, and delivers them.
   new work for an open PR goes into that PR.
 - **A PR that changes an image uses the `open-pr-images` verb** (bipri): the `open-pr` body plus
   before and after images, committed in `docs/screenshots/<topic>/`.
-- **Identify honestly.** Every HTTP request sends `smart_alerts_core::USER_AGENT`
-  (`smart-alerts/<version> (+repo URL)`). Never send a browser User-Agent and never copy another
+- **Identify honestly.** Every HTTP request sends `alerts_core::USER_AGENT`
+  (`piabrota-alerts/<version> (+repo URL)`). Never send a browser User-Agent and never copy another
   client's name, not even as a fallback. When a source refuses the honest name, stop and tell a
   human: the fix is to ask the agency, not to disguise the client.
 - **FOSS first.** A new dependency must pass `just deny` (license allowlist in `deny.toml`).
@@ -84,20 +84,21 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 
 | Crate | Kind | Role |
 |---|---|---|
-| `smart-alerts-core` | lib | Domain types (`Alert`, `Uf`, `Severity`, `Hazard`) and the FP harness. Knows nothing about Discord, Python or MCP. |
-| `smart-alerts` | bin | The service: publishes to Discord and to the feed. |
-| `smart-alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
-| `smart-alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import smart_alerts`. |
-| `smart-alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
-| `smart-alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
-| `smart-alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
+| `alerts-core` | lib | Domain types (`Alert`, `Uf`, `Severity`, `Hazard`) and the FP harness. Knows nothing about Discord, Python or MCP. |
+| `alerts` | bin | The service: publishes to Discord and to the feed. |
+| `alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
+| `alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import piabrota_alerts`. |
+| `alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
+| `alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
+| `alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
 
-Dependencies point to `smart-alerts-core`, never the other way.
+Dependencies point to `alerts-core`, never the other way.
 
 **Source facts** (checked 2026-10-22; endpoints and formats in `docs/SOURCES.md`):
 
-- INMET drops the connection when the User-Agent is curl's default. The smart-alerts
-  User-Agent works (see the hard rule on honest identification).
+- INMET drops the connection when the User-Agent is curl's default. The honest
+  User-Agent worked with the former project name; nobody checked the new name ⚠ (see the hard
+  rule on honest identification).
 - The IDAP feed keeps about 12 hours: poll it often and store what you read.
 - CPTEC/INPE forbids commercial use without authorization and requires the citation "CPTEC/INPE".
 - No source blocks foreign IPs, but ANA and Epagri/Ciram registration can require a CPF or CNPJ.
@@ -105,7 +106,7 @@ Dependencies point to `smart-alerts-core`, never the other way.
   without notice. A module that uses one must fail loudly, never silently.
 
 **Sources are modular.** Brazilian data is scattered, so each source is its own crate,
-`crates/smart-alerts-source-<id>`, that turns the agency's data into `Alert`s. Adding a source,
+`crates/alerts-source-<id>`, that turns the agency's data into `Alert`s. Adding a source,
 or a state, adds a crate. It does not change the core.
 
 ## The FP harness
@@ -113,7 +114,7 @@ or a state, adds a crate. It does not change the core.
 The design follows the Object-Oriented Harness paper (arXiv 2610.28380) and translates it to
 functional composition. A position paper on the FP harness lives in the `smart-notes` repo.
 
-| OO Harness | smart-alerts |
+| OO Harness | alerts |
 |---|---|
 | A subclass overrides a method | A new `Stage` wraps the pipeline: `Harness::then` |
 | `super()` | The stages before it in the composition |
@@ -130,7 +131,7 @@ never required.
 
 Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is a `Stage`:
 
-| Runtime | License | Job in smart-alerts | Status |
+| Runtime | License | Job in alerts | Status |
 |---|---|---|---|
 | Ollama | MIT | Read free text: extract fields (place, time, river level) from a bulletin into an `Alert`. | planned |
 | OLLAYA (`ollaya-dev/ollaya`) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with calibrated probabilities. It never generates text. | soon |
@@ -201,9 +202,9 @@ ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs diff
 | code-graph (graphify's schema) | `just graph` | The code graph of this repo: `build/graph/graph.html` |
 | gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve`, `just deploy-site` | The static site in `site/`: the home of piabrota.art and alerts under `/alerts/`, on Codeberg Pages |
 
-- The Desmos support stays: `just wave` (the Rust binary `wave`, crate `smart-alerts-drawings`)
+- The Desmos support stays: `just wave` (the Rust binary `wave`, crate `alerts-drawings`)
   writes `wave.svg` and `wave.desmos.json`, and `just desmos-gif` records a Desmos animation
-  as a GIF (crate `smart-alerts-desmos`).
+  as a GIF (crate `alerts-desmos`).
   Archify draws diagrams; it does not replace the drawing.
 - Every Archify figure has an English twin, `docs/archify/en/<slug>.json`, with the same lanes,
   nodes and edges. `README.pt-BR.md` embeds `docs/img/<slug>.png`; `README.md` embeds

@@ -1,0 +1,13 @@
+[package]
+name = "alerts-feed"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+quick-xml = "0.42.0"
+alerts-core = { workspace = true }

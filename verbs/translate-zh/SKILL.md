@@ -1,6 +1,6 @@
 ---
 name: translate-zh
-description: Translates a smart-alerts English wiki page into controlled Simplified Chinese (wiki/zh). Use when a zh page is missing or `just docs-stale` reports it stale, or when the user asks for Chinese documentation.
+description: Translates a alerts English wiki page into controlled Simplified Chinese (wiki/zh). Use when a zh page is missing or `just docs-stale` reports it stale, or when the user asks for Chinese documentation.
 ---
 
 # translate-zh

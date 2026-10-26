@@ -2,7 +2,7 @@
 # Fontes
 
 Os dados do Brasil estão espalhados. No alerts, cada fonte é um crate próprio,
-`crates/smart-alerts-source-<id>`. Esse crate transforma os dados do órgão em alertas. Uma fonte
+`crates/alerts-source-<id>`. Esse crate transforma os dados do órgão em alertas. Uma fonte
 nova ou um estado novo adiciona um crate e não muda o núcleo.
 
 A conferência é de 2026-10-22. Cada endpoint foi acessado de dentro do Brasil (`curl`) e de fora
@@ -26,7 +26,8 @@ endpoint, o formato e a autenticação de cada fonte estão em `docs/SOURCES.md`
 - **Defesa Civil (IDAP).** O feed guarda cerca de 12 horas de alertas ⚠ e tem cerca de 10 MB. O
   módulo deve consultar o feed com frequência e guardar os alertas que leu.
 - **INMET.** O servidor derruba a conexão quando o User-Agent é o padrão do curl. O servidor
-  aceita o User-Agent `smart-alerts/<versão>`. O RSS declara domínio público, com citação da fonte.
+  aceitou o User-Agent honesto com o nome antigo do projeto em 2026-10-22. O
+  nome novo é `piabrota-alerts/<versão>`, e ninguém conferiu esse nome ⚠. O RSS declara domínio público, com citação da fonte.
 - **CEMADEN.** A API oficial entrega observações, não alertas. Os alertas municipais só existem
   num JSON sem documentação (`wsAlertas2`). O limite é de 12 requisições por minuto para um
   usuário externo ⚠. O CEMADEN exige citação.

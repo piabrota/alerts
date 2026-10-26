@@ -13,6 +13,6 @@ build:
     gleam run --no-print-progress > {{out}}/index.html
     grep -qF '<h1>alerts</h1>' {{out}}/index.html
     cp static/style.css ../docs/drawings/wave.svg ../docs/img/fluxo-alerta.png {{out}}/
-    code-graph extract .. --out {{out}}/grafo --exclude vendor --exclude target --exclude build --exclude site --exclude scripts --exclude verbs --title smart-alerts
+    code-graph extract .. --out {{out}}/grafo --exclude vendor --exclude target --exclude build --exclude site --exclude scripts --exclude verbs --title alerts
     test -s {{out}}/grafo/graph.html
     @echo "site: {{out}}/index.html"

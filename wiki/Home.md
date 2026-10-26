@@ -1,5 +1,5 @@
 <!-- reading-time: 1 min -->
-# smart-alerts
+# alerts
 
 - [Português (Brasil)](Home-pt-BR)
 - [English](Home-en)

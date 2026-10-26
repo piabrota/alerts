@@ -86,7 +86,7 @@ lida em 2026-10-26.
 
 ## Depois: o serviço do Discord
 
-O Codeberg Pages só serve arquivos. O serviço `smart-alerts` (o Discord e o feed que muda a cada
+O Codeberg Pages só serve arquivos. O serviço `alerts` (o Discord e o feed que muda a cada
 alerta) precisa de um servidor quando existir. Uma ideia é um servidor pequeno com o Caddy
 (Apache-2.0): o Caddy serve o feed e pode passar a servir o site. Um servidor tem custo mensal, e
 um recurso pago precisa da confirmação explícita do autor.

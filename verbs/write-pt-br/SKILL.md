@@ -1,11 +1,11 @@
 ---
 name: write-pt-br
-description: Writes or revises smart-alerts text in controlled Brazilian Portuguese — README.pt-BR.md, wiki/pt-BR pages, and the pt-BR text of alert messages. Use for any pt-BR writing in this repository.
+description: Writes or revises alerts text in controlled Brazilian Portuguese — README.pt-BR.md, wiki/pt-BR pages, and the pt-BR text of alert messages. Use for any pt-BR writing in this repository.
 ---
 
 # write-pt-br
 
-pt-BR is the first language of smart-alerts. The author writes it by hand, with the EN text in the
+pt-BR is the first language of alerts. The author writes it by hand, with the EN text in the
 same change.
 
 If the `ptbr-writer` skill is available, apply it, and stop reading here. Use level `estrito`

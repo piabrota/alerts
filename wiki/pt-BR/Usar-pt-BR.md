@@ -22,14 +22,14 @@ just py-build                               # gera o pacote Python
 
 ## Pacote Python
 
-O `just py-build` gera o pacote com o maturin. O módulo se chama `smart_alerts`.
+O `just py-build` gera o pacote com o maturin. O módulo se chama `piabrota_alerts`.
 
 ```python
-import smart_alerts
+import piabrota_alerts
 
-smart_alerts.__version__       # a versão do pacote
-smart_alerts.v0_ufs()          # ['PR', 'SC', 'RS']
-smart_alerts.parse_uf(" rs ")  # 'RS'
+piabrota_alerts.__version__       # a versão do pacote
+piabrota_alerts.v0_ufs()          # ['PR', 'SC', 'RS']
+piabrota_alerts.parse_uf(" rs ")  # 'RS'
 ```
 
 - A função `v0_ufs` devolve os estados que a versão 0 atende.

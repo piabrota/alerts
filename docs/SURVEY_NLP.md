@@ -105,7 +105,7 @@ The sizes are the fp32 weights. A quantized ONNX export is usually several times
 [OLLAYA](https://github.com/ollaya-dev/ollaya) (Apache-2.0) serves GLiClass, NLI and other
 decision models behind one local API and an MCP server. Its CUDA build for Linux is 1391 MB.
 Use it when you want the models as a service. Use `ort` or `gline-rs` when you want them inside
-the smart-alerts binary.
+the alerts binary.
 
 ### Tier 3: small LLM
 
