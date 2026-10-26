@@ -1,6 +1,6 @@
 <div align="center">
 
-<img alt="A wave that rings a bell: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
+<img alt="A Fibonacci wave that rings a bell: an original line drawing" src="docs/drawings/wave.svg" width="320"/>
 
 # ialerts
 
@@ -179,7 +179,7 @@ gives the license and the copyright of each file, and the citation rules for age
 | What | Terms |
 |---|---|
 | The code and the documentation | [MPL-2.0](LICENSE) |
-| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository |
+| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository: a Fibonacci spiral that `docs/drawings/wave.py` draws |
 | The source data | the terms of each agency ([`docs/SOURCES.md`](docs/SOURCES.md)): INMET is public domain with citation; CPTEC/INPE forbids commercial use without authorization |
 | AstrBot and its plugins | AGPL-3.0, their own repositories; nothing here vendors their code |
 
