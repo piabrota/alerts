@@ -1,0 +1,16 @@
+# The static site: `just build` writes serve/alerts/, the tree that piabrota.art/alerts/ serves.
+set shell := ["bash", "-euo", "pipefail", "-c"]
+out := "serve/alerts"
+
+default:
+    @just --list
+
+# The page, its style, the drawings and the code graph.
+build:
+    rm -rf serve && mkdir -p {{out}}
+    gleam run --no-print-progress > {{out}}/index.html
+    grep -qF '<h1>ialerts</h1>' {{out}}/index.html
+    cp static/style.css ../docs/drawings/wave.svg ../docs/img/fluxo-alerta.png {{out}}/
+    code-graph extract .. --out {{out}}/grafo --exclude vendor --exclude target --exclude build --exclude site --exclude scripts --exclude verbs --title smart-alerts
+    test -s {{out}}/grafo/graph.html
+    @echo "site: {{out}}/index.html"
