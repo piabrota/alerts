@@ -27,9 +27,9 @@ The bootstrap frontend is React with Vite and React Router. It has no style shee
 `3-register-sent.png` used a test address (`teste@example.com`) on a local SQLite database: no
 email was sent.
 
-## What ialerts would keep
+## What alerts would keep
 
-| Loco part | ialerts | Why |
+| Loco part | alerts | Why |
 |---|---|---|
 | Generators, `doctor`, scheduler, tasks | keep, as `just` recipes (skills `generate`, `diagnose`, `schedule`) | one command per job |
 | Users, JWT auth, sign-up pages | drop in v0 | the v0 channels (Discord, Atom feed) have no accounts |

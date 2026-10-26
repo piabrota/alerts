@@ -1,9 +1,9 @@
 <!-- reading-time: 2 min -->
-# ialerts
+# alerts
 
-O ialerts é uma plataforma de alertas genérica. O nome de código do projeto é `smart-alerts`.
+O alerts é uma plataforma de alertas genérica. O nome de código do projeto é `smart-alerts`.
 
-O ialerts coleta alertas de fontes oficiais, filtra os alertas e entrega os alertas. Um risco, uma
+O alerts coleta alertas de fontes oficiais, filtra os alertas e entrega os alertas. Um risco, uma
 região ou um canal é um módulo. O núcleo não muda quando alguém adiciona um módulo.
 
 ## A versão 0
@@ -24,11 +24,11 @@ mensagem de teste.
 
 ## Princípios
 
-- **Só fontes oficiais.** Um alerta vem de um órgão oficial. O ialerts nunca inventa um alerta,
+- **Só fontes oficiais.** Um alerta vem de um órgão oficial. O alerts nunca inventa um alerta,
   uma área, um horário ou uma ação que a fonte não diz.
 - **Identificação honesta.** Toda requisição HTTP envia o User-Agent `smart-alerts/<versão>`. O
-  ialerts nunca se passa por um navegador.
-- **Aberto por princípio.** O ialerts usa padrões abertos (Atom, CAP 1.2), só dependências FOSS e
+  alerts nunca se passa por um navegador.
+- **Aberto por princípio.** O alerts usa padrões abertos (Atom, CAP 1.2), só dependências FOSS e
   só modelos locais. Uma API paga nunca é obrigatória.
 
 ## Páginas

@@ -1,7 +1,7 @@
 <!-- reading-time: 4 min -->
 # Arquitetura
 
-O ialerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`.
+O alerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`.
 
 | Crate | Tipo | Papel |
 |---|---|---|
@@ -46,10 +46,10 @@ O desenho segue o artigo [Object-Oriented Harness](https://arxiv.org/abs/2610.28
   `try_fold`.
 - O núcleo tem dois estágios: `only_ufs` (mantém os alertas de certos estados) e `min_severity`
   (mantém os alertas a partir de uma severidade).
-- Uma especialização compõe um estágio novo. O ialerts não usa hierarquias de traits parecidas com
+- Uma especialização compõe um estágio novo. O alerts não usa hierarquias de traits parecidas com
   herança.
 
-| Harness orientado a objetos | ialerts |
+| Harness orientado a objetos | alerts |
 |---|---|
 | Uma subclasse sobrescreve um método | Um `Stage` novo envolve o pipeline: `Harness::then` |
 | `super()` | Os estágios anteriores na composição |
@@ -59,7 +59,7 @@ O desenho segue o artigo [Object-Oriented Harness](https://arxiv.org/abs/2610.28
 
 ## Modelos locais, no futuro
 
-Algumas fontes publicam texto livre (boletins, PDFs). Para essas fontes, o ialerts vai usar modelos
+Algumas fontes publicam texto livre (boletins, PDFs). Para essas fontes, o alerts vai usar modelos
 abertos que rodam na máquina local. Cada modelo é um estágio.
 
 | Runtime | Licença | Uso | Estado |

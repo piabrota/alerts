@@ -1,7 +1,7 @@
 <!-- reading-time: 2 min -->
 # Fontes
 
-Os dados do Brasil estão espalhados. No ialerts, cada fonte é um crate próprio,
+Os dados do Brasil estão espalhados. No alerts, cada fonte é um crate próprio,
 `crates/smart-alerts-source-<id>`. Esse crate transforma os dados do órgão em alertas. Uma fonte
 nova ou um estado novo adiciona um crate e não muda o núcleo.
 

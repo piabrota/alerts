@@ -25,7 +25,7 @@ agree, the orange line runs inside the blue line.
 
 ### Side by side
 
-| ialerts wave | Ammonite |
+| alerts wave | Ammonite |
 |---|---|
 | <img src="wave.svg" width="320" alt="A Fibonacci wave and a bell"/> | <a href="https://www.desmos.com/calculator/z7zooq9zsh"><img src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320" alt="Ammonite, by Harry Chen, in Desmos"/></a> |
 | *Fibonacci wave*, Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026. MPL-2.0. | *Ammonite*, Harry Chen ([@harry7557558](https://github.com/harry7557558)), [Desmos graph](https://www.desmos.com/calculator/z7zooq9zsh). 1st place, 2021 Desmos Global Math Art Contest. |

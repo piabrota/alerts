@@ -1,5 +1,5 @@
 <!-- reading-time: 12 min -->
-# ialerts
+# alerts
 
 🇬🇧 [Read in English](README.md) · nome de código: `smart-alerts`
 
@@ -12,10 +12,10 @@ Alertas do século 22.
 
 ## em um minuto
 
-- **O ialerts é uma plataforma de alertas genérica.** Ele coleta alertas de fontes oficiais,
+- **O alerts é uma plataforma de alertas genérica.** Ele coleta alertas de fontes oficiais,
   filtra os alertas e entrega os alertas. Um risco, uma região ou um canal é um módulo: o núcleo
   não muda quando alguém adiciona um módulo.
-- **Só fontes oficiais.** Um alerta vem de um órgão oficial. O ialerts nunca inventa um alerta,
+- **Só fontes oficiais.** Um alerta vem de um órgão oficial. O alerts nunca inventa um alerta,
   uma área, um horário ou uma ação que a fonte não diz.
 - **O primeiro risco é inundação no Brasil.** A v0 atende a Região Sul: Paraná (PR),
   Santa Catarina (SC) e Rio Grande do Sul (RS).
@@ -95,16 +95,16 @@ feed, com o mesmo texto. O feed não depende de empresa: Atom e CAP são padrõe
 tem o mesmo formato do feed nacional da Defesa Civil (IDAP), e qualquer leitor de feed abre o
 arquivo. Um alerta de teste sai com `<status>Test</status>`.
 
-## quem vai usar o ialerts
+## quem vai usar o alerts
 
-| Consumidor | O que é | Como lê o ialerts | Situação |
+| Consumidor | O que é | Como lê o alerts | Situação |
 |---|---|---|---|
 | Discord | O servidor da v0, que já existe | webhook (push) | v0 |
 | Qualquer leitor de feed | Atom (RFC 4287) com CAP 1.2 em cada entrada | o arquivo do feed (pull) | v0 |
 | [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot para apps de mensagem (AGPL-3.0) | o pacote Python `smart-alerts` num plugin | planejado |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | Plugin de alertas de desastre para o AstrBot: terremoto, tsunami, tempo (AGPL-3.0) | o pacote Python ou o feed, para alertas do Brasil | planejado |
 
-Um plugin chama o pacote: o ialerts não copia código AGPL. Mais em
+Um plugin chama o pacote: o alerts não copia código AGPL. Mais em
 [`docs/REFERENCES.md`](docs/REFERENCES.md).
 
 ## arquitetura

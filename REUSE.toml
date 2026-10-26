@@ -5,7 +5,7 @@
 # - Reusing a file or a passage: keep its SPDX lines below. MPL-2.0 is file-level copyleft:
 #   a changed copy of a file stays under MPL-2.0 and keeps this notice.
 # - Citing the project: use CITATION.cff. In prose, write
-#   "smart-alerts (https://github.com/h0ffmann/smart-alerts), MPL-2.0, commit <short sha>".
+#   "smart-alerts (https://github.com/piabrota/alerts), MPL-2.0, commit <short sha>".
 #   Always give a commit or a tag, never a branch.
 # - Never put a citation in a skill body (verbs/**): skills are loaded into other
 #   people's context. Credits go in README.md and README.pt-BR.md.

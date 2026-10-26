@@ -16,9 +16,9 @@
 </tr>
 </table>
 
-# ialerts
+# alerts
 
-<sub>22nd century alerts · code name <code>smart-alerts</code> · <a href="#in-one-minute">in one minute</a> · <a href="#sources">sources</a> · <a href="#channels">channels</a> · <a href="#who-will-use-ialerts">who uses it</a> · <a href="#architecture">architecture</a> · <a href="#how-to-cite">cite</a> · <a href="README.pt-BR.md">português</a></sub>
+<sub>22nd century alerts · code name <code>smart-alerts</code> · <a href="#in-one-minute">in one minute</a> · <a href="#sources">sources</a> · <a href="#channels">channels</a> · <a href="#who-will-use-alerts">who uses it</a> · <a href="#architecture">architecture</a> · <a href="#how-to-cite">cite</a> · <a href="README.pt-BR.md">português</a></sub>
 
 [![status: bootstrap](https://img.shields.io/badge/status-bootstrap-FF4F00?style=flat-square)](#in-one-minute)
 [![hazard: floods](https://img.shields.io/badge/first%20hazard-floods-1682D4?style=flat-square)](#in-one-minute)
@@ -31,16 +31,16 @@
 
 ## In one minute
 
-- **ialerts is a generic alert platform.** It collects alerts from official sources, filters
+- **alerts is a generic alert platform.** It collects alerts from official sources, filters
   the alerts, and delivers the alerts. A hazard, a region or a channel is a module: the core does
   not change when a module is added.
-- **Only official sources.** An alert comes from an authoritative agency. ialerts never invents an
+- **Only official sources.** An alert comes from an authoritative agency. alerts never invents an
   alert, an area, a time or an action that the source does not state.
 - **The first hazard is floods in Brazil.** v0 serves the South region: Paraná (PR),
   Santa Catarina (SC) and Rio Grande do Sul (RS).
 - **v0 delivers a Discord service** and an Atom feed with CAP 1.2 alerts, with the same alerts
   and the same text. The Python package `smart-alerts` exists from the start, for an
-  [AstrBot](#who-will-use-ialerts) plugin.
+  [AstrBot](#who-will-use-alerts) plugin.
 - **Open by design.** Open standards (Atom, CAP 1.2), FOSS dependencies only, local models only.
   A paid API is never required.
 - **Status:** bootstrap. No source is implemented. The service only sends a test message.
@@ -113,16 +113,16 @@ with the same text. The feed depends on no company: Atom and CAP are open standa
 the same shape as the national Civil Defense feed (IDAP), and any feed reader opens the file. A
 test alert has `<status>Test</status>`.
 
-## Who will use ialerts
+## Who will use alerts
 
-| Consumer | What it is | How it reads ialerts | Status |
+| Consumer | What it is | How it reads alerts | Status |
 |---|---|---|---|
 | [Discord](https://discord.com/developers/docs/resources/webhook) | The v0 server, which already exists | webhook (push) | v0 |
 | Any feed reader | Atom (RFC 4287) with CAP 1.2 in each entry | the feed file (pull) | v0 |
 | [AstrBot](https://github.com/AstrBotDevs/AstrBot) | An open-source chatbot platform for messaging apps (AGPL-3.0) | the Python package `smart-alerts` in a plugin | planned |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | A disaster warning plugin for AstrBot: earthquakes, tsunamis, weather (AGPL-3.0) | the Python package or the feed, for alerts from Brazil | planned |
 
-A plugin calls the package: ialerts copies no AGPL code. More in
+A plugin calls the package: alerts copies no AGPL code. More in
 [`docs/REFERENCES.md`](docs/REFERENCES.md) (pt-BR).
 
 ## Architecture

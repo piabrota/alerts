@@ -72,12 +72,12 @@ docs-stale:
 wiki-sync:
     #!/usr/bin/env bash
     set -euo pipefail
-    if [ "$(gh api repos/h0ffmann/smart-alerts --jq .private)" = "true" ]; then
+    if [ "$(gh api repos/piabrota/alerts --jq .private)" = "true" ]; then
         echo "The repo is private: the Wiki is deployed only after it is public (issue #1)." >&2
         exit 1
     fi
     tmp=$(mktemp -d)
-    git clone -q https://github.com/h0ffmann/smart-alerts.wiki.git "$tmp"
+    git clone -q https://github.com/piabrota/alerts.wiki.git "$tmp"
     rsync -a --delete --exclude .git wiki/ "$tmp/"
     git -C "$tmp" add -A
     git -C "$tmp" commit -qm "sync wiki/ from $(git rev-parse --short HEAD)" || echo "wiki: nothing to sync"

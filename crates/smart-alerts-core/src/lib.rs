@@ -19,7 +19,7 @@ macro_rules! ufs {
 pub const USER_AGENT: &str = concat!(
     "smart-alerts/",
     env!("CARGO_PKG_VERSION"),
-    " (+https://github.com/h0ffmann/smart-alerts)"
+    " (+https://github.com/piabrota/alerts)"
 );
 
 impl Uf {

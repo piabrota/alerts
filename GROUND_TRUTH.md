@@ -22,7 +22,7 @@ sources, filters them, and delivers them.
   rewrite alerts per channel.
 - **Python interface now:** `smart-alerts-py` is a pip package from day one. The long-term
   consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
-- **Codeberg mirror without AI trace:** `codeberg.org/piabrota/ialerts` holds the code with no
+- **Codeberg mirror without AI trace:** `codeberg.org/piabrota/alerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
   `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
   only with `just export-codeberg <out-dir>` (Rust, `scripts/export-codeberg/`): it fails when a
@@ -199,7 +199,7 @@ ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs diff
 | ptbr-tools (`ptbr reading-time`) | `just reading-time` | Writes the reading time of every file for humans |
 | Archify (`vendor/archify`, MIT, pinned `2ab3cae`) | `just figure-init`, `just figure`, `just figure-check` | Draws `docs/archify/<slug>.json` to `docs/img/<slug>.png`, with picasso's look |
 | code-graph (graphify's schema) | `just graph` | The code graph of this repo: `build/graph/graph.html` |
-| gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve`, `just deploy-site` | The static site in `site/`: the home of piabrota.art and ialerts under `/alerts/`, on Codeberg Pages |
+| gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve`, `just deploy-site` | The static site in `site/`: the home of piabrota.art and alerts under `/alerts/`, on Codeberg Pages |
 
 - The Desmos support stays: `just wave` (the Rust binary `wave`, crate `smart-alerts-drawings`)
   writes `wave.svg` and `wave.desmos.json`, and `just desmos-gif` records a Desmos animation
