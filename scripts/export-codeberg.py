@@ -4,7 +4,7 @@
 Usage: python3 -I scripts/export-codeberg.py <out-dir> [<git-ref>]
 
 Writes the tree of <git-ref> (default HEAD) into <out-dir>, without the agent files, and with
-AGENTS.md as CONTRIBUTING.md and the docs skills as docs/style/<lang>.md. The script fails when a
+GROUND_TRUTH.md as CONTRIBUTING.md and each skill as docs/guides/<name>.md. The script fails when a
 trace remains. It never writes git history: commit the result with a plain message and no
 co-author trailer.
 """
@@ -18,18 +18,8 @@ import tarfile
 from pathlib import Path
 
 DROP = ["CLAUDE.md", ".claude", "opencode.json", ".mcp.json", "scripts/export-codeberg.py"]
-TRACE = re.compile(r"claude|anthropic|opencode|AGENTS\.md|\bAI agents?\b|co-authored-by|SKILL\.md",
-                   re.IGNORECASE)
-LANGS = ["pt-br", "en", "zh", "ja"]
-
-
-def sub(path: Path, pairs: list[tuple[str, str]]) -> None:
-    text = path.read_text(encoding="utf-8")
-    for old, new in pairs:
-        if old not in text:
-            sys.exit(f"export: expected text not found in {path}: {old!r}")
-        text = text.replace(old, new)
-    path.write_text(text, encoding="utf-8")
+TRACE = re.compile(r"claude|anthropic|opencode|AGENTS\.md|GROUND_TRUTH|\bAI agents?\b|co-authored-by|"
+                   r"SKILL\.md|\bskills?\b", re.IGNORECASE)
 
 
 def main() -> None:
@@ -46,23 +36,19 @@ def main() -> None:
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
         tar.extractall(out, filter="data")
 
-    # The docs skills become plain style guides.
-    style = out / "docs" / "style"
-    style.mkdir(parents=True, exist_ok=True)
-    for lang in LANGS:
-        src = out / ".claude" / "skills" / f"docs-{lang}" / "SKILL.md"
-        body = src.read_text(encoding="utf-8").split("---\n", 2)[2].lstrip()
-        body = re.sub(r"^# docs-(\S+)", r"# Style guide: \1", body, count=1, flags=re.M)
-        body = body.replace("Give the user a literal back-translation", "Give the reviewer a literal back-translation")
-        body = body.replace("tell\n  the user which pages need the `docs-zh` or `docs-ja` skill.",
-                            "update\n  those pages with `docs/style/zh.md` and `docs/style/ja.md`.")
+    # Each skill becomes a plain guide: docs/guides/<name>.md.
+    guides = out / "docs" / "guides"
+    guides.mkdir(parents=True, exist_ok=True)
+    for skill in sorted((out / ".claude" / "skills").glob("*/SKILL.md")):
+        body = skill.read_text(encoding="utf-8").split("---\n", 2)[2].lstrip()
         body = body.replace(
             "If the `ptbr-writer` skill is available, apply it, and stop reading here. Use level `estrito`\n"
             "for alert messages and runbooks, and level `descritivo` for README and wiki pages. The rules below\n"
             "are the fallback when that skill is not installed.",
             "Use level `estrito` for alert messages and runbooks, and level `descritivo` for README and\n"
             "wiki pages.")
-        (style / f"{lang}.md").write_text(body, encoding="utf-8")
+        body = re.sub(r"\bthe user\b", "the reviewer", body)
+        (guides / f"{skill.parent.name}.md").write_text(body, encoding="utf-8")
 
     for name in DROP:
         p = out / name
@@ -74,40 +60,46 @@ def main() -> None:
     if scripts.is_dir() and not any(scripts.iterdir()):
         scripts.rmdir()
 
+    gitignore = out / ".gitignore"
+    gitignore.write_text(re.sub(r"\n# Agent instructions live in GROUND_TRUTH\.md\nAGENTS\.md\n", "\n",
+                                gitignore.read_text(encoding="utf-8")), encoding="utf-8")
+
+    (out / "GROUND_TRUTH.md").rename(out / "CONTRIBUTING.md")
     contributing = out / "CONTRIBUTING.md"
-    (out / "AGENTS.md").rename(contributing)
     text = contributing.read_text(encoding="utf-8")
-    text = re.sub(r"\A# AGENTS\.md\n\n.*?\n\n", "# Contributing\n\nRules for everyone who works on "
+    text = re.sub(r"\A# GROUND_TRUTH\.md\n\n.*?\n\n", "# Contributing\n\nRules for everyone who works on "
                   "`smart-alerts`.\n\n", text, count=1, flags=re.S)
     text = re.sub(r"^- \*\*Codeberg mirror without AI trace:\*\*.*?(?=^- |^\n|^## )", "", text,
                   flags=re.M | re.S)
     text = text.replace("MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` (Claude Code) "
                         "and `opencode.json` (OpenCode).", "MCP server (rmcp, stdio): `just mcp`.")
-    text = text.replace("Four languages, each with a controlled-language skill in `.claude/skills/`:",
-                        "Four languages, each with a controlled-language style guide in `docs/style/`:")
-    text = text.replace("| Language | Skill |", "| Language | Style guide |")
-    for lang in LANGS:
-        text = text.replace(f"| `docs-{lang}` |", f"| `docs/style/{lang}.md` |")
-    text = text.replace("follows `docs-pt-br` (`estrito`)", "follows `docs/style/pt-br.md` (`estrito`)")
-    text = text.replace("level of `docs-pt-br`", "level of `docs/style/pt-br.md`")
     contributing.write_text(text, encoding="utf-8")
 
-    for f in ["README.md", "README.en.md", "docs/MAROLA.md", "docs/SURVEY_NLP.md"]:
-        p = out / f
-        p.write_text(p.read_text(encoding="utf-8").replace("AGENTS.md", "CONTRIBUTING.md"),
-                     encoding="utf-8")
-    sub(out / "README.md", [("as regras de citação para agentes", "as regras de citação")])
-    sub(out / "README.en.md", [("the citation rules for agents", "the citation rules")])
-    sub(out / "REUSE.toml", [
-        ("# Agents: how to cite smart-alerts", "# How to cite smart-alerts"),
-        ("# - Never put a citation in a skill body (.claude/skills/**): skills are loaded into other\n"
-         "#   people's context. Credits go in README.md and README.en.md.\n",
-         "# - Credits go in README.md and README.en.md.\n"),
-    ])
+    # Text files: the agent names and the skill vocabulary become plain names.
+    for p in sorted(out.rglob("*")):
+        if not p.is_file() or p.name.startswith("LICENSE") or "LICENSES" in p.parts:
+            continue
+        try:
+            t = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        t = t.replace("GROUND_TRUTH.md", "CONTRIBUTING.md")
+        t = re.sub(r"`?\.claude/skills/(\*\*)?`?", "`docs/guides/`", t)
+        t = re.sub(r"`docs/guides/`([a-z-]+)/`?", r"`docs/guides/\1.md`", t)
+        t = t.replace("the citation rules for agents", "the citation rules")
+        t = t.replace("as regras de citação para agentes", "as regras de citação")
+        t = t.replace("# Agents: how to cite smart-alerts", "# How to cite smart-alerts")
+        t = t.replace("# - Never put a citation in a skill body (`docs/guides/`): skills are loaded into other\n"
+                      "#   people's context. Credits go in", "# - Credits go in")
+        t = re.sub(r"\bskills\b", "guides", t)
+        t = re.sub(r"\bskill\b", "guide", t)
+        t = re.sub(r"\bSkill\b", "Guide", t)
+        p.write_text(t, encoding="utf-8")
 
     found = []
     for p in sorted(out.rglob("*")):
-        if ".git" in p.relative_to(out).parts or not p.is_file():
+        if ".git" in p.relative_to(out).parts or not p.is_file() or p.name.startswith("LICENSE") \
+                or "LICENSES" in p.parts:
             continue
         if TRACE.search(str(p.relative_to(out))):
             found.append(f"{p.relative_to(out)}: path")
