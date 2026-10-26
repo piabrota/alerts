@@ -102,7 +102,7 @@ flowchart LR
 **How to read.** Each arrow goes from the crate that uses to the crate that is used.
 
 **Not shown.** The source crates do not exist yet. The harness composes pure stages
-(`Fn(Alert) -> Option<Alert>`): see `AGENTS.md`.
+(`Fn(Alert) -> Option<Alert>`): see `GROUND_TRUTH.md`.
 
 **Evidence.** The `Cargo.toml` of each crate in `crates/`.
 

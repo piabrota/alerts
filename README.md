@@ -103,7 +103,7 @@ flowchart LR
 **Como ler.** Cada seta vai do crate que usa para o crate usado.
 
 **Fora da figura.** As crates de fonte ainda não existem. O harness compõe estágios puros
-(`Fn(Alert) -> Option<Alert>`): veja `AGENTS.md`.
+(`Fn(Alert) -> Option<Alert>`): veja `GROUND_TRUTH.md`.
 
 **Evidência.** `Cargo.toml` de cada crate em `crates/`.
 

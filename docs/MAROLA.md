@@ -92,7 +92,7 @@ field, and loud failure on an undocumented endpoint.
 
 ## Conflict: a failed fetch
 
-`AGENTS.md` says that a module on an undocumented endpoint must fail loudly, never silently.
+`GROUND_TRUTH.md` says that a module on an undocumented endpoint must fail loudly, never silently.
 MIP-0034 task 2 does the opposite for INMET: a failed fetch gives the same output as "no active
 warning". A user then cannot see that a real warning is missing.
 

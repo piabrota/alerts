@@ -144,7 +144,7 @@ that runs on every template, with no model.
 | `rust-bert` | Apache-2.0, but needs libtorch: too heavy. |
 | LanguageTool | LGPL-2.1, but needs Java and a large download. Vale covers the controlled-language rules. |
 | Llama and Gemma models | Their licenses are not OSI-approved. Qwen3.5 is Apache-2.0. |
-| Any paid API | AGENTS.md: never required. |
+| Any paid API | GROUND_TRUTH.md: never required. |
 
 ## Recommendation
 

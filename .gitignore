@@ -27,3 +27,6 @@ rustc-ice-*.txt
 .venv/
 __pycache__/
 *.whl
+
+# Agent instructions live in GROUND_TRUTH.md
+AGENTS.md

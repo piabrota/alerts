@@ -1,7 +1,8 @@
-# AGENTS.md
+# GROUND_TRUTH.md
 
 Instructions for AI agents working on `smart-alerts`. Claude Code reads this file through
-`CLAUDE.md`. OpenCode reads it directly. Both read the skills in `.claude/skills/`.
+`CLAUDE.md`. OpenCode reads it through `instructions` in `opencode.json`. Both read the skills in
+`.claude/skills/`. `AGENTS.md` is in `.gitignore`: never commit a file with that name.
 
 ## Goal
 

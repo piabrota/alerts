@@ -5,7 +5,7 @@ a list of sources: alert sources are in `docs/SOURCES.md`.
 
 An entry here is not adopted. Each entry states what the resource is, its license and cost, and
 its relevance. A new dependency must still pass `just deny`, and a paid resource needs explicit
-human confirmation (`AGENTS.md`).
+human confirmation (`GROUND_TRUTH.md`).
 
 Checked on 2026-10-22.
 
