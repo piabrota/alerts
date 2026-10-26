@@ -1,0 +1,45 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+
+
+    - name: tf-siesta
+      # You may pin to the exact commit or the version.
+      # uses: Typeform/siesta@ef96b0b260f3a98848aee6b847288a9eb7b4bd20
+      uses: Typeform/siesta@v1.3
+      with:
+        # string, contents of credentials.json
+        google-credentials: 
+        # string, contents of token.json
+        google-token: 
+        # string, the calendar id to check. If not specified, will take the primary calendar of that account
+        google-calendar-id: # optional
+        # string, in case the calendar is busy with events at the given timeframe, this message will be displayed in the github error
+        custom-calendar-busy-message: # optional
+        # string, in case the calendar is not busy with events at the given timeframe, this message will be displayed in the console log
+        custom-calendar-not-busy-message: # optional
+        # boolean, controls if the build should fail if the calendar is busy. Needs hard-failure in true. default is true
+        fail-if-busy: # optional
+        # boolean, if true, fails the build on any error. If false, throws an warning instead.
+        hard-failure: # optional
+        # the interval of time, starting from the moment of execution, on which to check that the calendar is busy. Default 0.1 seconds.
+        minutes-interval: # optional
