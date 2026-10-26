@@ -36,7 +36,8 @@ sources, filters them, and delivers them.
   the `estrito` level of `write-pt-br`, and ends with `verbs/open-pr/footer.md`. One PR per request:
   new work for an open PR goes into that PR.
 - **A PR that changes an image uses the `open-pr-images` verb** (bipri): the `open-pr` body plus
-  before and after images, committed in `docs/screenshots/<topic>/`.
+  before and after images. The images are temporary: they live in the branch
+  `pr-images/<PR number>`, never in the PR diff.
 - **Identify honestly.** Every HTTP request sends `smart_alerts_core::USER_AGENT`
   (`smart-alerts/<version> (+repo URL)`). Never send a browser User-Agent and never copy another
   client's name, not even as a fallback. When a source refuses the honest name, stop and tell a

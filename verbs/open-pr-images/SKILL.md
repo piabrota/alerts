@@ -13,10 +13,10 @@ O `open-pr-images` (o bipri) é o verbo `open-pr` (o bipr) com imagens. Siga tod
 
 1. Renderize o estado do branch base (`origin/<base>`) e o estado do HEAD, com o mesmo tamanho e
    o mesmo fundo. Use o Chromium do Playwright para SVG, HTML e páginas.
-2. Grave as imagens em `docs/screenshots/<tema>/`: `before.png`, `after.png` e, quando a imagem
-   prova uma regra (uma medida, uma grade, uma proporção), uma terceira imagem com essa prova.
-3. Faça o commit das imagens no mesmo branch. Uma imagem fora do repositório não entra no PR.
-4. Um arquivo novo mantém o `just reuse` verde.
+2. As imagens são temporárias: `before.png`, `after.png` e, quando a imagem prova uma regra (uma
+   medida, uma grade, uma proporção), uma terceira imagem com essa prova.
+3. Nunca faça o commit dessas imagens no branch do PR. Faça o commit delas no branch
+   `pr-images/<número do PR>`, que nunca entra no `main`. O corpo do PR aponta para esse branch.
 
 ## 2. Escreva o corpo
 
@@ -43,7 +43,7 @@ mudou** e de **What changed**:
 <one sentence: what the proof image shows>
 ```
 
-- A URL de uma imagem é `https://github.com/<owner>/<repo>/blob/<branch>/<caminho>?raw=true`. Essa
+- A URL de uma imagem é `https://github.com/<owner>/<repo>/blob/pr-images/<número do PR>/<caminho>?raw=true`. Essa
   URL abre num repositório privado para quem tem acesso.
 - As duas metades mostram as mesmas imagens. Só o texto muda de idioma.
 - A imagem não substitui o texto: o **Resumo** diz o que mudou sem a imagem.

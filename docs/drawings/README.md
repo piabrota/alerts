@@ -47,8 +47,8 @@ y up, so each y value is `180 - y` of the SVG.
 3. Run `Calc.setState(<the content of wave.desmos.json>)`.
 
 ⚠ Not checked: the Desmos page could not be opened when this file was made. The check was a
-local one: `docs/screenshots/wave/desmos-overlay.png` draws each Desmos expression (orange) over
-the SVG (blue), and the two match. Desmos is a free service but not FOSS: the file is data, and
+local one: `python3 docs/drawings/wave.py desmos` writes the Desmos state, and the default
+`wave.svg` draws each Desmos expression (orange) over the SVG geometry (blue). The two match. Desmos is a free service but not FOSS: the file is data, and
 smart-alerts does not depend on Desmos.
 
 ### Credits
