@@ -157,6 +157,8 @@ in `wiki/`. The GitHub Wiki gets the pages only after the repository is public (
 ## Credits
 
 - The layout of this README comes from [picasso](https://github.com/h0ffmann/picasso).
+- The wave joins the Fibonacci spiral and Katsushika Hokusai's *The Great Wave off Kanagawa*
+  (c. 1831). Other artists drew Fibonacci waves before: credits in [`docs/drawings/README.md`](docs/drawings/README.md).
 - The app conventions (generators, doctor, scheduler, tasks) follow [Loco](https://loco.rs)
   (Apache-2.0). Screenshots of its bootstrap are in [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
 - Alert maps will use [MapLibre](https://maplibre.org) (BSD-3-Clause) and OpenStreetMap data (ODbL).
@@ -179,7 +181,7 @@ gives the license and the copyright of each file, and the citation rules for age
 | What | Terms |
 |---|---|
 | The code and the documentation | [MPL-2.0](LICENSE) |
-| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository: a Fibonacci spiral that `docs/drawings/wave.py` draws |
+| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository: a Fibonacci spiral that `docs/drawings/wave.py` draws, also as a Desmos file. The idea follows Hokusai's *Great Wave* and earlier Fibonacci waves by other artists: see [`docs/drawings/README.md`](docs/drawings/README.md) |
 | The source data | the terms of each agency ([`docs/SOURCES.md`](docs/SOURCES.md)): INMET is public domain with citation; CPTEC/INPE forbids commercial use without authorization |
 | AstrBot and its plugins | AGPL-3.0, their own repositories; nothing here vendors their code |
 

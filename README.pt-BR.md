@@ -147,6 +147,8 @@ A documentação existe em quatro idiomas: pt-BR, inglês, chinês e japonês. A
 ## créditos
 
 - O layout do README em inglês vem do [picasso](https://github.com/h0ffmann/picasso).
+- A onda junta a espiral de Fibonacci e *A Grande Onda de Kanagawa*, de Katsushika Hokusai
+  (c. 1831). Outros artistas desenharam ondas de Fibonacci antes: os créditos estão em [`docs/drawings/README.md`](docs/drawings/README.md).
 - As convenções de app (geradores, doctor, agendador, tarefas) seguem o [Loco](https://loco.rs)
   (Apache-2.0). As capturas de tela do bootstrap estão em [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
 - Os mapas de alerta vão usar o [MapLibre](https://maplibre.org) (BSD-3-Clause) e dados do OpenStreetMap (ODbL).
