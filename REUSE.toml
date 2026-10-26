@@ -8,7 +8,7 @@
 #   "smart-alerts (https://github.com/h0ffmann/smart-alerts), MPL-2.0, commit <short sha>".
 #   Always give a commit or a tag, never a branch.
 # - Never put a citation in a skill body (.claude/skills/**): skills are loaded into other
-#   people's context. Credits go in README.md and README.en.md.
+#   people's context. Credits go in README.md and README.pt-BR.md.
 # - zh and ja wiki pages are translations, not sources. Cite the English page they name.
 
 version = 1
@@ -18,3 +18,9 @@ path = "**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 M.Hoffmann and the smart-alerts contributors"
 SPDX-License-Identifier = "MPL-2.0"
+
+[[annotations]]
+path = "docs/screenshots/loco-bootstrap/*.png"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the smart-alerts contributors; the pictured interface is the Loco bootstrap, © the Loco authors"
+SPDX-License-Identifier = "MPL-2.0 AND Apache-2.0"

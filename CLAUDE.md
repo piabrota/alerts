@@ -1,1 +1,1 @@
-@AGENTS.md
+@GROUND_TRUTH.md
