@@ -3,7 +3,7 @@
 <table>
 <tr>
 <td align="center"><img alt="A Fibonacci wave and a bell, by @h0ffmann: an original line drawing" src="docs/drawings/wave.svg" width="320"/></td>
-<td align="center"><a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, by Harry Chen, in Desmos" src="https://www.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a></td>
+<td align="center"><a href="https://www.desmos.com/calculator/z7zooq9zsh"><img alt="Ammonite, by Harry Chen, in Desmos" src="https://saved-work.desmos.com/calc_thumbs/production/z7zooq9zsh.png" width="320"/></a></td>
 </tr>
 <tr>
 <td align="center"><sub><i>Fibonacci wave</i>, Matheus Hoffmann (<a href="https://github.com/h0ffmann">@h0ffmann</a>), 2026</sub></td>
