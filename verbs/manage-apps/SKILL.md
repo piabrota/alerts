@@ -46,7 +46,8 @@ cemaden = "every 30s"            # at most 12 requests per minute
 inmet = "every 10m"
 ```
 
-The secrets are never in `app.toml`. `DISCORD_WEBHOOK_URL` and `FEED_PATH` come from the
+The desktop app (`docs/DESKTOP.md`) edits sources, channels and apps, and its `app_toml` action
+writes this file. The secrets are never in `app.toml`. `DISCORD_WEBHOOK_URL` and `FEED_PATH` come from the
 environment.
 
 ## Commands (planned recipes ⚠)
@@ -55,6 +56,8 @@ environment.
 |---|---|---|
 | New app | `just app-new <app>` | `generate` |
 | New source, stage or channel | `just generate <kind> <name>` | `generate` |
+| New CRUD resource (exists) | `just generate scaffold <name> <field:kind>...` | `generate` |
+| Configure apps in a window (exists) | `just desktop-dev` | `docs/DESKTOP.md` |
 | Check an app | `just diagnose <app>` | `diagnose` |
 | Poll the sources | `just app-start <app>` | `schedule` |
 | One-off job | `just app-task <app> <task>` | `schedule` |

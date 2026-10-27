@@ -1,4 +1,4 @@
-<!-- reading-time: 13 min -->
+<!-- reading-time: 15 min -->
 <div align="center">
 
 <table>
@@ -135,6 +135,8 @@ flowchart LR
     D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
     P["alerts-py<br/>Python package"] --> C
     M["alerts-mcp<br/>MCP server"] --> C
+    R["alerts-crud<br/>models, controllers"] --> C
+    T["desktop/app<br/>Tauri 2"] --> R
 ```
 
 <details open>
@@ -144,10 +146,10 @@ flowchart LR
 
 **How to read.** Each arrow goes from the crate that uses to the crate that is used.
 
-**Not shown.** The source crates do not exist yet. The harness composes pure stages
+**Not shown.** The source crates do not exist yet. The `alerts-scaffold` generator writes code into `alerts-crud` and depends on no crate. The harness composes pure stages
 (`Fn(Alert) -> Option<Alert>`): see `GROUND_TRUTH.md`.
 
-**Evidence.** The `Cargo.toml` of each crate in `crates/`.
+**Evidence.** The `Cargo.toml` of each crate in `crates/` and `desktop/`.
 
 </details>
 
@@ -183,7 +185,26 @@ just reading-time                           # write the reading time of every fi
 just figure                                 # draw docs/archify/*.json with Archify
 just graph                                  # the code graph: build/graph/graph.html
 just site                                   # the static site for piabrota.art/alerts/
+just desktop-dev                            # the desktop app (Tauri 2), with live reload
+just generate scaffold rivers slug:slug name:string   # a new CRUD resource in alerts-crud
 ```
+
+## Desktop app
+
+The desktop app configures apps in a window: the sources, the channels and the apps. It follows the
+CRUD conventions of Loco: each resource has a model, a controller and a migration. The app also lists
+the alerts that the sources delivered, next to a map. The app never creates an alert.
+
+- `crates/alerts-crud`: the models, the controllers and the migrations, on SQLite. Every operation
+  goes through `controllers::dispatch`.
+- `desktop/app`: Tauri 2. Its two commands (`modules`, `crud`) call `alerts-crud`.
+- `desktop/ui`: the interface, in Rust (Leptos, compiled to wasm32). It draws each page from the
+  spec of a resource, so a resource from `just generate scaffold` gets its page with no interface code.
+- The map uses MapLibre GL JS 5.24.0 and OpenFreeMap tiles: no key and no account.
+
+![The Apps page of the desktop app: the edit form of the app sul-enchentes](docs/screenshots/desktop/edit.png)
+
+More in [`docs/DESKTOP.md`](docs/DESKTOP.md).
 
 ## Documentation
 
@@ -203,7 +224,10 @@ to host the site at `piabrota.art/alerts` are in [`docs/HOSPEDAGEM.md`](docs/HOS
   (c. 1831). Other artists drew Fibonacci waves before: credits in [`docs/drawings/README.md`](docs/drawings/README.md).
 - The app conventions (generators, doctor, scheduler, tasks) follow [Loco](https://loco.rs)
   (Apache-2.0). Screenshots of its bootstrap are in [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
-- Alert maps will use [MapLibre](https://maplibre.org) (BSD-3-Clause) and OpenStreetMap data (ODbL).
+  The CRUD layout of `alerts-crud` (models, controllers, migrations, scaffold) also follows Loco.
+- The desktop map uses [MapLibre GL JS](https://maplibre.org) (BSD-3-Clause), [OpenFreeMap](https://openfreemap.org) tiles
+  and OpenStreetMap data (ODbL). The desktop app uses [Tauri](https://tauri.app) (Apache-2.0 or MIT) and
+  [Leptos](https://leptos.dev) (MIT).
 
 - The functional harness translates the
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) into function

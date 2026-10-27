@@ -4,10 +4,11 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-check
+check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-check desktop-check
 
 fmt:
     cargo fmt --all
+    cargo fmt --manifest-path desktop/Cargo.toml --all
     cargo fmt --manifest-path scripts/export-codeberg/Cargo.toml
 
 fmt-check:
@@ -213,6 +214,44 @@ wave:
 # Chromium (CHROME names the binary) and access to desmos.com.
 desmos-gif *args:
     cargo run -q --release -p alerts-desmos -- --out docs/drawings/ammonite-harry-chen.gif {{ args }}
+
+# New resource, source, stage or channel. Only `scaffold` exists today: `just generate scaffold rivers
+# slug:slug name:string level:int` writes the model, the controller and the migration of alerts-crud.
+generate kind *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{ kind }}" in
+        scaffold) cargo run -q -p alerts-scaffold --bin scaffold -- {{ args }}; cargo fmt -p alerts-crud;;
+        *) echo "generate: only scaffold exists; see the generate skill for the other kinds" >&2; exit 2;;
+    esac
+
+# MapLibre GL JS for the desktop map, pinned and checked by npm (desktop/ui/vendor, ignored by git).
+desktop-vendor:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    dir=desktop/ui/vendor/maplibre; tmp=$(mktemp -d)
+    (cd "$tmp" && npm pack --silent maplibre-gl@5.24.0 >/dev/null && tar -xzf maplibre-gl-5.24.0.tgz)
+    mkdir -p "$dir" && cp "$tmp"/package/dist/maplibre-gl.{js,css} "$tmp"/package/LICENSE.txt "$dir"/
+    rm -rf "$tmp"; echo "desktop-vendor: $dir (maplibre-gl 5.24.0)"
+
+# Run the desktop app with live reload: trunk serves the interface on :1420, Tauri opens it.
+desktop-dev: desktop-vendor
+    #!/usr/bin/env bash
+    set -euo pipefail
+    (cd desktop/ui && trunk serve) & trap "kill $!" EXIT
+    cargo run --manifest-path desktop/Cargo.toml -p alerts-desktop
+
+# Build the desktop binary with the interface inside: desktop/target/release/alerts-desktop.
+desktop-build: desktop-vendor
+    cd desktop/ui && trunk build --release
+    cargo build --release --manifest-path desktop/Cargo.toml -p alerts-desktop --features custom-protocol
+
+# The gate of desktop/: format, lints (the interface for wasm32), licenses. Part of `just check`.
+desktop-check:
+    cargo fmt --manifest-path desktop/Cargo.toml --all --check
+    cargo clippy --manifest-path desktop/Cargo.toml -p alerts-ui --target wasm32-unknown-unknown -- -D warnings
+    cargo clippy --manifest-path desktop/Cargo.toml -p alerts-desktop --all-targets -- -D warnings
+    cargo deny --manifest-path desktop/Cargo.toml check
 
 # Build the Codeberg copy without AI trace into OUT (empty, or only .git). Commit it as the author.
 export-codeberg out ref="HEAD":

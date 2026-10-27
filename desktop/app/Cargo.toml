@@ -1,0 +1,23 @@
+[package]
+name = "alerts-desktop"
+description = "The alerts desktop app: Tauri 2 around the alerts-crud controllers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+alerts-crud = { path = "../../crates/alerts-crud" }
+serde_json = "1.0.154"
+tauri = { version = "2.12.5", features = [] }
+
+[features]
+# Serve the built interface (desktop/ui/dist) from the binary. Without it, the app loads devUrl.
+custom-protocol = ["tauri/custom-protocol"]

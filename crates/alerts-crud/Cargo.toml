@@ -1,0 +1,17 @@
+[package]
+name = "alerts-crud"
+description = "Loco-style models, controllers and migrations for the alerts admin interface"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+alerts-core = { workspace = true }
+rusqlite = { version = "0.41.0", features = ["bundled"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+toml = "1.1.8"

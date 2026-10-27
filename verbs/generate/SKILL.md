@@ -16,6 +16,17 @@ skill first.
 | `source <id>` | `crates/alerts-source-<id>/` (lib), workspace member, `docs/SOURCES.md` row | `alerts-core` |
 | `stage <name>` | one function `pub fn <name>(...) -> Stage` and its tests | the other stages |
 | `channel <id>` | `crates/alerts-<id>/` (lib), workspace member | the harness output |
+| `scaffold <name> <field:kind>...` | `alerts-crud`: `models/<name>.rs`, `controllers/<name>.rs`, a migration, and one line at each `// scaffold:` marker | the other resources, the interface |
+
+## Scaffold
+
+`just generate scaffold <name> <field:kind>...` exists (crate `alerts-scaffold`). `<name>` is the plural
+snake_case table name. The kinds are `string`, `string?`, `text`, `url`, `slug`, `bool` and `int`.
+
+1. Run it, then write the pt-BR labels of `SPEC` and any other check in the model.
+2. Never edit a merged migration: a schema change is a new migration.
+3. The desktop interface draws the page from the spec. Do not add interface code for a CRUD page.
+4. A resource never creates an alert. Alerts come only from a source module (`models::alerts::record`).
 
 ## Source crate
 
