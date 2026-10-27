@@ -1,0 +1,15 @@
+[package]
+name = "alerts-source-mock"
+description = "A source of simulated test alerts, to try the harness and the channels without an agency"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+alerts-core = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }

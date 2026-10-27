@@ -24,7 +24,8 @@ Alertas do século 22.
   início. Um plugin AstrBot vai usar esse pacote no futuro.
 - **Aberto por princípio.** Padrões abertos (Atom, CAP 1.2), só dependências FOSS, só modelos
   locais. Uma API paga nunca é obrigatória.
-- **Estado:** bootstrap. Nenhuma fonte está implementada. O serviço só envia uma mensagem de teste.
+- **Estado:** bootstrap. Nenhuma fonte de um órgão está implementada. O serviço envia uma mensagem
+  de teste. O comando `alerts poll mock` envia alertas simulados de teste ao Discord e ao feed, pelo harness.
 
 ## fontes
 

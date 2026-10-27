@@ -28,6 +28,9 @@ rustc-ice-*.txt
 __pycache__/
 *.whl
 
+# The default database of the alerts service (ALERTS_DB)
+/alerts.db
+
 # Agent instructions live in GROUND_TRUTH.md
 AGENTS.md
 /build

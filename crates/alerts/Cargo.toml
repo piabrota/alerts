@@ -15,4 +15,5 @@ alerts-core = { workspace = true }
 alerts-crud = { workspace = true }
 alerts-feed = { workspace = true }
 alerts-rss = { workspace = true }
+alerts-source-mock = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros"] }

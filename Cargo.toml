@@ -23,4 +23,5 @@ alerts-core = { path = "crates/alerts-core" }
 alerts-feed = { path = "crates/alerts-feed" }
 alerts-rss = { path = "crates/alerts-rss" }
 alerts-crud = { path = "crates/alerts-crud" }
+alerts-source-mock = { path = "crates/alerts-source-mock" }
 tokio = "1.54.1"

@@ -56,6 +56,12 @@ mcp:
 test-message:
     cargo run -q -p alerts -- test-message
 
+# MOCK_ALERTS_PATH names a JSON file of mock alerts in place of the built-in scenarios;
+# crates/alerts-source-mock/tests/fixtures/alerts.json is an example. Each alert is delivered once per id.
+# Deliver the mock alerts (TESTE, CAP status Test) to DISCORD_WEBHOOK_URL and/or FEED_PATH.
+mock-alerts:
+    cargo run -q -p alerts -- poll mock
+
 # Hard rule: deliver one test alert to the official Marola Discord. Part of `just check`. The webhook
 # comes from MAROLA_DISCORD_WEBHOOK_URL and never enters the repository.
 marola-discord:

@@ -1,0 +1,15 @@
+[
+  {
+    "severity": "Moderate",
+    "ufs": ["SC"],
+    "headline": "nível simulado do rio acima da cota de alerta.",
+    "area": "Área simulada em Santa Catarina. Este alerta não é real."
+  },
+  {
+    "hazard": "Flood",
+    "severity": "Extreme",
+    "ufs": ["RS"],
+    "headline": "inundação simulada em área urbana.",
+    "area": "Área simulada no Rio Grande do Sul. Este alerta não é real."
+  }
+]

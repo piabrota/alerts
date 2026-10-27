@@ -126,6 +126,23 @@ means that the endpoint works, but the agency does not document it: it can chang
 - Every automatic client gets `403` (`cf-mitigated: challenge`), from inside and outside Brazil.
   The source gets no module until SIMEPAR publishes an API.
 
+## Mock source (tests only)
+
+`alerts-source-mock` is not an agency. It gives simulated alerts, so that a person can try the
+harness and the channels before a real source exists.
+
+| Input | Format | Auth | Status |
+|---|---|---|---|
+| built-in scenarios | five alerts: one per severity in PR, SC and RS, and one in SP that the v0 harness drops | none | done |
+| `MOCK_ALERTS_PATH` | JSON array; each item has `severity`, `ufs`, `headline`, `area`, and an optional `hazard` (default `Flood`) | none | done |
+
+- Every mock headline starts with `TESTE:`. The mock adds the prefix when it is missing.
+- The source id is `mock`, and the feed publishes a mock alert with `<status>Test</status>`.
+- Each run is a new simulated event: the alert ids hold the time of the run.
+- An empty or invalid mock file is an error, never an empty list.
+- Run it with `just mock-alerts` (or `alerts poll mock`). Example file:
+  `crates/alerts-source-mock/tests/fixtures/alerts.json`.
+
 ## Not verified
 
 - Authenticated calls: CEMADEN JWT, INMET station token, ANA REST.
