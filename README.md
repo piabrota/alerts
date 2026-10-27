@@ -118,6 +118,7 @@ test alert has `<status>Test</status>`.
 |---|---|---|---|
 | [Discord](https://discord.com/developers/docs/resources/webhook) | The v0 server, which already exists | webhook (push) | v0 |
 | Any feed reader | Atom (RFC 4287) with CAP 1.2 in each entry | the feed file (pull) | v0 |
+| [Obsidian](https://obsidian.md) | The plugin WeatherDisaster: one note per alert, for a second brain | the feed (pull) | new |
 | [AstrBot](https://github.com/AstrBotDevs/AstrBot) | An open-source chatbot platform for messaging apps (AGPL-3.0) | the Python package `piabrota-alerts` in a plugin | planned |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | A disaster warning plugin for AstrBot: earthquakes, tsunamis, weather (AGPL-3.0) | the Python package or the feed, for alerts from Brazil | planned |
 
@@ -180,6 +181,8 @@ nix develop
 just check                                  # formatting, clippy, tests, licenses
 DISCORD_WEBHOOK_URL=... just test-message   # send a test message to Discord
 FEED_PATH=alerts.atom just test-message     # write the Atom + CAP 1.2 feed with a test alert
+MAROLA_DISCORD_WEBHOOK_URL=... just marola-discord   # a test alert to the official Marola Discord
+just obsidian                               # build the Obsidian plugin WeatherDisaster
 just mcp                                    # MCP server on stdio
 just py-build                               # build the Python package
 just reading-time                           # write the reading time of every file for humans
@@ -208,6 +211,16 @@ the alerts that the sources delivered, next to a map. The app never creates an a
 ![The Apps page of the desktop app: the edit form of the app sul-enchentes](docs/screenshots/desktop/edit.png)
 
 More in [`docs/DESKTOP.md`](docs/DESKTOP.md).
+
+## Obsidian plugin
+
+WeatherDisaster (id `piabrota-alerts`) feeds official alerts into an Obsidian vault. It reads an
+Atom or RSS feed of CAP 1.2 alerts and writes one note per alert, with the CAP fields in the
+frontmatter and the issuer's text verbatim. A CAP `Update` rewrites the note, and a CAP `Cancel`
+marks it as cancelled. Filters: UF, IBGE municipality and lowest severity. A failed read shows as a
+failure, never as "no alert". The logic is Rust (`crates/alerts-obsidian`), built to WebAssembly.
+
+More in [`docs/OBSIDIAN.md`](docs/OBSIDIAN.md).
 
 ## Documentation
 

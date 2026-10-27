@@ -3,6 +3,8 @@
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 Inter, system-ui, sans-serif; }
 main { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem; }
 h1 { font: 400 3rem 'Fjalla One', sans-serif; margin: 0.5rem 0 0; }
+h2 { font: 400 1.75rem 'Fjalla One', sans-serif; margin: 2.5rem 0 0.5rem; }
+code { font: 0.9em ui-monospace, monospace; color: var(--muted); }
 .lead { color: var(--muted); margin-top: 0; }
 .wave { width: 12rem; }
 .figure { width: 100%; height: auto; margin: 1.5rem 0; }

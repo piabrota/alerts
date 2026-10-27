@@ -34,9 +34,17 @@ sources, filters them, and delivers them.
 - **Full Rust.** Every program, script and tool written for this repo is Rust. Python enters
   only as a third-party dependency: maturin builds the pip package, `uvx reuse` checks the
   licenses, and the pip package itself is Rust (PyO3). Never commit a `.py` file. A shell recipe
-  in the `justfile` may call tools, but a recipe that needs logic becomes a Rust binary.
+  in the `justfile` may call tools, but a recipe that needs logic becomes a Rust binary. One
+  exception: `crates/alerts-obsidian/plugin/main.js`, because Obsidian loads only JavaScript. It
+  is only the bridge to the Obsidian API (HTTP, files, notices, settings). The plugin logic is the
+  Rust of `alerts-obsidian`, built to WebAssembly. Never add logic to that file.
 - **No CI.** Do not add `.github/workflows` or any other CI. `just check` is the gate, run by hand
   before a PR.
+- **Every PR delivers a test alert to the official Marola Discord.** `just marola-discord` (in
+  `just check`) posts one test alert (CAP status Test, headline `TESTE: ...`) to the webhook in
+  `MAROLA_DISCORD_WEBHOOK_URL`. It fails when the variable is missing, when the URL is not a Discord
+  webhook, or when Discord does not store the message. Write the result in **Testado**. Never
+  print the webhook URL: it holds the token.
 - **Every PR uses the `open-pr` verb.** The title is pt-BR. The body is bilingual, pt-BR first, at
   the `estrito` level of `write-pt-br`, and ends with `verbs/open-pr/footer.md`. One PR per request:
   new work for an open PR goes into that PR.
@@ -48,7 +56,8 @@ sources, filters them, and delivers them.
   human: the fix is to ask the agency, not to disguise the client.
 - **FOSS first.** A new dependency must pass `just deny` (license allowlist in `deny.toml`).
   Do not use paid resources or paid APIs without explicit human confirmation.
-- **No secrets in the repo.** The Discord webhook comes from `DISCORD_WEBHOOK_URL`.
+- **No secrets in the repo.** The Discord webhooks come from `DISCORD_WEBHOOK_URL` (the alerts
+  server) and `MAROLA_DISCORD_WEBHOOK_URL` (the official Marola server).
 - **Official sources only.** An alert comes from an authoritative agency. Never invent an alert,
   an area, a time or an action that the source does not state.
 - **No `unwrap` or `expect`** outside tests (workspace clippy lints). `unsafe` is denied.
@@ -73,6 +82,8 @@ nix develop        # the toolchain is pinned in flake.lock
 just               # list recipes
 just check         # fmt, clippy, tests, cargo-deny, stale translations
 just test-message  # publish one test alert to DISCORD_WEBHOOK_URL and/or FEED_PATH
+just marola-discord # the hard-rule test: one test alert to MAROLA_DISCORD_WEBHOOK_URL
+just obsidian      # build the Obsidian plugin into target/obsidian/piabrota-alerts
 just mcp           # run the MCP server on stdio
 just py-build      # build the Python wheel
 ```
@@ -85,7 +96,8 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | Crate | Kind | Role |
 |---|---|---|
 | `alerts-core` | lib | Domain types (`Alert`, `Uf`, `Severity`, `Hazard`) and the FP harness. Knows nothing about Discord, Python or MCP. |
-| `alerts` | bin | The service: publishes to Discord and to the feed. |
+| `alerts` | bin + lib | The service: publishes to Discord and to the feed. `tests/marola_discord.rs` is the Marola Discord test. |
+| `alerts-obsidian` | cdylib (wasm32) | WeatherDisaster, the Obsidian plugin (id `piabrota-alerts`): an Atom/RSS feed of CAP alerts becomes one note per alert. Read `docs/OBSIDIAN.md`. |
 | `alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
 | `alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import piabrota_alerts`. |
 | `alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |

@@ -4,7 +4,7 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-check desktop-check
+check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-check desktop-check obsidian-check marola-discord
 
 fmt:
     cargo fmt --all
@@ -55,6 +55,32 @@ mcp:
 # Publish one test alert to every configured channel (DISCORD_WEBHOOK_URL, FEED_PATH).
 test-message:
     cargo run -q -p alerts -- test-message
+
+# Hard rule: deliver one test alert to the official Marola Discord. Part of `just check`. The webhook
+# comes from MAROLA_DISCORD_WEBHOOK_URL and never enters the repository.
+marola-discord:
+    cargo test -q -p alerts --test marola_discord -- --ignored --nocapture
+
+# Build the Obsidian plugin WeatherDisaster (id piabrota-alerts) into target/obsidian/piabrota-alerts:
+# main.js is the wasm-bindgen glue, the WebAssembly of alerts-obsidian in base64, and plugin/main.js.
+# Copy that folder to <vault>/.obsidian/plugins/ to install the plugin.
+obsidian:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cargo build -q --release -p alerts-obsidian --target wasm32-unknown-unknown
+    out=target/obsidian/piabrota-alerts; glue=target/obsidian/glue
+    rm -rf "$out" "$glue" && mkdir -p "$out"
+    wasm-bindgen --target no-modules --no-typescript --out-dir "$glue" target/wasm32-unknown-unknown/release/alerts_obsidian.wasm
+    { cat "$glue/alerts_obsidian.js"
+      printf 'const WASM_BASE64 = "%s";\n' "$(base64 < "$glue/alerts_obsidian_bg.wasm" | tr -d '\n')"
+      cat crates/alerts-obsidian/plugin/main.js; } > "$out/main.js"
+    cp crates/alerts-obsidian/plugin/manifest.json "$out/"
+    echo "obsidian: $out"
+
+# The plugin builds, its main.js parses, and the wasm32 lints pass. Part of `just check`.
+obsidian-check: obsidian
+    cargo clippy --release -p alerts-obsidian --target wasm32-unknown-unknown -- -D warnings
+    node --check target/obsidian/piabrota-alerts/main.js
 
 # List zh/ja wiki pages whose English source changed after translation.
 docs-stale:
@@ -173,9 +199,13 @@ graph:
     code-graph extract . --out build/graph --exclude vendor --exclude target --exclude build --exclude scripts --exclude verbs --title alerts
     @echo "graph: build/graph/graph.html"
 
-# Build the static site into site/dist/ (Gleam on JavaScript, picasso's gleam-website toolchain).
-site:
+# Build the static site into site/serve/ (Gleam on JavaScript, picasso's gleam-website toolchain), with
+# the Obsidian plugin in alerts/obsidian/ and a feed with one test alert in alerts/feed.atom.
+site: obsidian
     nix develop --no-update-lock-file .#site --command just --justfile site/justfile --working-directory site build
+    mkdir -p site/serve/alerts/obsidian
+    cp target/obsidian/piabrota-alerts/main.js target/obsidian/piabrota-alerts/manifest.json site/serve/alerts/obsidian/
+    env -u DISCORD_WEBHOOK_URL FEED_PATH=site/serve/alerts/feed.atom FEED_ID=https://piabrota.art/alerts/feed.atom cargo run -q -p alerts -- test-message
 
 # Publish the site to Codeberg Pages: build it, check it has no AI trace, and push it as one
 # commit to the `pages` branch of REMOTE (default: the public repository piabrota/pages). The

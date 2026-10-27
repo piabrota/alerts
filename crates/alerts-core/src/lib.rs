@@ -53,6 +53,45 @@ ufs! {
 impl Uf {
     /// The states v0 serves: the South region.
     pub const V0: &[Uf] = &[Uf::Pr, Uf::Sc, Uf::Rs];
+
+    /// The UF of an IBGE code: a 2-digit UF code or a 7-digit municipality code, whose first two
+    /// digits are the UF code.
+    pub fn from_ibge(code: &str) -> Option<Uf> {
+        let code = code.trim();
+        if !(code.len() == 2 || code.len() == 7) || !code.bytes().all(|b| b.is_ascii_digit()) {
+            return None;
+        }
+        Some(match &code[..2] {
+            "11" => Uf::Ro,
+            "12" => Uf::Ac,
+            "13" => Uf::Am,
+            "14" => Uf::Rr,
+            "15" => Uf::Pa,
+            "16" => Uf::Ap,
+            "17" => Uf::To,
+            "21" => Uf::Ma,
+            "22" => Uf::Pi,
+            "23" => Uf::Ce,
+            "24" => Uf::Rn,
+            "25" => Uf::Pb,
+            "26" => Uf::Pe,
+            "27" => Uf::Al,
+            "28" => Uf::Se,
+            "29" => Uf::Ba,
+            "31" => Uf::Mg,
+            "32" => Uf::Es,
+            "33" => Uf::Rj,
+            "35" => Uf::Sp,
+            "41" => Uf::Pr,
+            "42" => Uf::Sc,
+            "43" => Uf::Rs,
+            "50" => Uf::Ms,
+            "51" => Uf::Mt,
+            "52" => Uf::Go,
+            "53" => Uf::Df,
+            _ => return None,
+        })
+    }
 }
 
 impl fmt::Display for Uf {
@@ -190,6 +229,17 @@ mod tests {
         assert_eq!(" rs ".parse::<Uf>(), Ok(Uf::Rs));
         assert!("XX".parse::<Uf>().is_err());
         assert_eq!(Uf::ALL.len(), 27);
+    }
+
+    #[test]
+    fn uf_from_ibge() {
+        assert_eq!(Uf::from_ibge("4314902"), Some(Uf::Rs)); // Porto Alegre
+        assert_eq!(Uf::from_ibge("4106902"), Some(Uf::Pr)); // Curitiba
+        assert_eq!(Uf::from_ibge("42"), Some(Uf::Sc));
+        assert_eq!(Uf::from_ibge("3304557"), Some(Uf::Rj));
+        assert_eq!(Uf::from_ibge("34"), None);
+        assert_eq!(Uf::from_ibge("431490"), None);
+        assert_eq!(Uf::from_ibge("43a4902"), None);
     }
 
     #[test]
