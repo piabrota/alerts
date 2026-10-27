@@ -21,8 +21,10 @@ first, no paid API).
 - Never use a Mapbox, Google or other paid tile style. A paid tile service needs explicit human
   confirmation.
 - Always show the attribution control: "© OpenStreetMap contributors" and the tile provider.
-- The desktop app (`desktop/ui/src/map.rs`) uses MapLibre GL JS 5.24.0 (the UMD build, global
-  `maplibregl`) from `just desktop-vendor`, and the OpenFreeMap `liberty` style. MapLibre 6 ships only
+- The desktop app (`desktop/ui/src/map.rs`, its home page) uses MapLibre GL JS 5.24.0 (the UMD
+  build, global `maplibregl`) from `just desktop-vendor`, the OpenFreeMap `positron` style (muted,
+  so the alert colors stand out), and the IBGE UF borders that the same recipe fetches. Each UF
+  takes the color of the highest severity of the alerts that name it (`alert_view::by_uf`). MapLibre 6 ships only
   ES modules, and its worker URL needs an `http(s)` page ⚠, so the app stays on 5.x for now.
 - Pin the MapLibre GL JS version (`maplibre-gl@<x.y.z>`), and load it from npm or a pinned CDN URL.
 

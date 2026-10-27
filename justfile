@@ -261,7 +261,8 @@ generate kind *args:
         *) echo "generate: only scaffold exists; see the generate skill for the other kinds" >&2; exit 2;;
     esac
 
-# MapLibre GL JS for the desktop map, pinned and checked by npm (desktop/ui/vendor, ignored by git).
+# The desktop map's files, in desktop/ui/vendor (ignored by git): MapLibre GL JS, pinned and checked by
+# npm, and the IBGE UF borders (malhas API, minimal quality), fetched once with the honest User-Agent.
 desktop-vendor:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -269,6 +270,15 @@ desktop-vendor:
     (cd "$tmp" && npm pack --silent maplibre-gl@5.24.0 >/dev/null && tar -xzf maplibre-gl-5.24.0.tgz)
     mkdir -p "$dir" && cp "$tmp"/package/dist/maplibre-gl.{js,css} "$tmp"/package/LICENSE.txt "$dir"/
     rm -rf "$tmp"; echo "desktop-vendor: $dir (maplibre-gl 5.24.0)"
+    ibge=desktop/ui/vendor/ibge; mkdir -p "$ibge"
+    if [ ! -s "$ibge/ufs.geojson" ]; then
+        version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "alerts-core") | .version')
+        curl -fsS --retry 2 -A "piabrota-alerts/$version (+https://github.com/piabrota/alerts)" -o "$ibge/ufs.geojson.tmp" \
+            'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo%2Bjson&qualidade=minima&intrarregiao=UF'
+        jq -e '.features | length == 27' "$ibge/ufs.geojson.tmp" >/dev/null
+        mv "$ibge/ufs.geojson.tmp" "$ibge/ufs.geojson"
+    fi
+    echo "desktop-vendor: $ibge/ufs.geojson (IBGE, 27 UFs)"
 
 # Run the desktop app with live reload: trunk serves the interface on :1420, Tauri opens it.
 desktop-dev: desktop-vendor

@@ -91,10 +91,31 @@ never changes after its merge. A change to the schema is a new migration.
 
 ## The map
 
-The map page uses MapLibre GL JS and the OpenFreeMap tiles: no key and no account. The
-attribution shows. `alerts_core::Alert` has only the area as text, so the map draws no shape: a
-guessed shape is not allowed (the `map` skill). The list next to the map gives the area of each
-alert in text. A geometry field in the core is the next step.
+The map is the home page: the app opens on it. It uses MapLibre GL JS, the OpenFreeMap
+`positron` tiles (a muted base map, no key and no account) and the IBGE UF borders. The
+attribution shows the tile provider, OpenStreetMap and IBGE.
+
+The page follows the public disaster maps. INMET Alert-AS colors each state by its warning level
+(yellow, orange, red), and Google Crisis Map puts the layers and the list in a side panel.
+
+- **Color.** Each UF takes the color of the highest severity of the alerts that name it. The
+  colors are `alerts_core::Severity::color`, the palette of the Discord channel.
+- **Legend.** One row per severity, with its pt-BR label and its count. A click turns the
+  severity on or off. The label is the signal; the color repeats it.
+- **Click on a UF.** The list keeps only the alerts that name the UF. The chip `UF: RS ×` clears
+  the filter.
+- **Click on an alert.** The card opens, and the map outlines and fits the UFs of the alert.
+- **Filters.** The source, and the test alerts (headline `TESTE`) on or off.
+- **Refresh.** The page reads the database every 60 seconds, because `alerts poll` writes it
+  from outside the app. The button `Atualizar` reads it at once.
+
+`alerts_core::Alert` has only the area as text, so the map draws only the UF borders that an alert
+names. A guessed shape is not allowed (the `map` skill). The view never zooms past one UF. The
+list gives the area of each alert in text, and it is complete without the map. A geometry field
+in the core is the next step.
+
+`just desktop-vendor` gets the UF borders once from the IBGE malhas API (minimal quality, 27 UFs),
+with the honest User-Agent, into `desktop/ui/vendor/ibge/`, which git ignores.
 
 ## Screenshots
 
@@ -111,4 +132,9 @@ base map. Nobody checked the base map on an open network ⚠.
 | [`invalid.png`](screenshots/desktop/invalid.png) | Apps: the field errors from the controller |
 | [`app-toml.png`](screenshots/desktop/app-toml.png) | Apps: the `app_toml` action |
 | [`sources.png`](screenshots/desktop/sources.png) | Sources: the table |
-| [`map.png`](screenshots/desktop/map.png) | Map: MapLibre, with no tiles on the test machine, and the alert list |
+| [`map.png`](screenshots/desktop/map.png) | Map, the home page: the UFs colored by severity, the legend and the list (see below) |
+
+`map.png` and the images in `screenshots/mapa-inicio/` are newer. They were taken on 2026-10-27
+in Google Chrome (Playwright), at 1200 × 780 pixels, from the wasm build of the interface with a
+stub of the Tauri commands. The alerts are simulated: each headline starts with `TESTE`. Nobody
+took them in the Tauri window ⚠.

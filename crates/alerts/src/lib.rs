@@ -52,15 +52,6 @@ pub fn write_atomic(path: &str, contents: &str) -> std::io::Result<()> {
     std::fs::rename(&tmp, path)
 }
 
-fn severity_color(s: Severity) -> u32 {
-    match s {
-        Severity::Minor => 0x1682D4,
-        Severity::Moderate => 0xF5C518,
-        Severity::Severe => 0xF28C28,
-        Severity::Extreme => 0xD7263D,
-    }
-}
-
 /// The Discord webhook body for one alert: one embed, pt-BR labels.
 pub fn payload(a: &Alert) -> Value {
     let ufs = a
@@ -72,7 +63,7 @@ pub fn payload(a: &Alert) -> Value {
     let mut embed = json!({
         "title": a.headline,
         "description": a.area,
-        "color": severity_color(a.severity),
+        "color": a.severity.color(),
         "fields": [
             { "name": "Severidade", "value": a.severity.label_pt_br(), "inline": true },
             { "name": "UF", "value": ufs, "inline": true },

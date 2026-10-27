@@ -25,6 +25,15 @@ precedence = "override"
 SPDX-FileCopyrightText = "2026 M.Hoffmann and the alerts contributors; the pictured interface is the Loco bootstrap, © the Loco authors"
 SPDX-License-Identifier = "MPL-2.0 AND Apache-2.0"
 
+# The map screenshots show the OpenFreeMap positron base map: OpenStreetMap data (ODbL) in the
+# OpenMapTiles style (CC-BY-4.0 ⚠: nobody checked the license of the positron style). The UF borders
+# are IBGE data (terms not checked ⚠).
+[[annotations]]
+path = ["docs/screenshots/mapa-inicio/*.png", "docs/screenshots/desktop/map.png"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the alerts contributors; base map © OpenStreetMap contributors, © OpenMapTiles, OpenFreeMap; UF borders: IBGE"
+SPDX-License-Identifier = "MPL-2.0 AND ODbL-1.0 AND CC-BY-4.0"
+
 [[annotations]]
 path = "verbs/open-pr/**"
 precedence = "override"
