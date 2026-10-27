@@ -193,7 +193,8 @@ alertas que as fontes entregaram, ao lado de um mapa. O app nunca cria um alerta
 
 ![A página Apps do app desktop: o formulário de edição do app sul-enchentes](docs/screenshots/desktop/edit.png)
 
-Mais em [`docs/DESKTOP.md`](docs/DESKTOP.md).
+Mais em [`docs/DESKTOP.md`](docs/DESKTOP.md). O caminho até a App Store e o Google Play, como
+"marola alertas", está mapeado em [`docs/STORES.md`](docs/STORES.md).
 
 ## plugin do Obsidian
 

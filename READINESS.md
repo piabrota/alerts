@@ -26,6 +26,9 @@ one real source, a polling loop with delivery once per id, and a place where the
 Legend: **done** (on `main`), **in progress** (an open PR), **blocked** (waits on a person or a
 choice), **missing** (nobody started it).
 
+The app stores (App Store, Google Play) have their own map: [`docs/STORES.md`](docs/STORES.md). It starts
+where this page stops.
+
 ## Done
 
 - **Rename to `piabrota/alerts`** (#21, on `main` as `cbe5580`). Crates `alerts-*`, binary
