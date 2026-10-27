@@ -62,8 +62,9 @@ fn check_time(t: &str) -> Result<&str, FeedError> {
     }
 }
 
-/// CAP forbids spaces, commas and restricted characters in `<identifier>`.
-fn identifier(a: &Alert) -> String {
+/// The CAP `<identifier>` of an alert: unique per source and id. CAP forbids spaces, commas
+/// and restricted characters in it.
+pub fn identifier(a: &Alert) -> String {
     format!("{SENDER}-{}-{}", a.source, a.id)
         .chars()
         .map(|c| {
@@ -121,11 +122,45 @@ pub fn cap(a: &Alert, status: Status) -> Result<String, FeedError> {
     Ok(x)
 }
 
+/// One Atom `<entry>`. An entry that carries an alert holds it as CAP 1.2 in `<content>`, so
+/// a composed feed delivers the alert with the same text as every other channel.
+#[derive(Debug, Clone)]
+pub struct Entry<'a> {
+    /// A permanent URI for the entry.
+    pub id: String,
+    pub title: &'a str,
+    pub link: Option<&'a str>,
+    /// In the same form as `Alert::sent`.
+    pub updated: &'a str,
+    pub summary: &'a str,
+    pub alert: Option<(&'a Alert, Status)>,
+}
+
 /// The whole Atom feed. `updated` is the feed time, in the same form as `Alert::sent`.
 pub fn atom(
     meta: &FeedMeta,
     alerts: &[Alert],
     status: Status,
+    updated: &str,
+) -> Result<String, FeedError> {
+    let entries: Vec<Entry<'_>> = alerts
+        .iter()
+        .map(|a| Entry {
+            id: format!("{}:{}", meta.id, identifier(a)),
+            title: &a.headline,
+            link: None,
+            updated: &a.sent,
+            summary: &a.area,
+            alert: Some((a, status)),
+        })
+        .collect();
+    atom_entries(meta, &entries, updated)
+}
+
+/// An Atom feed of any entries, with or without an alert.
+pub fn atom_entries(
+    meta: &FeedMeta,
+    entries: &[Entry<'_>],
     updated: &str,
 ) -> Result<String, FeedError> {
     let mut x = String::new();
@@ -138,18 +173,30 @@ pub fn atom(
         escape(meta.title.as_str()),
         check_time(updated)?,
     );
-    for a in alerts {
+    for e in entries {
         let _ = write!(
             x,
-            "<entry><id>{}:{}</id><title>{}</title><updated>{}</updated>\
-             <summary>{}</summary><content type=\"application/cap+xml\">{}</content></entry>",
-            escape(meta.id.as_str()),
-            escape(identifier(a)),
-            escape(a.headline.as_str()),
-            check_time(&a.sent)?,
-            escape(a.area.as_str()),
-            cap(a, status)?,
+            "<entry><id>{}</id><title>{}</title>",
+            escape(e.id.as_str()),
+            escape(e.title),
         );
+        if let Some(link) = e.link {
+            let _ = write!(x, "<link href=\"{}\"/>", escape(link));
+        }
+        let _ = write!(
+            x,
+            "<updated>{}</updated><summary>{}</summary>",
+            check_time(e.updated)?,
+            escape(e.summary),
+        );
+        if let Some((a, status)) = e.alert {
+            let _ = write!(
+                x,
+                "<content type=\"application/cap+xml\">{}</content>",
+                cap(a, status)?
+            );
+        }
+        x.push_str("</entry>");
     }
     x.push_str("</feed>\n");
     Ok(x)

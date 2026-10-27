@@ -92,6 +92,7 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
 | `alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
 | `alerts-crud` | lib | Loco-style models, controllers and migrations (SQLite) of the desktop app. `controllers::dispatch` is the one entry point. |
+| `alerts-rss` | lib | The RSS combinator: RSS and Atom items, a rule algebra (union, intersect, diff, filter, map, dedupe, take) and a pure evaluator. No I/O. See `docs/RSS.md`. |
 | `alerts-scaffold` | bin | `scaffold`: writes a new `alerts-crud` resource (`just generate scaffold`). |
 
 `desktop/` is its own Cargo workspace, outside `crates/`: `desktop/app` (Tauri 2) and `desktop/ui` (Leptos,

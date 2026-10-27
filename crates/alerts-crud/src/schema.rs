@@ -130,6 +130,22 @@ pub const HAZARDS: &[Choice] = &[Choice {
     label: "Inundação",
 }];
 
+/// The owner kinds of a feed or a rule: one level of the PARA tree.
+pub const SCOPES: &[Choice] = &[
+    Choice {
+        value: "area",
+        label: "Área",
+    },
+    Choice {
+        value: "project",
+        label: "Projeto",
+    },
+    Choice {
+        value: "task",
+        label: "Tarefa",
+    },
+];
+
 macro_rules! uf_choices {
     ($($uf:literal),*) => { &[$(Choice { value: $uf, label: $uf }),*] };
 }

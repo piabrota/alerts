@@ -21,4 +21,6 @@ serde = "1.0.229"
 serde_json = "1.0.154"
 alerts-core = { path = "crates/alerts-core" }
 alerts-feed = { path = "crates/alerts-feed" }
+alerts-rss = { path = "crates/alerts-rss" }
+alerts-crud = { path = "crates/alerts-crud" }
 tokio = "1.54.1"

@@ -198,7 +198,7 @@ fn alerts_are_read_only() {
 #[test]
 fn unknown_resource_and_bad_params() {
     let db = open_in_memory().unwrap();
-    let r = dispatch(&db, req(json!({"op": "list", "resource": "users"})));
+    let r = dispatch(&db, req(json!({"op": "list", "resource": "rivers"})));
     assert!(matches!(r, Err(Error::UnknownResource { .. })), "{r:?}");
     let r = dispatch(
         &db,

@@ -1,0 +1,19 @@
+[package]
+name = "alerts-rss"
+description = "RSS and Atom feeds as values, and a small algebra of rules that compose them"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+alerts-core = { workspace = true }
+alerts-feed = { workspace = true }
+quick-xml = "0.42.0"
+serde = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_json = { workspace = true }

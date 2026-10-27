@@ -69,6 +69,8 @@ path as JSON with a `kind` tag.
 | `apps` | CRUD, `app_toml` | Each source and each channel must exist. `app_toml` gives the `apps/<app>/app.toml` of the `manage-apps` skill. `App::harness` builds the harness. |
 | `sources` | CRUD | `slug` is the id of the source crate. `poll_every` is `every <N><s, m or h>`. |
 | `channels` | CRUD | `target_env` names the environment variable of the target. The secret is never in the database. |
+| `users`, `areas`, `projects`, `tasks` | CRUD, `para` on users | The PARA tree of each user. See `docs/RSS.md`. |
+| `feeds`, `rules`, `feed_items` | CRUD, `atom` on rules; items are read-only | The RSS combinator. See `docs/RSS.md`. |
 
 A check that fails returns the field and a pt-BR message. The form shows the message under its
 input.

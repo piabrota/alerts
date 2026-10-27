@@ -1,4 +1,5 @@
-//! The alerts service: publishes alerts to Discord and to an Atom + CAP 1.2 feed.
+//! The alerts service: publishes alerts to Discord and to an Atom + CAP 1.2 feed, and reads
+//! the RSS feeds that the rules of `alerts-crud` compose.
 
 use alerts_core::{Alert, Hazard, Severity, Uf};
 use alerts_feed::{FeedMeta, Status};
@@ -6,14 +7,19 @@ use serde_json::{Value, json};
 use std::error::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const USAGE: &str = "usage: alerts test-message
+const USAGE: &str = "usage: alerts test-message | rss-fetch | rss-atom <rule>
 
 Publishes to every configured channel:
   DISCORD_WEBHOOK_URL   post to this Discord webhook
   FEED_PATH             write an Atom + CAP 1.2 feed to this file
   FEED_ID               the feed id URI (default: urn:piabrota-alerts)
 
-  test-message   publish one test alert (CAP status Test)";
+Reads and composes RSS feeds in the alerts-crud database:
+  ALERTS_DB             the database file (default: alerts.db)
+
+  test-message     publish one test alert (CAP status Test)
+  rss-fetch        read every enabled feed and store its items
+  rss-atom <rule>  print the Atom feed of the rule with this slug";
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -40,6 +46,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
             }
             Ok(())
         }
+        Some("rss-fetch") => rss_fetch(&open_db()?).await,
+        Some("rss-atom") => {
+            let Some(slug) = std::env::args().nth(2) else {
+                eprintln!("{USAGE}");
+                std::process::exit(2);
+            };
+            let db = open_db()?;
+            let rule = alerts_crud::model::find_by::<alerts_crud::models::rules::Rule>(
+                &db, "slug", &slug,
+            )?
+            .ok_or_else(|| format!("no rule {slug}"))?;
+            print!("{}", alerts_crud::controllers::rules::atom(&db, rule.id)?);
+            Ok(())
+        }
         _ => {
             eprintln!("{USAGE}");
             std::process::exit(2);
@@ -56,6 +76,50 @@ async fn post(webhook: &str, alert: &Alert) -> Result<(), Box<dyn Error>> {
         .send()
         .await?
         .error_for_status()?;
+    Ok(())
+}
+
+fn open_db() -> Result<alerts_crud::Db, Box<dyn Error>> {
+    let path = std::env::var("ALERTS_DB").unwrap_or_else(|_| "alerts.db".into());
+    Ok(alerts_crud::open(std::path::Path::new(&path))?)
+}
+
+/// Reads each enabled feed once and stores its items. A feed that fails is reported, and the
+/// others still run; the command fails when any feed failed.
+async fn rss_fetch(db: &alerts_crud::Db) -> Result<(), Box<dyn Error>> {
+    use alerts_crud::models::feeds::Feed;
+    let client = reqwest::Client::builder()
+        .user_agent(alerts_core::USER_AGENT)
+        .build()?;
+    let mut failed = 0;
+    for feed in alerts_crud::model::list::<Feed>(db)?
+        .into_iter()
+        .filter(|f| f.enabled)
+    {
+        let read = async {
+            let xml = client
+                .get(&feed.url)
+                .send()
+                .await?
+                .error_for_status()?
+                .text()
+                .await?;
+            let items = alerts_rss::parse(&xml, &feed.slug)?;
+            Ok::<_, Box<dyn Error>>(alerts_crud::models::feed_items::record_items(
+                db, &feed.slug, &items,
+            )?)
+        };
+        match read.await {
+            Ok(n) => println!("{}: {n} items", feed.slug),
+            Err(e) => {
+                eprintln!("{}: {e}", feed.slug);
+                failed += 1;
+            }
+        }
+    }
+    if failed > 0 {
+        return Err(format!("{failed} feeds failed").into());
+    }
     Ok(())
 }
 
@@ -126,19 +190,7 @@ fn now_utc() -> String {
 }
 
 fn rfc3339_utc(secs: u64) -> String {
-    let (days, rem) = ((secs / 86_400) as i64, secs % 86_400);
-    // Civil date from days since 1970-01-01 (Howard Hinnant's algorithm).
-    let z = days + 719_468;
-    let era = z.div_euclid(146_097);
-    let doe = z - era * 146_097;
-    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
-    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
-    let mp = (5 * doy + 2) / 153;
-    let d = doy - (153 * mp + 2) / 5 + 1;
-    let m = if mp < 10 { mp + 3 } else { mp - 9 };
-    let y = yoe + era * 400 + i64::from(m <= 2);
-    let (h, mi, s) = (rem / 3600, rem % 3600 / 60, rem % 60);
-    format!("{y:04}-{m:02}-{d:02}T{h:02}:{mi:02}:{s:02}+00:00")
+    alerts_rss::time::rfc3339_utc(i64::try_from(secs).unwrap_or(i64::MAX))
 }
 
 #[cfg(test)]

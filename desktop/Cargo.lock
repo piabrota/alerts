@@ -29,6 +29,8 @@ name = "alerts-crud"
 version = "0.0.0"
 dependencies = [
  "alerts-core",
+ "alerts-feed",
+ "alerts-rss",
  "rusqlite",
  "serde",
  "serde_json",
@@ -43,6 +45,24 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+]
+
+[[package]]
+name = "alerts-feed"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "quick-xml",
+]
+
+[[package]]
+name = "alerts-rss"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "alerts-feed",
+ "quick-xml",
+ "serde",
 ]
 
 [[package]]

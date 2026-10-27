@@ -12,5 +12,7 @@ workspace = true
 reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls"] }
 serde_json = { workspace = true }
 alerts-core = { workspace = true }
+alerts-crud = { workspace = true }
 alerts-feed = { workspace = true }
+alerts-rss = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros"] }
