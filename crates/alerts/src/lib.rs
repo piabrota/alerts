@@ -1,10 +1,13 @@
 //! The channels of the alerts service: the Discord webhook body and its delivery, the test
-//! alert, and the feed file. `main.rs` and the delivery tests in `tests/` use them.
+//! alert, and the feed file. `sources` joins the sources to these channels. `main.rs` and the
+//! delivery tests in `tests/` use them.
 
 use alerts_core::{Alert, Hazard, Severity, Uf};
 use serde_json::{Value, json};
 use std::error::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
+
+pub mod sources;
 
 /// A Discord webhook URL, the only kind of URL that `post` accepts.
 pub fn is_discord_webhook(url: &str) -> bool {

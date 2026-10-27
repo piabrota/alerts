@@ -83,6 +83,7 @@ just               # list recipes
 just check         # fmt, clippy, tests, cargo-deny, stale translations
 just test-message  # publish one test alert to DISCORD_WEBHOOK_URL and/or FEED_PATH
 just marola-discord # the hard-rule test: one test alert to MAROLA_DISCORD_WEBHOOK_URL
+just mock-alerts    # deliver the mock alerts (TESTE) to DISCORD_WEBHOOK_URL and/or FEED_PATH
 just obsidian      # build the Obsidian plugin into target/obsidian/piabrota-alerts
 just mcp           # run the MCP server on stdio
 just py-build      # build the Python wheel
@@ -106,6 +107,7 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `alerts-crud` | lib | Loco-style models, controllers and migrations (SQLite) of the desktop app. `controllers::dispatch` is the one entry point. |
 | `alerts-rss` | lib | The RSS combinator: RSS and Atom items, a rule algebra (union, intersect, diff, filter, map, dedupe, take) and a pure evaluator. No I/O. See `docs/RSS.md`. |
 | `alerts-scaffold` | bin | `scaffold`: writes a new `alerts-crud` resource (`just generate scaffold`). |
+| `alerts-source-mock` | lib | The mock source: simulated test alerts (headline `TESTE:`, CAP status Test) for `alerts poll mock` and `just mock-alerts`. Never an agency. |
 
 `desktop/` is its own Cargo workspace, outside `crates/`: `desktop/app` (Tauri 2) and `desktop/ui` (Leptos,
 wasm32). It needs WebKitGTK on Linux, and `just desktop-check` (in `just check`) is its gate. Read

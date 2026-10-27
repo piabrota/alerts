@@ -16,6 +16,7 @@ dependencies = [
  "alerts-crud",
  "alerts-feed",
  "alerts-rss",
+ "alerts-source-mock",
  "reqwest",
  "serde_json",
  "tokio",
@@ -114,6 +115,15 @@ dependencies = [
 [[package]]
 name = "alerts-scaffold"
 version = "0.0.0"
+
+[[package]]
+name = "alerts-source-mock"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "alerts-trilhas"

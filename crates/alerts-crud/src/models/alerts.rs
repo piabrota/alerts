@@ -80,6 +80,19 @@ pub fn record(db: &crate::Db, a: &alerts_core::Alert) -> Result<AlertRecord> {
     crate::model::find(db, id)
 }
 
+/// The stored alert that `source` gave with the id `alert_id`, if any.
+pub fn find(db: &crate::Db, source: &str, alert_id: &str) -> Result<Option<AlertRecord>> {
+    use rusqlite::OptionalExtension;
+    let id: Option<i64> = db
+        .query_row(
+            "SELECT id FROM alerts WHERE source = ?1 AND alert_id = ?2",
+            params![source, alert_id],
+            |r| r.get(0),
+        )
+        .optional()?;
+    id.map(|id| crate::model::find(db, id)).transpose()
+}
+
 pub const SPEC: ModuleSpec = ModuleSpec {
     resource: "alerts",
     label: "Alertas",
