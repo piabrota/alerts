@@ -1,4 +1,4 @@
-<!-- reading-time: 6 min -->
+<!-- reading-time: 7 min -->
 # The desktop app
 
 The desktop app is a window to configure alerts apps and to read the delivered alerts. It is
@@ -32,7 +32,7 @@ just desktop-check    # format, clippy (the interface for wasm32), licenses; par
 | `crates/alerts-crud/src/migrations/` | migrations | One file per schema change, applied in order |
 | `crates/alerts-scaffold/` | `cargo loco generate scaffold` | Writes the three files of a new resource |
 | `desktop/app/` | the server | Tauri 2: the window and two commands |
-| `desktop/ui/` | the views | The interface: one page per resource spec, and the map |
+| `desktop/ui/` | the views | The interface: one page per resource spec, the map and the about page |
 
 ## The path of a request
 
@@ -117,6 +117,31 @@ in the core is the next step.
 `just desktop-vendor` gets the UF borders once from the IBGE malhas API (minimal quality, 27 UFs),
 with the honest User-Agent, into `desktop/ui/vendor/ibge/`, which git ignores.
 
+- **Area.** The areas of marola.dev (`marola-site` `site/areas.json`): Florianópolis (FL), Rio de
+  Janeiro (RJ) and Salvador (BA). An area only moves the map, up to zoom 9. An alert still covers
+  its whole UF, so the area never filters the list.
+
+## The marola brand
+
+alerts is the "alertas" section of marola v2: marola.dev lists it as "em breve". The interface
+wears the marola look. `desktop/ui/src/marola.rs` holds the brand, read from marola on
+2026-10-27:
+
+- **The strip.** The sections of marola.dev on top of every page, as on the site, then two GitHub
+  pills: `marola-dev/marola` and `piabrota/alerts`.
+- **The logo.** marola logo v2 (`desktop/ui/assets/marola-logo-v2.svg`), from `marola-dev/marola`
+  at `19fdf0df`, CC BY 4.0. It is the brand in the menu, the favicon and the about page.
+- **The tokens.** The colors, radii and shadow of `marola-site` `DESIGN.md`: neutral chrome, one
+  blue accent. The severity colors stay as they are: they are data. Inter is not bundled ⚠: the
+  app uses it only when the system has it.
+- **The about page.** The last item of the menu, and `sobre` in the strip. It says what the app
+  is, the promises it keeps (the hard rules of `GROUND_TRUTH.md`, in plain words), the marola
+  areas, one pill per repo, and the credits.
+
+A link out of the app (the strip, a pill, the source page of an alert) opens in the system
+browser through `tauri-plugin-opener`. The window never leaves the app. The capability grants
+only `opener:allow-open-url` and `opener:allow-default-urls` (http, https, mailto and tel).
+
 ## Screenshots
 
 Taken on 2026-10-27 from the release build (`just desktop-build`) under Xvfb, at 1200 × 780
@@ -137,4 +162,5 @@ base map. Nobody checked the base map on an open network ⚠.
 `map.png` and the images in `screenshots/mapa-inicio/` are newer. They were taken on 2026-10-27
 in Google Chrome (Playwright), at 1200 × 780 pixels, from the wasm build of the interface with a
 stub of the Tauri commands. The alerts are simulated: each headline starts with `TESTE`. Nobody
-took them in the Tauri window ⚠.
+took them in the Tauri window ⚠. The images in `screenshots/marola-v2/` (the marola strip, the about page,
+the area picker) were taken the same way.

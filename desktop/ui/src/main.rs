@@ -1,13 +1,16 @@
 //! The alerts desktop interface. Each page of the menu is a module. A resource of
 //! `alerts-crud` becomes a CRUD page drawn from its spec, so a scaffolded resource needs no
-//! interface code. A page with its own code (the map) is in [`custom_pages`]. The map is the
-//! home page: the app opens on it.
+//! interface code. A page with its own code (the map, the about page) is in [`custom_pages`].
+//! The map is the home page: the app opens on it. The marola strip and brand wrap every page:
+//! alerts is the "alertas" section of marola v2.
 
+mod about;
 mod alert_view;
 mod api;
 mod crud;
 mod form;
 mod map;
+mod marola;
 
 use leptos::prelude::*;
 
@@ -15,6 +18,7 @@ use leptos::prelude::*;
 enum Page {
     Crud(api::Spec),
     Map,
+    About,
 }
 
 impl Page {
@@ -22,6 +26,7 @@ impl Page {
         match self {
             Page::Crud(spec) => spec.resource.clone(),
             Page::Map => "map".into(),
+            Page::About => "about".into(),
         }
     }
 
@@ -29,20 +34,22 @@ impl Page {
         match self {
             Page::Crud(spec) => spec.label.clone(),
             Page::Map => "Mapa".into(),
+            Page::About => "Sobre".into(),
         }
     }
 }
 
-/// The pages with their own code. They come first, so the app opens on the map.
-fn custom_pages() -> Vec<Page> {
-    vec![Page::Map]
+/// The pages with their own code: the map first, so the app opens on it, and the about page
+/// last, after the resources.
+fn custom_pages() -> (Vec<Page>, Vec<Page>) {
+    (vec![Page::Map], vec![Page::About])
 }
 
 fn menu(specs: Vec<api::Spec>) -> Vec<Page> {
-    let mut pages: Vec<Page> = specs.into_iter().map(Page::Crud).collect();
-    let mut home = custom_pages();
-    home.append(&mut pages);
-    home
+    let (mut pages, mut last) = custom_pages();
+    pages.extend(specs.into_iter().map(Page::Crud));
+    pages.append(&mut last);
+    pages
 }
 
 #[component]
@@ -51,22 +58,25 @@ fn App() -> impl IntoView {
     let current = RwSignal::new(String::new());
     let error = RwSignal::new(None::<String>);
     leptos::task::spawn_local(async move {
-        match api::modules().await {
-            Ok(specs) => {
-                let ps = menu(specs);
-                current.set(ps.first().map(Page::key).unwrap_or_default());
-                pages.set(ps);
-            }
-            Err(e) => error.set(Some(e.message())),
-        }
+        // Without the specs the menu keeps its own pages: the map says what failed.
+        let specs = api::modules().await.unwrap_or_else(|e| {
+            error.set(Some(e.message()));
+            Vec::new()
+        });
+        let ps = menu(specs);
+        current.set(ps.first().map(Page::key).unwrap_or_default());
+        pages.set(ps);
     });
+    let about_open = Signal::derive(move || current.get() == "about");
+    let on_about = Callback::new(move |()| current.set("about".into()));
 
     view! {
+        <marola::SiteNav on_about about_open />
         <div class="shell">
             <nav class="menu">
                 <div class="brand">
-                    <span class="brand-mark">"≈"</span>
-                    "alerts"
+                    <img class="brand-logo" src=marola::LOGO alt="" width="36" height="36" />
+                    <span class="brand-name">"marola"<small>"alertas"</small></span>
                 </div>
                 {move || {
                     pages
@@ -100,6 +110,7 @@ fn App() -> impl IntoView {
                         .map(|p| match p {
                             Page::Crud(spec) => view! { <crud::CrudPage spec /> }.into_any(),
                             Page::Map => view! { <map::MapPage /> }.into_any(),
+                            Page::About => view! { <about::AboutPage /> }.into_any(),
                         })
                 }}
             </main>

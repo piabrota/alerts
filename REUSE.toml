@@ -27,12 +27,21 @@ SPDX-License-Identifier = "MPL-2.0 AND Apache-2.0"
 
 # The map screenshots show the OpenFreeMap positron base map: OpenStreetMap data (ODbL) in the
 # OpenMapTiles style (CC-BY-4.0 ⚠: nobody checked the license of the positron style). The UF borders
-# are IBGE data (terms not checked ⚠).
+# are IBGE data (terms not checked ⚠). The marola-v2 screenshots also show the marola logo v2
+# (CC BY 4.0).
 [[annotations]]
-path = ["docs/screenshots/mapa-inicio/*.png", "docs/screenshots/desktop/map.png"]
+path = ["docs/screenshots/mapa-inicio/*.png", "docs/screenshots/marola-v2/*.png", "docs/screenshots/desktop/map.png"]
 precedence = "override"
-SPDX-FileCopyrightText = "2026 M.Hoffmann and the alerts contributors; base map © OpenStreetMap contributors, © OpenMapTiles, OpenFreeMap; UF borders: IBGE"
+SPDX-FileCopyrightText = "2026 M.Hoffmann and the alerts contributors; base map © OpenStreetMap contributors, © OpenMapTiles, OpenFreeMap; UF borders: IBGE; marola logo v2 © 2026 Matheus Hoffmann"
 SPDX-License-Identifier = "MPL-2.0 AND ODbL-1.0 AND CC-BY-4.0"
+
+# The marola v2 logo, copied from marola-dev/marola docs/assets/logo-v2/marola-logo-v2.svg at
+# 19fdf0df. Its README puts the images under CC BY 4.0.
+[[annotations]]
+path = "desktop/ui/assets/marola-logo-v2.svg"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Matheus Hoffmann (marola-dev/marola, docs/assets/logo-v2)"
+SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
 path = "verbs/open-pr/**"

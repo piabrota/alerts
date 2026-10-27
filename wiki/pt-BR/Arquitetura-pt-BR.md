@@ -65,7 +65,7 @@ abertos que rodam na máquina local. Cada modelo é um estágio.
 | Runtime | Licença | Uso | Estado |
 |---|---|---|---|
 | [Ollama](https://github.com/ollama/ollama) | MIT | Ler texto livre e extrair campos (local, hora, nível do rio) | planejado |
-| [OLLAYA](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decidir perguntas tipadas com probabilidade calibrada; não gera texto | em breve |
+| [Ollaya](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decidir perguntas tipadas com probabilidade calibrada; não gera texto | em breve |
 
 - Um modelo nunca inventa um alerta. Um estágio de modelo só preenche ou descarta um campo que o
   texto da fonte diz.

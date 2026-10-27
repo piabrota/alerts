@@ -89,7 +89,7 @@ In order of need. The first three are the release.
    no tag. Release 0 needs a version, a tag, and the README status changed from "bootstrap".
 
 Not in v0: Indexgram (issue #8), the planned sources (ANA, CPTEC/INPE, Epagri/Ciram, SGB,
-Defesa Civil RS, SIMEPAR), and the local LLM stages (Ollama, OLLAYA).
+Defesa Civil RS, SIMEPAR), and the local LLM stages (Ollama, Ollaya).
 
 ## Rules that the repo breaks now
 

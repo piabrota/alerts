@@ -96,7 +96,7 @@ models that run on the local machine. A paid API is never required.
 | Runtime | License | Use in alerts | Status |
 |---|---|---|---|
 | [Ollama](https://github.com/ollama/ollama) | MIT | Read free text and extract fields (place, time, river level) into an `Alert`. | planned |
-| [OLLAYA](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with a calibrated probability. It does not generate text. | soon |
+| [Ollaya](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with a calibrated probability. It does not generate text. | soon |
 
 A model never invents an alert. When the model is not sure, the alert goes back to the
 deterministic harness and is marked for human review.
