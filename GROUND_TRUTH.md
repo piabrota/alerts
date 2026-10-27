@@ -91,6 +91,12 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
 | `alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
 | `alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
+| `alerts-crud` | lib | Loco-style models, controllers and migrations (SQLite) of the desktop app. `controllers::dispatch` is the one entry point. |
+| `alerts-scaffold` | bin | `scaffold`: writes a new `alerts-crud` resource (`just generate scaffold`). |
+
+`desktop/` is its own Cargo workspace, outside `crates/`: `desktop/app` (Tauri 2) and `desktop/ui` (Leptos,
+wasm32). It needs WebKitGTK on Linux, and `just desktop-check` (in `just check`) is its gate. Read
+`docs/DESKTOP.md` before you work on it.
 
 Dependencies point to `alerts-core`, never the other way.
 
@@ -147,8 +153,8 @@ Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is
 ## Apps and maps
 
 An app is one deployment: sources, a harness and channels for one audience. The conventions follow
-[Loco](https://loco.rs) (generators, doctor, scheduler, tasks), without the ORM, the accounts and
-the server-side HTML. Read the skills before you work on these parts:
+[Loco](https://loco.rs) (generators, doctor, scheduler, tasks), without the ORM (`alerts-crud` writes
+plain SQL), the accounts and the server-side HTML. Read the skills before you work on these parts:
 
 | Skill | Job |
 |---|---|
@@ -157,6 +163,9 @@ the server-side HTML. Read the skills before you work on these parts:
 | `diagnose` | Check that an app can run |
 | `schedule` | Poll rates, delivery once per id, one-off tasks |
 | `map` | Alert areas on a map, CAP 1.2 to GeoJSON, FOSS tiles only |
+
+The desktop app (`docs/DESKTOP.md`) is the first interface: a CRUD page per `alerts-crud` resource and
+a map page. The interface never creates an alert.
 
 ## Why Rust
 
