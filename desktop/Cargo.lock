@@ -69,6 +69,7 @@ dependencies = [
 name = "alerts-ui"
 version = "0.0.0"
 dependencies = [
+ "alerts-core",
  "console_error_panic_hook",
  "js-sys",
  "leptos",

@@ -1,7 +1,9 @@
 //! The alerts desktop interface. Each page of the menu is a module. A resource of
 //! `alerts-crud` becomes a CRUD page drawn from its spec, so a scaffolded resource needs no
-//! interface code. A page with its own code (the map) is in [`custom_pages`].
+//! interface code. A page with its own code (the map) is in [`custom_pages`]. The map is the
+//! home page: the app opens on it.
 
+mod alert_view;
 mod api;
 mod crud;
 mod form;
@@ -31,18 +33,16 @@ impl Page {
     }
 }
 
-/// The pages with their own code. They come right after the first resource (the alerts).
+/// The pages with their own code. They come first, so the app opens on the map.
 fn custom_pages() -> Vec<Page> {
     vec![Page::Map]
 }
 
 fn menu(specs: Vec<api::Spec>) -> Vec<Page> {
     let mut pages: Vec<Page> = specs.into_iter().map(Page::Crud).collect();
-    let at = pages.len().min(1);
-    for (i, p) in custom_pages().into_iter().enumerate() {
-        pages.insert(at + i, p);
-    }
-    pages
+    let mut home = custom_pages();
+    home.append(&mut pages);
+    home
 }
 
 #[component]

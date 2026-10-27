@@ -1,5 +1,5 @@
 /* The alerts desktop interface. The severity colors are the colors of the Discord channel
-   (crates/alerts/src/main.rs, severity_color): one palette for every channel. */
+   (alerts_core::Severity::color): one palette for every channel. */
 
 :root {
   --bg: #f4f6f8;
@@ -127,10 +127,52 @@ td { max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
 .output-head { display: flex; justify-content: space-between; align-items: center; }
 pre { background: #0f2a43; color: #e6f0fa; padding: 14px; border-radius: 8px; overflow: auto; font-size: 13px; }
 
-.map-layout { display: grid; grid-template-columns: 1fr 340px; gap: 16px; height: calc(100vh - 180px); min-height: 380px; }
-.map { border-radius: 10px; border: 1px solid var(--line); background: #dfe8ef; min-height: 380px; }
-.alert-list { overflow: auto; margin: 0; }
-.alert-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+/* The map page, the home of the app: the map with its legend, and the alert list. */
+.home { display: flex; flex-direction: column; height: calc(100vh - 48px); min-height: 520px; }
+.home-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.home-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.home-tools select { font: inherit; border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; background: #fff; }
+.home-tools .chip { font-size: 13px; }
+.home-body { display: grid; grid-template-columns: 1fr 360px; gap: 16px; flex: 1; min-height: 0; }
+.map-wrap { position: relative; min-height: 380px; }
+.map { position: absolute; inset: 0; border-radius: 10px; border: 1px solid var(--line); background: #dfe8ef; overflow: hidden; }
+
+.legend {
+  position: absolute; left: 12px; bottom: 34px; z-index: 2;
+  background: rgba(255, 255, 255, 0.95); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 10px 6px; min-width: 168px; box-shadow: 0 2px 10px rgba(20, 32, 43, 0.12);
+}
+.legend-title { margin: 0 0 6px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.legend-row {
+  display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 8px; width: 100%;
+  border: 0; background: none; border-radius: 6px; padding: 4px; text-align: left;
+}
+.legend-row:hover { background: #eef3f7; }
+.legend-row.off { opacity: 0.4; }
+.legend-row.off .legend-label { text-decoration: line-through; }
+.legend-row.static { cursor: default; }
+.legend-row.static:hover { background: none; }
+.legend-count { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--muted); }
+.swatch { width: 16px; height: 16px; border-radius: 4px; opacity: 0.85; }
+.swatch.none { background: #fff; border: 1.5px solid #41566b; opacity: 1; }
+
+.map-hover {
+  position: absolute; left: 12px; top: 12px; z-index: 2;
+  background: #14202b; color: #fff; border-radius: 8px; padding: 7px 11px; font-size: 13px;
+  box-shadow: 0 2px 10px rgba(20, 32, 43, 0.25); pointer-events: none;
+}
+
+.alert-list { overflow: auto; margin: 0; padding-top: 12px; }
+.list-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.list-head h2 { margin-bottom: 6px; }
+.alert-item {
+  border: 1px solid var(--line); border-left: 5px solid var(--sev, var(--line)); border-radius: 8px;
+  padding: 9px 11px; margin-bottom: 8px; cursor: pointer;
+}
+.alert-item:hover { border-color: var(--accent); border-left-color: var(--sev, var(--accent)); }
+.alert-item.selected { background: #f1f7fc; border-color: var(--ink); border-left-color: var(--sev, var(--ink)); }
 .alert-item h3 { font-size: 14px; margin: 6px 0 2px; }
 .alert-item p { margin: 2px 0; }
+.alert-tags { display: flex; gap: 6px; }
+.badge.test { background: #14202b; color: #fff; letter-spacing: 0.04em; }
 .meta { color: var(--muted); font-size: 12px; }

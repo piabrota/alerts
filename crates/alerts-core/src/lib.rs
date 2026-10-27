@@ -130,6 +130,22 @@ impl Severity {
             Severity::Extreme => "extrema",
         }
     }
+
+    /// The color of this severity as `0xRRGGBB`, one palette for every channel and the map:
+    /// blue, then the yellow, orange and red of the INMET warning levels.
+    pub fn color(self) -> u32 {
+        match self {
+            Severity::Minor => 0x1682D4,
+            Severity::Moderate => 0xF5C518,
+            Severity::Severe => 0xF28C28,
+            Severity::Extreme => 0xD7263D,
+        }
+    }
+
+    /// The color as a CSS hex string, for example `#d7263d`.
+    pub fn css_color(self) -> String {
+        format!("#{:06x}", self.color())
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -240,6 +256,12 @@ mod tests {
         assert_eq!(Uf::from_ibge("34"), None);
         assert_eq!(Uf::from_ibge("431490"), None);
         assert_eq!(Uf::from_ibge("43a4902"), None);
+    }
+
+    #[test]
+    fn one_palette() {
+        assert_eq!(Severity::Extreme.css_color(), "#d7263d");
+        assert_eq!(Severity::Minor.css_color(), "#1682d4");
     }
 
     #[test]
