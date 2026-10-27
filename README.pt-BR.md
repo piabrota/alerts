@@ -78,7 +78,7 @@ modelos abertos que rodam na máquina local. Uma API paga nunca é obrigatória.
 | Runtime | Licença | Uso no alerts | Estado |
 |---|---|---|---|
 | [Ollama](https://github.com/ollama/ollama) | MIT | Ler texto livre e extrair campos (local, hora, nível do rio) para um `Alert`. | planejado |
-| [OLLAYA](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decidir: perguntas tipadas (é alerta de inundação? qual severidade?) com probabilidade calibrada. Não gera texto. | em breve |
+| [Ollaya](https://github.com/ollaya-dev/ollaya) | Apache-2.0 | Decidir: perguntas tipadas (é alerta de inundação? qual severidade?) com probabilidade calibrada. Não gera texto. | em breve |
 
 Um modelo nunca inventa alerta. Quando o modelo não tem certeza, o alerta volta para o harness
 determinístico e fica marcado para revisão humana.

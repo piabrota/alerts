@@ -155,7 +155,7 @@ Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is
 | Runtime | License | Job in alerts | Status |
 |---|---|---|---|
 | Ollama | MIT | Read free text: extract fields (place, time, river level) from a bulletin into an `Alert`. | planned |
-| OLLAYA (`ollaya-dev/ollaya`) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with calibrated probabilities. It never generates text. | soon |
+| Ollaya (`ollaya-dev/ollaya`) | Apache-2.0 | Decide: typed questions (is this a flood alert? which severity?) with calibrated probabilities. It never generates text. | soon |
 
 - A model never invents an alert. A model stage can only fill or drop a field that the source
   text states. When the model is unsure (below a fixed probability), the stage falls back to the

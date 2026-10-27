@@ -1,54 +1,89 @@
-/* The alerts desktop interface. The severity colors are the colors of the Discord channel
-   (alerts_core::Severity::color): one palette for every channel. */
+/* The alerts desktop interface, in the marola v2 look: the tokens of marola-site DESIGN.md
+   (ink, muted, surface, line, one blue accent; chrome stays neutral, color means data). The
+   severity colors are data: the colors of the Discord channel (alerts_core::Severity::color),
+   one palette for every channel. */
 
 :root {
-  --bg: #f4f6f8;
+  --bg: #f3f5f7;
+  --surface: #f3f5f7;
   --panel: #ffffff;
-  --ink: #14202b;
-  --muted: #5b6b7a;
-  --line: #dde3e9;
-  --menu: #0f2a43;
-  --menu-ink: #d8e6f3;
-  --accent: #1682d4;
+  --ink: #111820;
+  --muted: #56606c;
+  --line: #e1e5ea;
+  --line-strong: #cbd2da;
+  --accent: #1b5fc1;
+  --accent-hover: #164e9e;
+  --accent-soft: #e9f0fb;
+  --shadow-float: 0 1px 2px rgb(17 24 32 / .06), 0 8px 24px -6px rgb(17 24 32 / .16);
+  --strip: 40px;
   --danger: #d7263d;
   --sev-minor: #1682d4;
   --sev-moderate: #f5c518;
   --sev-severe: #f28c28;
   --sev-extreme: #d7263d;
-  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
   color: var(--ink);
   background: var(--bg);
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-hover); }
 
-.shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+/* The marola.dev strip (marola-site .sitenav): its sections, then the GitHub pills. */
+.sitenav {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px 18px;
+  min-height: var(--strip); padding: 4px 24px;
+  background: var(--surface); border-bottom: 1px solid var(--line); font-size: 13px;
+}
+.sitenav > a, .sitenav-about { color: var(--ink); text-decoration: none; font-weight: 500; }
+.sitenav > a:hover, .sitenav-about:hover { color: var(--accent); }
+.sitenav .here, .sitenav-about.on {
+  color: var(--accent); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px;
+}
+.sitenav-about { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+.sitenav-gap { flex: 1; }
+.gh {
+  display: inline-flex; align-items: center; gap: 6px; color: var(--ink); text-decoration: none;
+  font-weight: 500; font-size: 13px; white-space: nowrap;
+}
+.gh:hover { color: var(--accent); }
+.gh svg { width: 15px; height: 15px; flex: none; }
+.gh-owner { color: var(--muted); font-weight: 400; }
+.gh-star { display: inline-flex; align-items: center; gap: 4px; padding-left: 8px; border-left: 1px solid var(--line-strong); }
+.gh-star svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
+.gh:hover .gh-star svg { fill: currentColor; }
+
+.shell { display: grid; grid-template-columns: 220px 1fr; height: calc(100vh - var(--strip)); }
 
 .menu {
-  background: var(--menu);
-  color: var(--menu-ink);
+  background: var(--panel);
+  border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 18px 12px;
+  padding: 16px 12px;
 }
-.brand { font-size: 20px; font-weight: 700; color: #fff; padding: 4px 10px 18px; }
-.brand-mark { color: #7cc4ff; margin-right: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 2px 8px 18px; }
+.brand-logo { flex: none; }
+.brand-name { display: flex; flex-direction: column; font-size: 22px; font-weight: 650; letter-spacing: -0.018em; line-height: 1.1; }
+.brand-name small { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
 .menu-item {
   background: none;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 8px;
-  color: inherit;
+  color: var(--ink);
   font: inherit;
-  padding: 9px 12px;
+  font-weight: 500;
+  padding: 8px 12px;
   text-align: left;
   cursor: pointer;
 }
-.menu-item:hover { background: rgba(255, 255, 255, 0.08); }
-.menu-item.active { background: #1d4366; color: #fff; font-weight: 600; }
-.menu-foot { margin-top: auto; font-size: 12px; opacity: 0.7; padding: 0 10px; }
+.menu-item:hover { background: var(--surface); border-color: transparent; }
+.menu-item.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.menu-foot { margin-top: auto; font-size: 12px; color: var(--muted); padding: 0 10px; }
 
 .page { padding: 24px 28px; overflow: auto; }
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
@@ -59,7 +94,7 @@ h2 { font-size: 16px; margin: 0 0 12px; }
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
 }
@@ -111,13 +146,13 @@ td { max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
   user-select: none;
 }
 .chip input { display: none; }
-.chip.on { background: #e3f1fc; border-color: var(--accent); color: #0b4f86; font-weight: 600; }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .switch { display: inline-flex; gap: 8px; align-items: center; }
 
 .badge { display: inline-block; border-radius: 999px; padding: 2px 9px; font-size: 12px; font-weight: 700; }
 .sev-Minor { background: var(--sev-minor); color: #fff; }
-.sev-Moderate { background: var(--sev-moderate); color: #14202b; }
-.sev-Severe { background: var(--sev-severe); color: #14202b; }
+.sev-Moderate { background: var(--sev-moderate); color: var(--ink); }
+.sev-Severe { background: var(--sev-severe); color: var(--ink); }
 .sev-Extreme { background: var(--sev-extreme); color: #fff; }
 
 .error, .warn { border-radius: 8px; padding: 10px 12px; margin: 0 0 14px; }
@@ -125,10 +160,10 @@ td { max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
 .warn { background: #fff6d6; color: #6b5200; }
 
 .output-head { display: flex; justify-content: space-between; align-items: center; }
-pre { background: #0f2a43; color: #e6f0fa; padding: 14px; border-radius: 8px; overflow: auto; font-size: 13px; }
+pre { background: var(--ink); color: #e6f0fa; padding: 14px; border-radius: 8px; overflow: auto; font-size: 13px; }
 
 /* The map page, the home of the app: the map with its legend, and the alert list. */
-.home { display: flex; flex-direction: column; height: calc(100vh - 48px); min-height: 520px; }
+.home { display: flex; flex-direction: column; height: calc(100vh - var(--strip) - 48px); min-height: 520px; }
 .home-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
 .home-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .home-tools select { font: inherit; border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; background: #fff; }
@@ -139,15 +174,15 @@ pre { background: #0f2a43; color: #e6f0fa; padding: 14px; border-radius: 8px; ov
 
 .legend {
   position: absolute; left: 12px; bottom: 34px; z-index: 2;
-  background: rgba(255, 255, 255, 0.95); border: 1px solid var(--line); border-radius: 10px;
-  padding: 10px 10px 6px; min-width: 168px; box-shadow: 0 2px 10px rgba(20, 32, 43, 0.12);
+  background: rgba(255, 255, 255, 0.95); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 10px 6px; min-width: 168px; box-shadow: var(--shadow-float);
 }
 .legend-title { margin: 0 0 6px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
 .legend-row {
   display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 8px; width: 100%;
   border: 0; background: none; border-radius: 6px; padding: 4px; text-align: left;
 }
-.legend-row:hover { background: #eef3f7; }
+.legend-row:hover { background: var(--surface); }
 .legend-row.off { opacity: 0.4; }
 .legend-row.off .legend-label { text-decoration: line-through; }
 .legend-row.static { cursor: default; }
@@ -158,7 +193,7 @@ pre { background: #0f2a43; color: #e6f0fa; padding: 14px; border-radius: 8px; ov
 
 .map-hover {
   position: absolute; left: 12px; top: 12px; z-index: 2;
-  background: #14202b; color: #fff; border-radius: 8px; padding: 7px 11px; font-size: 13px;
+  background: var(--ink); color: #fff; border-radius: 8px; padding: 7px 11px; font-size: 13px;
   box-shadow: 0 2px 10px rgba(20, 32, 43, 0.25); pointer-events: none;
 }
 
@@ -170,9 +205,28 @@ pre { background: #0f2a43; color: #e6f0fa; padding: 14px; border-radius: 8px; ov
   padding: 9px 11px; margin-bottom: 8px; cursor: pointer;
 }
 .alert-item:hover { border-color: var(--accent); border-left-color: var(--sev, var(--accent)); }
-.alert-item.selected { background: #f1f7fc; border-color: var(--ink); border-left-color: var(--sev, var(--ink)); }
+.alert-item.selected { background: var(--accent-soft); border-color: var(--ink); border-left-color: var(--sev, var(--ink)); }
 .alert-item h3 { font-size: 14px; margin: 6px 0 2px; }
 .alert-item p { margin: 2px 0; }
 .alert-tags { display: flex; gap: 6px; }
-.badge.test { background: #14202b; color: #fff; letter-spacing: 0.04em; }
+.badge.test { background: var(--ink); color: #fff; letter-spacing: 0.04em; }
 .meta { color: var(--muted); font-size: 12px; }
+
+/* The about page: a reading column, as on marola.dev about.html. */
+.about-page { max-width: 46rem; margin: 8px auto 48px; font-size: 16px; line-height: 1.6; }
+.about-hero { display: flex; gap: 24px; align-items: center; margin-bottom: 8px; }
+.about-hero img { flex: none; }
+.about-page h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.022em; line-height: 1.1; margin: 0 0 8px; }
+.eyebrow { margin: 0 0 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
+.lede { margin: 0; font-size: 19px; line-height: 1.45; color: var(--muted); }
+.about-page section { margin-top: 36px; }
+.about-page h2 { font-size: 22px; font-weight: 650; letter-spacing: -0.018em; margin: 0 0 10px; }
+.about-page p { margin: 0 0 12px; text-wrap: pretty; }
+.promises, .credits { margin: 0; padding-left: 20px; }
+.promises li, .credits li { margin-bottom: 8px; }
+.repos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.repos li {
+  display: grid; grid-template-columns: 270px 1fr; gap: 12px; align-items: center;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px;
+}
+.repos li > span { color: var(--muted); font-size: 14px; line-height: 1.45; }

@@ -43,6 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             app.manage(Store(Mutex::new(alerts_crud::open(&path)?)));
             Ok(())
         })
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![modules, crud])
         .run(tauri::generate_context!())?;
     Ok(())

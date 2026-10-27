@@ -9,6 +9,7 @@
 
 use crate::alert_view::{self as view, AlertView, BBox, Filter, SEVERITIES, V0};
 use crate::api;
+use crate::marola::{self, Area, Out};
 use alerts_core::Uf;
 use leptos::prelude::*;
 use leptos::task::spawn_local;
@@ -28,6 +29,8 @@ const UFS_URL: &str = "ibge/ufs.geojson";
 const CENTER: (f64, f64) = (-51.2, -27.5);
 /// A UF is the most precise area an alert has: never zoom past it.
 const MAX_ZOOM: f64 = 6.5;
+/// A marola.dev area is a city: it may zoom closer, but an alert still covers its whole UF.
+const AREA_ZOOM: f64 = 9.0;
 /// The list reads the database again at this interval: `alerts poll` writes it from outside.
 const REFRESH: Duration = Duration::from_secs(60);
 
@@ -244,11 +247,12 @@ fn set_cursor(map: &MapLibre, cursor: &str) {
     );
 }
 
-/// Fits the view to `b`. The left padding keeps the UFs clear of the legend.
-fn fit(map: &MapLibre, [w, s, e, n]: BBox) {
+/// Fits the view to `b`, no closer than `max_zoom`. The left padding keeps the UFs clear of the
+/// legend.
+fn fit(map: &MapLibre, [w, s, e, n]: BBox, max_zoom: f64) {
     map.fit_bounds(
         &js(&json!([[w, s], [e, n]])),
-        &js(&json!({ "padding": { "top": 40, "bottom": 40, "left": 200, "right": 60 }, "maxZoom": MAX_ZOOM, "duration": 600 })),
+        &js(&json!({ "padding": { "top": 40, "bottom": 40, "left": 200, "right": 60 }, "maxZoom": max_zoom, "duration": 600 })),
     );
 }
 
@@ -266,6 +270,7 @@ pub fn MapPage() -> impl IntoView {
     let filter = RwSignal::new(Filter::default());
     let selected = RwSignal::new(None::<i64>);
     let hover = RwSignal::new(None::<Uf>);
+    let area = RwSignal::new(None::<&'static Area>);
     let ready = RwSignal::new(false);
     let boxes = StoredValue::new(HashMap::<Uf, BBox>::new());
     let map = StoredValue::new_local(None::<MapLibre>);
@@ -374,7 +379,8 @@ pub fn MapPage() -> impl IntoView {
         });
     });
 
-    // The outline and the view: the selected alert, else the clicked UF, else the v0 states.
+    // The outline and the view: the selected alert, else the clicked UF, else the marola.dev
+    // area, else the v0 states.
     Effect::new(move |_| {
         if !ready.get() {
             return;
@@ -384,9 +390,10 @@ pub fn MapPage() -> impl IntoView {
             .and_then(|k| alerts.with(|all| all.iter().find(|a| a.key == k).map(|a| a.ufs.clone())))
             .or_else(|| filter.get().uf.map(|u| vec![u]));
         let outline: Vec<&str> = picked.iter().flatten().map(|u| u.as_str()).collect();
-        let target = boxes.with_value(|b| match &picked {
-            Some(ufs) => view::union(b, ufs.iter()),
-            None => view::union(b, V0.iter()),
+        let target = boxes.with_value(|b| match (&picked, area.get()) {
+            (Some(ufs), _) => view::union(b, ufs.iter()).map(|b| (b, MAX_ZOOM)),
+            (None, Some(a)) => Some((marola::area_bbox(a), AREA_ZOOM)),
+            (None, None) => view::union(b, V0.iter()).map(|b| (b, MAX_ZOOM)),
         });
         map.with_value(|m| {
             let Some(m) = m else { return };
@@ -394,8 +401,8 @@ pub fn MapPage() -> impl IntoView {
                 "ufs-selected",
                 &js(&json!(["in", ["get", "uf"], ["literal", outline]])),
             );
-            if let Some(b) = target {
-                fit(m, b);
+            if let Some((b, zoom)) = target {
+                fit(m, b, zoom);
             }
         });
     });
@@ -419,6 +426,22 @@ pub fn MapPage() -> impl IntoView {
                             {format!("UF: {uf} ×")}
                         </button>
                     })}
+                    <select
+                        aria-label="Área"
+                        title="As áreas do marola.dev. A área só move o mapa: um alerta cobre a UF inteira."
+                        on:change=move |ev| {
+                            selected.set(None);
+                            filter.update(|f| f.uf = None);
+                            area.set(marola::area(&event_target_value(&ev)));
+                        }
+                    >
+                        <option value="">"Sul (PR, SC, RS)"</option>
+                        {marola::AREAS.iter().map(|a| view! {
+                            <option value=a.id title=a.name selected=move || area.get() == Some(a)>
+                                {format!("{} ({})", a.name, a.code)}
+                            </option>
+                        }).collect_view()}
+                    </select>
                     <select
                         aria-label="Fonte"
                         on:change=move |ev| {
@@ -538,7 +561,7 @@ fn AlertCard(a: AlertView, selected: RwSignal<Option<i64>>) -> impl IntoView {
             {move || is_selected().then(|| view! {
                 <p class="meta">{format!("Id na fonte: {}", a.alert_id)}</p>
                 {a.url.clone().map(|u| view! {
-                    <p class="meta"><a href=u.clone() target="_blank" rel="noreferrer">"Página da fonte"</a></p>
+                    <p class="meta"><Out href=u.clone()>"Página da fonte"</Out></p>
                 })}
             })}
         </article>

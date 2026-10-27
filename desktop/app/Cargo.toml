@@ -17,6 +17,8 @@ tauri-build = { version = "2.7.4", features = [] }
 alerts-crud = { path = "../../crates/alerts-crud" }
 serde_json = "1.0.154"
 tauri = { version = "2.12.5", features = [] }
+# Opens a link of the interface (marola.dev, GitHub, a source page) in the system browser.
+tauri-plugin-opener = "2.7.0"
 
 [features]
 # Serve the built interface (desktop/ui/dist) from the binary. Without it, the app loads devUrl.
