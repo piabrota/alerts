@@ -100,6 +100,7 @@ arquivo. Um alerta de teste sai com `<status>Test</status>`.
 |---|---|---|---|
 | Discord | O servidor da v0, que já existe | webhook (push) | v0 |
 | Qualquer leitor de feed | Atom (RFC 4287) com CAP 1.2 em cada entrada | o arquivo do feed (pull) | v0 |
+| [Obsidian](https://obsidian.md) | O plugin WeatherDisaster: uma nota por alerta, para um segundo cérebro | o feed (pull) | novo |
 | [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot para apps de mensagem (AGPL-3.0) | o pacote Python `piabrota-alerts` num plugin | planejado |
 | [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | Plugin de alertas de desastre para o AstrBot: terremoto, tsunami, tempo (AGPL-3.0) | o pacote Python ou o feed, para alertas do Brasil | planejado |
 
@@ -162,6 +163,8 @@ nix develop
 just check                                  # formatação, clippy, testes, licenças
 DISCORD_WEBHOOK_URL=... just test-message   # envia uma mensagem de teste ao Discord
 FEED_PATH=alerts.atom just test-message     # grava o feed Atom + CAP 1.2 com um alerta de teste
+MAROLA_DISCORD_WEBHOOK_URL=... just marola-discord   # um alerta de teste ao Discord oficial do Marola
+just obsidian                               # gera o plugin WeatherDisaster do Obsidian
 just mcp                                    # servidor MCP em stdio
 just py-build                               # gera o pacote Python
 just reading-time                           # grava o tempo de leitura de cada arquivo para humanos
@@ -190,6 +193,17 @@ alertas que as fontes entregaram, ao lado de um mapa. O app nunca cria um alerta
 ![A página Apps do app desktop: o formulário de edição do app sul-enchentes](docs/screenshots/desktop/edit.png)
 
 Mais em [`docs/DESKTOP.md`](docs/DESKTOP.md).
+
+## plugin do Obsidian
+
+O WeatherDisaster (id `piabrota-alerts`) leva os alertas oficiais para um cofre do Obsidian. O
+plugin lê um feed Atom ou RSS de alertas CAP 1.2 e grava uma nota por alerta. O frontmatter tem os
+campos CAP, e o texto do emissor fica literal. Um `Update` do CAP reescreve a nota, e um `Cancel`
+do CAP marca a nota como cancelada. Os filtros são UF, município do IBGE e severidade mínima. Uma
+leitura que falha aparece como falha, nunca como "nenhum alerta". A lógica é Rust
+(`crates/alerts-obsidian`), compilada para WebAssembly.
+
+Mais em [`docs/OBSIDIAN.md`](docs/OBSIDIAN.md) (em inglês).
 
 ## documentação
 

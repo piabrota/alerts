@@ -1,0 +1,10 @@
+{
+  "id": "piabrota-alerts",
+  "name": "WeatherDisaster",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Official disaster alerts (CAP 1.2) as notes: one note per alert, CAP fields in the frontmatter, the issuer's text verbatim.",
+  "author": "piabrota",
+  "authorUrl": "https://github.com/piabrota/alerts",
+  "isDesktopOnly": false
+}
