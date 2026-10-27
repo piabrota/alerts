@@ -1,0 +1,19 @@
+# Not a member of the alerts workspace: the desktop app needs WebKitGTK (on Linux) and the
+# wasm32 target, and the rest of the repo needs neither. `just desktop-check` is its gate.
+[workspace]
+resolver = "3"
+members = ["app", "ui"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+license = "MPL-2.0"
+repository = "https://github.com/piabrota/alerts"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"

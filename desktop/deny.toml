@@ -1,0 +1,25 @@
+# FOSS policy of desktop/: the policy of the root deny.toml, plus three FOSS licenses that the
+# Tauri and Leptos trees use. `just desktop-check` checks it.
+[licenses]
+allow = [
+    "MIT", "Apache-2.0", "Apache-2.0 WITH LLVM-exception", "MPL-2.0", "BSD-3-Clause", "ISC",
+    "Unicode-3.0", "CDLA-Permissive-2.0",
+    "Zlib",     # OSI approved: const_format, foldhash, slotmap, xxhash-rust (Leptos)
+    "BSL-1.0",  # OSI approved: konst (Leptos)
+    "CC0-1.0",  # public domain dedication, FSF free: base16 (Leptos)
+]
+
+[advisories]
+# Two "unmaintained" notices, not vulnerabilities. Both crates are build-time macros deep in the
+# tree; remove each entry when the parent crate drops it.
+ignore = [
+    { id = "RUSTSEC-2024-0436", reason = "paste is unmaintained; used by tachys (Leptos)" },
+    { id = "RUSTSEC-2024-0370", reason = "proc-macro-error is unmaintained; used by the gtk3 macros (Tauri on Linux)" },
+]
+
+[bans]
+multiple-versions = "allow"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

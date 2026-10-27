@@ -1,0 +1,11 @@
+[build]
+target = "index.html"
+dist = "dist"
+
+[serve]
+# The devUrl of desktop/app/tauri.conf.json.
+port = 1420
+open = false
+
+[watch]
+ignore = ["vendor"]

@@ -30,7 +30,14 @@
             nodejs # vendor/archify (`just figure`); Chrome comes from the host
             ptbr-tools.packages.${system}.default # `just reading-time`
             code-graph.packages.${system}.default # `just graph`
-          ] ++ pkgs.lib.optional pkgs.stdenv.hostPlatform.isLinux pkgs.chromium; # `just desmos-gif`; on macOS, CHROME names Chrome
+            trunk wasm-bindgen-cli lld # desktop/ui: the interface, built for wasm32
+          ] ++ pkgs.lib.optional pkgs.stdenv.hostPlatform.isLinux pkgs.chromium # `just desmos-gif`; on macOS, CHROME names Chrome
+          # desktop/app: Tauri 2 on WebKitGTK. On macOS, Tauri uses the system WebView.
+          ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (with pkgs; [
+            pkg-config openssl glib glib-networking gtk3 webkitgtk_4_1 libsoup_3 librsvg cairo pango gdk-pixbuf atk
+          ]);
+          # WebKitGTK needs glib-networking for HTTPS (the map tiles).
+          GIO_MODULE_DIR = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux "${pkgs.glib-networking}/lib/gio/modules/";
         };
         # `just site`: the Gleam site in site/.
         site = pkgs.mkShell {

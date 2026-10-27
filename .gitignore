@@ -33,3 +33,8 @@ AGENTS.md
 /build
 site/build
 site/serve
+
+# The desktop app: the built interface, the pinned MapLibre (just desktop-vendor), the Tauri schemas
+desktop/ui/dist
+desktop/ui/vendor
+desktop/app/gen

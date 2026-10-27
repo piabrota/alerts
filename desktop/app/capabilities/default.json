@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The main window: the core defaults. The app commands (modules, crud) need no extra permission.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
