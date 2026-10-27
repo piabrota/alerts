@@ -136,6 +136,7 @@ flowchart LR
     P["alerts-py<br/>Python package"] --> C
     M["alerts-mcp<br/>MCP server"] --> C
     R["alerts-crud<br/>models, controllers"] --> C
+    R --> X["alerts-rss<br/>RSS rules"] --> F
     T["desktop/app<br/>Tauri 2"] --> R
 ```
 
@@ -197,6 +198,8 @@ the alerts that the sources delivered, next to a map. The app never creates an a
 
 - `crates/alerts-crud`: the models, the controllers and the migrations, on SQLite. Every operation
   goes through `controllers::dispatch`.
+- `crates/alerts-rss`: the RSS combinator. Each user has areas, projects and tasks, and each of
+  them owns RSS feeds and rules that compose the feeds. See [`docs/RSS.md`](docs/RSS.md).
 - `desktop/app`: Tauri 2. Its two commands (`modules`, `crud`) call `alerts-crud`.
 - `desktop/ui`: the interface, in Rust (Leptos, compiled to wasm32). It draws each page from the
   spec of a resource, so a resource from `just generate scaffold` gets its page with no interface code.

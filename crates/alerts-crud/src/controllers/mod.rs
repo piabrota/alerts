@@ -11,8 +11,15 @@ use serde_json::Value;
 
 pub mod alerts;
 pub mod apps;
+pub mod areas;
 pub mod channels;
+pub mod feed_items;
+pub mod feeds;
+pub mod projects;
+pub mod rules;
 pub mod sources;
+pub mod tasks;
+pub mod users;
 // scaffold: controllers
 
 /// The operations of one resource, on JSON values.
@@ -70,6 +77,31 @@ fn no_action<M: Model>(_: &Db, _: i64, action: &str) -> Result<String> {
     })
 }
 
+/// Fails with a field error on `field` when no `M` has this id. `what` is the pt-BR name of
+/// the record, with its article, for example `A área`.
+pub fn require<M: Model>(db: &Db, field: &str, id: i64, what: &str) -> Result<()> {
+    match model::find::<M>(db, id) {
+        Ok(_) => Ok(()),
+        Err(Error::NotFound { .. }) => Err(Error::invalid(vec![crate::validate::FieldError {
+            field: field.into(),
+            message: format!("{what} {id} não existe."),
+        }])),
+        Err(e) => Err(e),
+    }
+}
+
+/// The owner of a feed or a rule exists: the area, project or task `scope_id`.
+pub fn check_scope(db: &Db, scope: &str, scope_id: i64) -> Result<()> {
+    use crate::models::{areas::Area, projects::Project, tasks::Task};
+    match scope {
+        "area" => require::<Area>(db, "scope_id", scope_id, "A área"),
+        "project" => require::<Project>(db, "scope_id", scope_id, "O projeto"),
+        "task" => require::<Task>(db, "scope_id", scope_id, "A tarefa"),
+        // The model validation names a bad scope.
+        _ => Ok(()),
+    }
+}
+
 /// Params that do not parse are a field error on the first field serde names, so the form can
 /// show it.
 pub fn parse<P: serde::de::DeserializeOwned>(params: Value) -> Result<P> {
@@ -95,6 +127,13 @@ pub fn resources() -> Vec<Resource> {
         apps::resource(),
         sources::resource(),
         channels::resource(),
+        users::resource(),
+        areas::resource(),
+        projects::resource(),
+        tasks::resource(),
+        feeds::resource(),
+        rules::resource(),
+        feed_items::resource(),
         // scaffold: resources
     ]
 }

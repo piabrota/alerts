@@ -11,6 +11,8 @@ workspace = true
 
 [dependencies]
 alerts-core = { workspace = true }
+alerts-feed = { workspace = true }
+alerts-rss = { workspace = true }
 rusqlite = { version = "0.41.0", features = ["bundled"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
