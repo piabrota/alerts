@@ -26,6 +26,15 @@ pub fn page() -> String {
   <> item("Dois canais, o mesmo texto.", "Discord e um feed Atom com alertas CAP 1.2.")
   <> item("Estado: bootstrap.", "Nenhuma fonte está implementada.")
   <> "</ul>"
+  <> "<h2>Plugin do Obsidian</h2>"
+  <> "<p>O WeatherDisaster (id <code>piabrota-alerts</code>) lê um feed Atom ou RSS de alertas CAP 1.2 e grava uma nota por alerta no cofre. O frontmatter tem os campos CAP, e o texto do emissor fica literal. Um Update reescreve a nota, e um Cancel marca a nota como cancelada.</p>"
+  <> "<p>Para instalar, baixe os dois arquivos para <code>&lt;cofre&gt;/.obsidian/plugins/piabrota-alerts/</code> e ative o plugin em Configurações → Plugins da comunidade.</p>"
+  <> "<nav>"
+  <> link("obsidian/main.js", "main.js")
+  <> link("obsidian/manifest.json", "manifest.json")
+  <> link("feed.atom", "feed de teste")
+  <> "</nav>"
+  <> "<p>O feed de teste tem só um alerta com status CAP Test. Para ver o plugin funcionar, use o endereço do feed de teste e ative \"Alertas de teste\" nas configurações do plugin.</p>"
   <> "<img class=\"figure\" src=\"fluxo-alerta.png\" alt=\"Como um alerta oficial chega ao Discord e ao feed\">"
   <> "<nav>"
   <> link("https://github.com/piabrota/alerts", "código")
