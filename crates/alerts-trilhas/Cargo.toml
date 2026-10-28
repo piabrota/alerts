@@ -1,6 +1,6 @@
 [package]
 name = "alerts-trilhas"
-description = "Turns Wikiloc GPX exports into rows of data/raw/trilhas/trilhas.tsv, and beach names into slugs"
+description = "The trails raw-source: OpenStreetMap trails (Overpass) and Wikiloc GPX exports as rows of data/raw/trilhas/, beach slugs, and GeoJSON for the map"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -13,3 +13,6 @@ workspace = true
 [[bin]]
 name = "trilhas"
 path = "src/main.rs"
+
+[dependencies]
+serde_json = { workspace = true }

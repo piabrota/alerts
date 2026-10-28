@@ -4,17 +4,23 @@
 //! cargo run -q -p alerts-trilhas -- slug "Recreio dos Bandeirantes"   # recreio-dos-bandeirantes
 //! cargo run -q -p alerts-trilhas -- praias < nomes.tsv >> data/raw/trilhas/praias.tsv
 //! cargo run -q -p alerts-trilhas -- gpx rio joatinga 123456 trilha.gpx >> data/raw/trilhas/trilhas.tsv
+//! cargo run -q -p alerts-trilhas -- osm-query rio                       # the Overpass QL
+//! cargo run -q -p alerts-trilhas -- osm rio < overpass.json >> data/raw/trilhas/osm.tsv
+//! cargo run -q -p alerts-trilhas -- geojson < data/raw/trilhas/osm.tsv > trilhas.geojson
 //! ```
 //!
 //! `praias` reads `cidade<TAB>nome` lines and writes `cidade<TAB>slug<TAB>nome`.
 //! `gpx` reads one GPX file exported from Wikiloc and writes one row of `trilhas.tsv`:
 //! `cidade praia id km dmais lat lon nome`. `id` is the Wikiloc trail id, so the trail page is
 //! `https://www.wikiloc.com/wikiloc/view.do?id=<id>`. `lat lon` is the first point of the track.
-//! This tool never fetches anything: it reads files that a person exported.
+//! `osm`, `osm-query` and `geojson` are in [`osm`]: `just trilhas-osm` fetches the Overpass JSON.
+//! This tool never fetches anything: it reads files that a person or a recipe wrote.
 
 use std::fs;
 use std::io::{self, BufRead, Write};
 use std::process::ExitCode;
+
+mod osm;
 
 /// The beach table that `gpx` checks the beach slug against.
 const PRAIAS: &str = "data/raw/trilhas/praias.tsv";
@@ -51,6 +57,13 @@ fn main() -> ExitCode {
         ["slug", nome] => Ok(format!("{}\n", slug(nome))),
         ["praias"] => praias(io::stdin().lock()),
         ["gpx", cidade, praia, id, arquivo] => gpx(cidade, praia, id, arquivo),
+        ["osm-query", cidade] => osm::query(cidade).map(|q| q + "\n"),
+        ["osm", cidade] => io::read_to_string(io::stdin())
+            .map_err(|e| e.to_string())
+            .and_then(|j| osm::tsv(cidade, &j)),
+        ["geojson"] => io::read_to_string(io::stdin())
+            .map_err(|e| e.to_string())
+            .and_then(|t| osm::geojson(&t)),
         _ => Err(USO.to_string()),
     };
     match out {
@@ -68,7 +81,7 @@ fn main() -> ExitCode {
     }
 }
 
-const USO: &str = "uso: trilhas slug <nome> | trilhas praias < cidade-nome.tsv | trilhas gpx <cidade> <praia> <id> <arquivo.gpx>";
+const USO: &str = "uso: trilhas slug <nome> | trilhas praias < cidade-nome.tsv | trilhas gpx <cidade> <praia> <id> <arquivo.gpx> | trilhas osm-query <cidade> | trilhas osm <cidade> < overpass.json | trilhas geojson < osm.tsv";
 
 /// A beach name as a slug: lowercase ASCII, words joined by `-`.
 fn slug(nome: &str) -> String {

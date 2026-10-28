@@ -128,6 +128,9 @@ dependencies = [
 [[package]]
 name = "alerts-trilhas"
 version = "0.0.0"
+dependencies = [
+ "serde_json",
+]
 
 [[package]]
 name = "android_system_properties"
