@@ -44,7 +44,7 @@
 - **Open by design.** Open standards (Atom, CAP 1.2), FOSS dependencies only, local models only.
   A paid API is never required.
 - **Status:** bootstrap. No agency source is implemented. The service sends a test message, and
-  `alerts poll mock` sends simulated test alerts through the harness to Discord and the feed.
+  `alerts poll mock` sends simulated test alerts through the harness to Discord and the feed. The Discord setup, step by step, is in [`docs/DISCORD.md`](docs/DISCORD.md).
 
 ## Sources
 

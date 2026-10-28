@@ -44,7 +44,7 @@ sources, filters them, and delivers them.
   `just check`) posts one test alert (CAP status Test, headline `TESTE: ...`) to the webhook in
   `MAROLA_DISCORD_WEBHOOK_URL`. It fails when the variable is missing, when the URL is not a Discord
   webhook, or when Discord does not store the message. Write the result in **Testado**. Never
-  print the webhook URL: it holds the token.
+  print the webhook URL: it holds the token. The setup is in `docs/DISCORD.md`.
 - **Every PR uses the `open-pr` verb.** The title is pt-BR. The body is bilingual, pt-BR first, at
   the `estrito` level of `write-pt-br`, and ends with `verbs/open-pr/footer.md`. One PR per request:
   new work for an open PR goes into that PR.

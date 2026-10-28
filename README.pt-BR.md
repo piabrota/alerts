@@ -25,7 +25,7 @@ Alertas do século 22.
 - **Aberto por princípio.** Padrões abertos (Atom, CAP 1.2), só dependências FOSS, só modelos
   locais. Uma API paga nunca é obrigatória.
 - **Estado:** bootstrap. Nenhuma fonte de um órgão está implementada. O serviço envia uma mensagem
-  de teste. O comando `alerts poll mock` envia alertas simulados de teste ao Discord e ao feed, pelo harness.
+  de teste. O comando `alerts poll mock` envia alertas simulados de teste ao Discord e ao feed, pelo harness. A configuração do Discord, passo a passo, está em [`docs/DISCORD.md`](docs/DISCORD.md).
 
 ## fontes
 
