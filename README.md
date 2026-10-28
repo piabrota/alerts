@@ -211,7 +211,8 @@ the alerts that the sources delivered, next to a map. The app never creates an a
 
 ![The Apps page of the desktop app: the edit form of the app sul-enchentes](docs/screenshots/desktop/edit.png)
 
-More in [`docs/DESKTOP.md`](docs/DESKTOP.md).
+More in [`docs/DESKTOP.md`](docs/DESKTOP.md). The way to the App Store and Google Play, as
+"marola alertas", is mapped in [`docs/STORES.md`](docs/STORES.md).
 
 ## Obsidian plugin
 
