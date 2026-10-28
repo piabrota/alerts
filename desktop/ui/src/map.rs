@@ -6,6 +6,10 @@
 //! and off, a click on a UF filters the list, and a click on an alert outlines its UFs.
 //! `alerts_core::Alert` has no geometry, so the map draws only the UF borders: the `map` skill
 //! forbids a guessed shape. The list gives each area in text, and it is complete without the map.
+//!
+//! The trails of Salvador, Rio de Janeiro and Florianópolis come from OpenStreetMap (ODbL), as
+//! `data/raw/trilhas/osm.tsv`. `just desktop-vendor` writes them as GeoJSON. The map draws each
+//! trail as a line and marks its start with a point. A trail is context, not an alert.
 
 use crate::alert_view::{self as view, AlertView, BBox, Filter, SEVERITIES, V0};
 use crate::api;
@@ -24,6 +28,10 @@ use wasm_bindgen_futures::JsFuture;
 const STYLE: &str = "https://tiles.openfreemap.org/styles/positron";
 /// The IBGE UF borders, from `just desktop-vendor` (`vendor/ibge/ufs.geojson`).
 const UFS_URL: &str = "ibge/ufs.geojson";
+/// The OpenStreetMap trails, from `just desktop-vendor` (`vendor/trilhas/trilhas.geojson`).
+const TRILHAS_URL: &str = "trilhas/trilhas.geojson";
+/// The trail color: a green that no severity uses.
+const TRILHA_COR: &str = "#2f7d32";
 /// South Brazil (PR, SC, RS), as `[lon, lat]`, before the borders load.
 const CENTER: (f64, f64) = (-51.2, -27.5);
 /// A UF is the most precise area an alert has: never zoom past it.
@@ -107,7 +115,7 @@ fn options(container: &JsValue) -> JsValue {
         "maxZoom": 12,
         "attributionControl": {
             "compact": false,
-            "customAttribution": "Limites das UFs: IBGE",
+            "customAttribution": ["Limites das UFs: IBGE", "Trilhas: © OpenStreetMap contributors (ODbL)"],
         },
     }));
     let _ = js_sys::Reflect::set(&o, &"container".into(), container);
@@ -192,6 +200,41 @@ fn add_uf_layers(map: &MapLibre, data: &Value) {
             "id": "ufs-selected", "type": "line", "source": "ufs",
             "filter": ["in", ["get", "uf"], ["literal", []]],
             "paint": { "line-color": "#14202b", "line-width": 3 },
+        })),
+        None,
+    );
+}
+
+/// Adds the trails: a line per trail, a point at its start, and the name from zoom 13.
+fn add_trail_layers(map: &MapLibre, data: &Value) {
+    map.add_source("trilhas", &js(&json!({ "type": "geojson", "data": data })));
+    map.add_layer(
+        &js(&json!({
+            "id": "trilhas-line", "type": "line", "source": "trilhas",
+            "filter": ["!", ["has", "inicio"]],
+            "paint": { "line-color": TRILHA_COR, "line-width": 2, "line-dasharray": [2, 1] },
+        })),
+        None,
+    );
+    map.add_layer(
+        &js(&json!({
+            "id": "trilhas-inicio", "type": "circle", "source": "trilhas",
+            "filter": ["has", "inicio"],
+            "paint": {
+                "circle-color": TRILHA_COR,
+                "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 2, 12, 5],
+                "circle-stroke-color": "#ffffff",
+                "circle-stroke-width": 1,
+            },
+        })),
+        None,
+    );
+    map.add_layer(
+        &js(&json!({
+            "id": "trilhas-nome", "type": "symbol", "source": "trilhas",
+            "filter": ["has", "inicio"], "minzoom": 13,
+            "layout": { "text-field": ["get", "nome"], "text-size": 12, "text-offset": [0, 1.2], "text-anchor": "top" },
+            "paint": { "text-color": TRILHA_COR, "text-halo-color": "#ffffff", "text-halo-width": 1 },
         })),
         None,
     );
@@ -335,6 +378,14 @@ pub fn MapPage() -> impl IntoView {
                     Err(e) => status.set(Some(format!(
                         "Os limites das UFs não carregaram ({e}). Rode just desktop-vendor."
                     ))),
+                }
+                // The trails are optional: without the file, the map has only the alerts.
+                if let Ok(trilhas) = fetch_json(TRILHAS_URL).await {
+                    map.with_value(|m| {
+                        if let Some(m) = m {
+                            add_trail_layers(m, &trilhas);
+                        }
+                    });
                 }
             });
         });

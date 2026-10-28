@@ -279,6 +279,25 @@ desktop-vendor:
         mv "$ibge/ufs.geojson.tmp" "$ibge/ufs.geojson"
     fi
     echo "desktop-vendor: $ibge/ufs.geojson (IBGE, 27 UFs)"
+    trilhas=desktop/ui/vendor/trilhas; mkdir -p "$trilhas"
+    cargo run -q -p alerts-trilhas -- geojson < data/raw/trilhas/osm.tsv > "$trilhas/trilhas.geojson"
+    echo "desktop-vendor: $trilhas/trilhas.geojson (OpenStreetMap, $(($(wc -l < data/raw/trilhas/osm.tsv) - 1)) trilhas)"
+
+# Fetch the OpenStreetMap trails of ssa, rio and fln from Overpass into data/raw/trilhas/osm.tsv.
+trilhas-osm:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "alerts-core") | .version')
+    out=data/raw/trilhas/osm.tsv; tmp=$(mktemp)
+    printf 'cidade\tpraia\tosm\tkm\tnome\tlinha\n' > "$tmp"
+    for cidade in ssa rio fln; do
+        cargo run -q -p alerts-trilhas -- osm-query "$cidade" \
+            | curl -fsS --retry 2 -A "piabrota-alerts/$version (+https://github.com/piabrota/alerts)" \
+                --data-urlencode data@- https://overpass-api.de/api/interpreter \
+            | cargo run -q -p alerts-trilhas -- osm "$cidade" >> "$tmp"
+    done
+    mv "$tmp" "$out"
+    echo "trilhas-osm: $out ($(($(wc -l < "$out") - 1)) trilhas, © OpenStreetMap contributors, ODbL)"
 
 # Run the desktop app with live reload: trunk serves the interface on :1420, Tauri opens it.
 desktop-dev: desktop-vendor
