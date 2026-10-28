@@ -1,0 +1,6 @@
+# rustup reads this file: outside `nix develop`, cargo installs and uses this toolchain, not an
+# older one from Homebrew or from `rustup default`. The workspace is edition 2024 (rustc 1.85 or
+# newer). `nix develop` ignores this file and takes rustc from nixpkgs.
+[toolchain]
+channel = "1.99.1"
+components = ["clippy", "rustfmt"]

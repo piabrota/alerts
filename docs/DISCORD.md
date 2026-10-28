@@ -134,10 +134,12 @@ A git history rewrite does not help: assume that a pushed URL was copied.
 The workspace is Rust edition 2024, so it needs rustc 1.85 or newer.
 
 - **With Nix:** `nix develop`, then run every command below inside it.
-- **Without Nix:** install [rustup](https://rustup.rs), then `rustup toolchain install stable`.
-  Homebrew's `rustc` may be older than 1.85. Check with `rustc --version`. A cargo that is too
-  old fails with ``feature `edition2024` is required``. Put `~/.cargo/bin` first in `PATH`, or
-  run the commands with `RUSTUP_TOOLCHAIN=stable`.
+- **Without Nix:** install [rustup](https://rustup.rs). `rust-toolchain.toml` pins the
+  toolchain, so the first `cargo` command installs it. This works only when `cargo` is rustup's
+  `~/.cargo/bin/cargo`. Homebrew's `cargo` ignores the file, may be older than 1.85, and fails with
+  ``feature `edition2024` is required`` or `` `resolver` setting `3` is not valid``. Put
+  `~/.cargo/bin` first in `PATH` (in `~/.zshrc`), or run `brew uninstall rust`. Check with
+  `rustc --version`: it prints the version in `rust-toolchain.toml`.
 - `just`: `brew install just`, or `cargo install just`.
 
 The first build takes a few minutes. The next ones take seconds.
@@ -299,6 +301,8 @@ mock alerts on the map, each with its `TESTE` headline. See `docs/DESKTOP.md`.
 | ``mock: invalid mock file: unknown variant `Big`, expected one of `Minor`, `Moderate`, `Severe`, `Extreme` `` | A value outside the table above | Fix the field it names |
 | `mock: 5 read, 4 passed the harness, 0 delivered` | The store already had these ids | Use a new `ALERTS_DB`, or run again |
 | ``feature `edition2024` is required`` | cargo older than 1.85 | Step 3 |
+| `` `resolver` setting `3` is not valid`` | cargo older than 1.85 | Step 3 |
+| `warning: other users can read .../.env (mode 644)` | `.env` is readable by other users | `chmod 600 .env` (step 2) |
 
 A failed source never looks like "no alert": `alerts poll` prints the error, ends with
 `Error: "1 sources failed"` and exits with a non-zero code.
