@@ -9,6 +9,28 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 pub mod sources;
 
+/// Loads `.env` (from the current directory or a parent) into the environment. A variable that is
+/// already set wins, and a missing `.env` is fine. An invalid line fails without its text: the line
+/// may hold a webhook token.
+pub fn load_dotenv() -> Result<(), Box<dyn Error>> {
+    match dotenvy::dotenv() {
+        Ok(_) => Ok(()),
+        Err(e) if e.not_found() => Ok(()),
+        Err(dotenvy::Error::LineParse(_, at)) => Err(format!(
+            ".env: invalid line near character {at} (the line is not printed: it may hold a secret)"
+        )
+        .into()),
+        Err(dotenvy::Error::Io(e)) => Err(format!(".env: {e}").into()),
+        Err(_) => Err(".env: a value is not valid Unicode".into()),
+    }
+}
+
+/// An environment variable, or `None` when it is unset or empty. `.env.example` lists every
+/// variable with an empty value, so an empty variable means "not set".
+pub fn env(name: &str) -> Option<String> {
+    std::env::var(name).ok().filter(|v| !v.is_empty())
+}
+
 /// A Discord webhook URL, the only kind of URL that `post` accepts.
 pub fn is_discord_webhook(url: &str) -> bool {
     [
