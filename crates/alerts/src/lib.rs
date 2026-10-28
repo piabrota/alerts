@@ -11,10 +11,13 @@ pub mod sources;
 
 /// Loads `.env` (from the current directory or a parent) into the environment. A variable that is
 /// already set wins, and a missing `.env` is fine. An invalid line fails without its text: the line
-/// may hold a webhook token.
+/// may hold a webhook token. A `.env` that other users can read prints a warning to stderr.
 pub fn load_dotenv() -> Result<(), Box<dyn Error>> {
     match dotenvy::dotenv() {
-        Ok(_) => Ok(()),
+        Ok(path) => {
+            warn_if_readable_by_others(&path);
+            Ok(())
+        }
         Err(e) if e.not_found() => Ok(()),
         Err(dotenvy::Error::LineParse(_, at)) => Err(format!(
             ".env: invalid line near character {at} (the line is not printed: it may hold a secret)"
@@ -23,6 +26,32 @@ pub fn load_dotenv() -> Result<(), Box<dyn Error>> {
         Err(dotenvy::Error::Io(e)) => Err(format!(".env: {e}").into()),
         Err(_) => Err(".env: a value is not valid Unicode".into()),
     }
+}
+
+/// The `.env` holds webhook tokens, so only its owner should read it (`chmod 600 .env`).
+#[cfg(unix)]
+fn warn_if_readable_by_others(path: &std::path::Path) {
+    use std::os::unix::fs::PermissionsExt;
+    if let Ok(meta) = std::fs::metadata(path) {
+        let mode = meta.permissions().mode();
+        if readable_by_others(mode) {
+            eprintln!(
+                "warning: other users can read {} (mode {:o}); run: chmod 600 {}",
+                path.display(),
+                mode & 0o777,
+                path.display()
+            );
+        }
+    }
+}
+
+#[cfg(not(unix))]
+fn warn_if_readable_by_others(_path: &std::path::Path) {}
+
+/// True when the group or other users have any permission on the file.
+#[cfg_attr(not(unix), allow(dead_code))]
+fn readable_by_others(mode: u32) -> bool {
+    mode & 0o077 != 0
 }
 
 /// An environment variable, or `None` when it is unset or empty. `.env.example` lists every
@@ -162,5 +191,14 @@ mod tests {
             "https://discord.com.example.org/api/webhooks/1"
         ));
         assert!(!is_discord_webhook(""));
+    }
+
+    #[test]
+    fn env_file_mode() {
+        assert!(!readable_by_others(0o100600));
+        assert!(!readable_by_others(0o100400));
+        assert!(readable_by_others(0o100644));
+        assert!(readable_by_others(0o100640));
+        assert!(readable_by_others(0o100604));
     }
 }
