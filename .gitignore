@@ -31,6 +31,11 @@ __pycache__/
 # The default database of the alerts service (ALERTS_DB)
 /alerts.db
 
+# Secrets: the Discord webhook URLs hold their tokens. Only the empty template is committed.
+.env
+.env.*
+!.env.example
+
 # Agent instructions live in GROUND_TRUTH.md
 AGENTS.md
 /build

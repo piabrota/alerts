@@ -1,4 +1,4 @@
-<!-- reading-time: 10 min -->
+<!-- reading-time: 11 min -->
 # Discord: set up the server, test it, mock alerts
 
 This page takes you from an empty Discord server to test alerts on your screen. Follow it in
@@ -60,10 +60,39 @@ test channel, or test alerts at the real channel.
 
 ## 2. Keep the URL secret on your computer
 
-The URL must not land in your shell history. On macOS, the login Keychain keeps it encrypted.
+The URL must not land in a commit or in your shell history. Pick one of the two ways.
 
-Save it once. `-w` with no value makes `security` ask for the password, so you paste the URL at a
-hidden prompt:
+### The `.env` file
+
+Git ignores `.env` (and `.env.*`, except the empty template `.env.example`). `just` loads it
+into every recipe (`set dotenv-load`), and the `alerts` binary and the Marola test load it too,
+from the current directory or a parent. So `cargo run -p alerts -- ...` works without `just`.
+
+```console
+cp .env.example .env
+chmod 600 .env                 # only your user can read it
+git check-ignore .env          # prints ".env": git will never add it
+```
+
+Open `.env` in your editor and paste the URL after the `=`, with no quotes and no spaces:
+
+```text
+MAROLA_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/<id>/<token>
+```
+
+Paste it in the editor, not with `echo ... >> .env`: an `echo` lands in the shell history.
+
+- To post the tests and the mock alerts to the Marola server too, paste the same URL in
+  `DISCORD_WEBHOOK_URL`. For a test server of your own, paste that server's URL there instead.
+- A variable that is already set in the shell wins over `.env`. An empty value counts as not set.
+- A line that `.env` cannot parse fails without printing its text:
+  `.env: invalid line near character 68 (the line is not printed: it may hold a secret)`.
+- `.env` is a plain text file. A backup, a sync folder or a screen share can still copy it.
+
+### The macOS Keychain
+
+The login Keychain keeps the URL encrypted. Save it once. `-w` with no value makes `security`
+ask for the password, so you paste the URL at a hidden prompt:
 
 ```console
 security add-generic-password -a "$USER" -s marola-discord-webhook -w
@@ -81,12 +110,6 @@ On Linux, or for one session only, read it at a hidden prompt:
 read -rs MAROLA_DISCORD_WEBHOOK_URL && export MAROLA_DISCORD_WEBHOOK_URL
 ```
 
-Check that it is set without printing it:
-
-```console
-echo "${MAROLA_DISCORD_WEBHOOK_URL:+set}"     # prints "set", never the URL
-```
-
 For your own test server, do the same with `DISCORD_WEBHOOK_URL` and another service name, for
 example `alerts-discord-webhook`. To test against the Marola server directly:
 
@@ -94,10 +117,17 @@ example `alerts-discord-webhook`. To test against the Marola server directly:
 export DISCORD_WEBHOOK_URL="$MAROLA_DISCORD_WEBHOOK_URL"
 ```
 
+### Check it without printing it
+
+```console
+echo "${MAROLA_DISCORD_WEBHOOK_URL:+set}"   # shell variable: prints "set"
+grep -c '^MAROLA_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/' .env   # .env: prints 1
+```
+
 **If the URL leaks** (a screenshot, a commit, a paste): delete the webhook in Discord at once
 (**Integrations**, **Webhooks**, the webhook, **Delete Webhook**). That kills the token. Make a
-new webhook and save its URL again with `security add-generic-password -U ...`. A git history
-rewrite does not help: assume that a pushed URL was copied.
+new webhook and put its URL in `.env` or in the Keychain (`security add-generic-password -U ...`).
+A git history rewrite does not help: assume that a pushed URL was copied.
 
 ## 3. Get the toolchain
 
@@ -258,8 +288,9 @@ mock alerts on the map, each with its `TESTE` headline. See `docs/DESKTOP.md`.
 
 | Message | Cause | Fix |
 |---|---|---|
-| `no channel: set DISCORD_WEBHOOK_URL or FEED_PATH` | No variable in this terminal | Load the URL again (step 2). A new terminal does not keep `export`s. |
-| `set MAROLA_DISCORD_WEBHOOK_URL to the webhook of the official Marola Discord: NotPresent` | `just marola-discord` without the variable | Step 2 |
+| `no channel: set DISCORD_WEBHOOK_URL or FEED_PATH` | No variable in this terminal, and none in `.env` | Step 2. A new terminal does not keep `export`s; `.env` stays. |
+| `set MAROLA_DISCORD_WEBHOOK_URL to the webhook of the official Marola Discord` | `just marola-discord` without the variable, or with an empty value in `.env` | Step 2 |
+| `.env: invalid line near character N (...)` | A line of `.env` is not `NAME=value`, for example an open quote | Fix the line in the editor; the error never prints it |
 | `the webhook URL is not a Discord webhook URL` | The URL does not start with `https://discord.com/api/webhooks/` or `https://discordapp.com/api/webhooks/`. A URL from Discord Canary or PTB starts with `canary.discord.com` or `ptb.discord.com`. | Copy the URL again, or change the host to `discord.com` |
 | `reqwest::Error { kind: Status(404, None) }` | The webhook was deleted, or the URL is cut short | Make a new webhook (step 1.4) |
 | `Status(400, ...)` | A forum channel, or a field that Discord refuses | Use a text channel |
@@ -277,8 +308,9 @@ A failed source never looks like "no alert": `alerts poll` prints the error, end
 - [ ] The server `marola` has `#alertas` and `#alertas-teste`, both text channels, read-only for
       `@everyone`.
 - [ ] The webhook `marola alertas` posts in `#alertas-teste`.
-- [ ] The URL is in the Keychain, not in a file or the shell history.
-- [ ] `echo "${MAROLA_DISCORD_WEBHOOK_URL:+set}"` prints `set`.
+- [ ] The URL is in `.env` (`git check-ignore .env` prints `.env`) or in the Keychain, never in
+      a commit or the shell history.
+- [ ] The check of step 2 prints `1` (`.env`) or `set` (Keychain), never the URL.
 - [ ] `just test-message` with `DISCORD_WEBHOOK_URL="$MAROLA_DISCORD_WEBHOOK_URL"`: one blue embed.
 - [ ] `just marola-discord`: `test alert stored as message <id>`.
 - [ ] `just mock-alerts` with a throwaway `ALERTS_DB`: four embeds, blue, yellow, orange and red;

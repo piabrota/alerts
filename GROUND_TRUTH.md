@@ -57,7 +57,8 @@ sources, filters them, and delivers them.
 - **FOSS first.** A new dependency must pass `just deny` (license allowlist in `deny.toml`).
   Do not use paid resources or paid APIs without explicit human confirmation.
 - **No secrets in the repo.** The Discord webhooks come from `DISCORD_WEBHOOK_URL` (the alerts
-  server) and `MAROLA_DISCORD_WEBHOOK_URL` (the official Marola server).
+  server) and `MAROLA_DISCORD_WEBHOOK_URL` (the official Marola server). They live in the
+  environment or in `.env`, which git ignores; only the empty `.env.example` is committed.
 - **Official sources only.** An alert comes from an authoritative agency. Never invent an alert,
   an area, a time or an action that the source does not state.
 - **No `unwrap` or `expect`** outside tests (workspace clippy lints). `unsafe` is denied.

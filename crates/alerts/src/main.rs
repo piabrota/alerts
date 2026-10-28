@@ -2,7 +2,7 @@
 //! the RSS feeds that the rules of `alerts-crud` compose.
 
 use alerts::sources::{Channels, Fetch, Source, deliver, v0_harness, write_feed};
-use alerts::{now_utc, post, test_alert, write_atomic};
+use alerts::{env, load_dotenv, now_utc, post, test_alert, write_atomic};
 use alerts_feed::{FeedMeta, Status};
 use std::error::Error;
 
@@ -19,6 +19,9 @@ Reads the sources and stores what it delivered:
 
 Reads and composes RSS feeds in the same database.
 
+Every variable can also come from a .env file in the current directory or a parent; a
+variable that is already set wins, and an empty one counts as not set.
+
   test-message     publish one test alert (CAP status Test)
   poll <source>... read each source once, run the v0 harness, and deliver each new
                    alert once (sources: mock)
@@ -27,11 +30,12 @@ Reads and composes RSS feeds in the same database.
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn Error>> {
+    load_dotenv()?;
     match std::env::args().nth(1).as_deref() {
         Some("test-message") => {
             let alert = test_alert(&now_utc());
-            let discord = std::env::var("DISCORD_WEBHOOK_URL").ok();
-            let feed = std::env::var("FEED_PATH").ok();
+            let discord = env("DISCORD_WEBHOOK_URL");
+            let feed = env("FEED_PATH");
             if discord.is_none() && feed.is_none() {
                 return Err("no channel: set DISCORD_WEBHOOK_URL or FEED_PATH".into());
             }
@@ -69,13 +73,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn open_db() -> Result<alerts_crud::Db, Box<dyn Error>> {
-    let path = std::env::var("ALERTS_DB").unwrap_or_else(|_| "alerts.db".into());
+    let path = env("ALERTS_DB").unwrap_or_else(|| "alerts.db".into());
     Ok(alerts_crud::open(std::path::Path::new(&path))?)
 }
 
 fn feed_meta() -> FeedMeta {
     FeedMeta {
-        id: std::env::var("FEED_ID").unwrap_or_else(|_| "urn:piabrota-alerts".into()),
+        id: env("FEED_ID").unwrap_or_else(|| "urn:piabrota-alerts".into()),
         title: "alerts".into(),
     }
 }
@@ -92,8 +96,8 @@ async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
         .map(|id| id.parse::<Source>())
         .collect::<Result<Vec<_>, _>>()?;
     let channels = Channels {
-        discord: std::env::var("DISCORD_WEBHOOK_URL").ok(),
-        feed: std::env::var("FEED_PATH").ok().map(|p| (p, feed_meta())),
+        discord: env("DISCORD_WEBHOOK_URL"),
+        feed: env("FEED_PATH").map(|p| (p, feed_meta())),
     };
     if channels.discord.is_none() && channels.feed.is_none() {
         return Err("no channel: set DISCORD_WEBHOOK_URL or FEED_PATH".into());
@@ -102,7 +106,7 @@ async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
     let harness = v0_harness();
     let ctx = Fetch {
         now: now_utc(),
-        mock_file: std::env::var("MOCK_ALERTS_PATH").ok(),
+        mock_file: env("MOCK_ALERTS_PATH"),
     };
     let mut failed = 0;
     for source in sources {

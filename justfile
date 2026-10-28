@@ -1,5 +1,8 @@
 # Run every recipe inside `nix develop`. There is no CI: `just check` is the gate before a PR.
 
+# Load .env (git ignores it) into every recipe: the Discord webhooks live there. See .env.example.
+set dotenv-load
+
 default:
     @just --list
 
@@ -211,7 +214,8 @@ site: obsidian
     nix develop --no-update-lock-file .#site --command just --justfile site/justfile --working-directory site build
     mkdir -p site/serve/alerts/obsidian
     cp target/obsidian/piabrota-alerts/main.js target/obsidian/piabrota-alerts/manifest.json site/serve/alerts/obsidian/
-    env -u DISCORD_WEBHOOK_URL FEED_PATH=site/serve/alerts/feed.atom FEED_ID=https://piabrota.art/alerts/feed.atom cargo run -q -p alerts -- test-message
+    # The site gets the feed only: an empty DISCORD_WEBHOOK_URL wins over .env and counts as not set.
+    env DISCORD_WEBHOOK_URL= FEED_PATH=site/serve/alerts/feed.atom FEED_ID=https://piabrota.art/alerts/feed.atom cargo run -q -p alerts -- test-message
 
 # Publish the site to Codeberg Pages: build it, check it has no AI trace, and push it as one
 # commit to the `pages` branch of REMOTE (default: the public repository piabrota/pages). The
