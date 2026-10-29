@@ -65,6 +65,15 @@ test-message:
 mock-alerts:
     cargo run -q -p alerts -- poll mock
 
+# Read the sources of ALERTS_SOURCES (for example cemaden) and deliver each new alert once to
+# DISCORD_WEBHOOK_URL and/or FEED_PATH.
+poll:
+    cargo run -q -p alerts -- poll
+
+# Search the curated catalog of official sources, for example: just sources --country BR --alerts
+sources *args:
+    cargo run -q -p alerts -- sources {{args}}
+
 # Hard rule: deliver one test alert to the official Marola Discord. Part of `just check`. The webhook
 # comes from MAROLA_DISCORD_WEBHOOK_URL and never enters the repository.
 marola-discord:

@@ -1,4 +1,4 @@
-<!-- reading-time: 6 min -->
+<!-- reading-time: 9 min -->
 # Sources: endpoints and formats
 
 This page lists the concrete endpoint, the format and the authentication of each source.
@@ -63,6 +63,23 @@ means that the endpoint works, but the agency does not document it: it can chang
 | `http://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=PR` | JSON, rain accumulation 1 h to 96 h | none | undocumented ⚠ |
 
 - The official API has observations, not alerts. The municipal alerts exist only in `wsAlertas2`.
+- `alerts-source-cemaden` reads `wsAlertas2` (`alerts poll cemaden`). Checked on 2026-10-28: 14
+  alerts, all with `status` 1, the events `Risco Hidrológico` and `Movimentos de Massa`, and the
+  levels `Moderado` and `Alto`.
+
+  | Panel field | `Alert` |
+  |---|---|
+  | `evento` `Risco Hidrológico - <nivel>` | hazard Flood |
+  | `evento` `Movimentos de Massa - <nivel>` | hazard Landslide (CAP category `Geo`) |
+  | `nivel` `Moderado`, `Alto`, `Muito Alto` | severity Moderate, Severe, Extreme (`Muito Alto` not seen ⚠) |
+  | `uf`, checked against the first two digits of `codibge` | ufs |
+  | `cod_alerta` and `ult_atualizacao` | id: a changed alert is delivered again |
+  | `ult_atualizacao`, without an offset | sent, taken as Brasília time (UTC-3) ⚠ |
+  | `evento`, `municipio`, `uf` as the panel writes them | headline, for example `Risco Hidrológico - Alto em SÃO BORJA (RS).` |
+
+- Any other `status`, `evento` or `nivel`, a `uf` that does not match `codibge`, or a time in
+  another form fails the poll, with the alert id and the field. The other fields (`latitude`,
+  `longitude`, `datahoracriacao`) are not read.
 - Limit: 12 requests per minute for an external user ⚠ (from a third-party page). CEMADEN requires
   citation.
 
@@ -125,6 +142,49 @@ means that the endpoint works, but the agency does not document it: it can chang
 
 - Every automatic client gets `403` (`cf-mitigated: challenge`), from inside and outside Brazil.
   The source gets no module until SIMEPAR publishes an API.
+
+## Catalog and BYOT
+
+`alerts-catalog` is the curated catalog of official alert sources: the Brazilian sources of this
+page, and the national weather services and global systems that a person outside Brazil can use.
+`alerts sources` searches it (words, `--country <ISO code>`, `--no-token`, `--alerts`), and the
+MCP tool `search_sources` gives the same search to an agent. A catalog entry is not a source
+module: `module` names the module when one exists, and `alerts poll` reads only the modules.
+
+Checked on 2026-10-28 from inside Brazil, with the honest User-Agent. "Answered" is the HTTP
+status without a token.
+
+| Id | Agency | Countries | Format | Token (BYOT) | Answered | Module |
+|---|---|---|---|---|---|---|
+| `cemaden` | CEMADEN | BR | JSON | none | 200 | `cemaden` |
+| `cemaden-ped` | CEMADEN | BR | JSON (observations) | `ALERTS_TOKEN_CEMADEN_PED` | 400 "O parâmetro token não pode ser vazio!" | — |
+| `defesa-civil-idap` | Defesa Civil Nacional | BR | Atom + CAP 1.2 | none | 200 | — |
+| `inmet` | INMET | BR | RSS + CAP 1.2 | none | 200 | — |
+| `inmet-estacoes` | INMET | BR | JSON (observations) | `ALERTS_TOKEN_INMET_ESTACOES` | not checked ⚠ | — |
+| `ana` | ANA | BR | JSON (observations) | `ALERTS_TOKEN_ANA` | not checked ⚠ | — |
+| `smn-ar` | SMN Argentina | AR | GeoRSS | none | 200 | — |
+| `nws` | NWS (NOAA) | US | GeoJSON + CAP 1.2 | none | 200 | — |
+| `eccc` | ECCC | CA | CAP 1.2 files | none | the path of the CAP files ⚠ | — |
+| `meteoalarm` | EUMETNET | 38 countries in Europe ⚠ | Atom + CAP 1.2 | none | 200 (`portugal`) | — |
+| `dwd` | DWD | DE | JSONP | none | 200 | — |
+| `meteo-france` | Météo-France | FR | JSON | `ALERTS_TOKEN_METEO_FRANCE` | 401 "Missing Credentials" | — |
+| `aemet` | AEMET | ES | CAP 1.2 (tar) | `ALERTS_TOKEN_AEMET` | no answer in 25 s ⚠ | — |
+| `jma` | JMA | JP | Atom + JMA XML | none | 200 | — |
+| `gdacs` | GDACS (UN and EC) | world | RSS | none | 200 | — |
+
+**BYOT (bring your own token).** alerts never ships a token, and the catalog never holds one.
+Each person registers with the agency (`alerts sources <id>` says how) and sets the token in the
+variable of the entry: `ALERTS_TOKEN_` and the id in uppercase, with `_` for `-`. The token lives
+in the environment or in `.env` (`chmod 600 .env`; alerts warns when other users can read it).
+`alerts tokens` says which tokens are set, never their values, and no message, log or error
+shows a token.
+
+**Subscribe.** `ALERTS_SOURCES` lists the modules that `alerts poll` reads when it gets none,
+for example `ALERTS_SOURCES=cemaden` for the PiaBrota server. `just poll` runs it.
+`ALERTS_UFS` selects the states that `alerts poll` delivers: `all` for every UF, or a list such as
+`PR,SC,RS`. Without it, the poll keeps the states of v0 (PR, SC and RS). `ALERTS_SOURCES=cemaden`
+with `ALERTS_UFS=all` delivers every alert of the CEMADEN panel. On 2026-10-29 the panel had 7
+alerts: 6 of them were outside the South (BA, GO, MT and SP).
 
 ## Mock source (tests only)
 

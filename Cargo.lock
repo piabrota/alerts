@@ -12,16 +12,22 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 name = "alerts"
 version = "0.0.0"
 dependencies = [
+ "alerts-catalog",
  "alerts-core",
  "alerts-crud",
  "alerts-feed",
  "alerts-rss",
+ "alerts-source-cemaden",
  "alerts-source-mock",
  "dotenvy",
  "reqwest",
  "serde_json",
  "tokio",
 ]
+
+[[package]]
+name = "alerts-catalog"
+version = "0.0.0"
 
 [[package]]
 name = "alerts-core"
@@ -75,6 +81,7 @@ dependencies = [
 name = "alerts-mcp"
 version = "0.0.0"
 dependencies = [
+ "alerts-catalog",
  "alerts-core",
  "rmcp",
  "schemars",
@@ -116,6 +123,15 @@ dependencies = [
 [[package]]
 name = "alerts-scaffold"
 version = "0.0.0"
+
+[[package]]
+name = "alerts-source-cemaden"
+version = "0.0.0"
+dependencies = [
+ "alerts-core",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "alerts-source-mock"

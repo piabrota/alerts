@@ -57,8 +57,10 @@ sources, filters them, and delivers them.
 - **FOSS first.** A new dependency must pass `just deny` (license allowlist in `deny.toml`).
   Do not use paid resources or paid APIs without explicit human confirmation.
 - **No secrets in the repo.** The Discord webhooks come from `DISCORD_WEBHOOK_URL` (the alerts
-  server) and `MAROLA_DISCORD_WEBHOOK_URL` (the official Marola server). They live in the
-  environment or in `.env`, which git ignores; only the empty `.env.example` is committed.
+  server) and `MAROLA_DISCORD_WEBHOOK_URL` (the official Marola server). The source tokens are BYOT:
+  each person brings their own in `ALERTS_TOKEN_<ID>` (`alerts-catalog` names the variable). They
+  live in the environment or in `.env`, which git ignores; only the empty `.env.example` is
+  committed. Never print a token: `alerts::tokens::Token` hides it in `Debug` and `Display`.
 - **Official sources only.** An alert comes from an authoritative agency. Never invent an alert,
   an area, a time or an action that the source does not state.
 - **No `unwrap` or `expect`** outside tests (workspace clippy lints). `unsafe` is denied.
@@ -85,6 +87,8 @@ just check         # fmt, clippy, tests, cargo-deny, stale translations
 just test-message  # publish one test alert to DISCORD_WEBHOOK_URL and/or FEED_PATH
 just marola-discord # the hard-rule test: one test alert to MAROLA_DISCORD_WEBHOOK_URL
 just mock-alerts    # deliver the mock alerts (TESTE) to DISCORD_WEBHOOK_URL and/or FEED_PATH
+just poll          # read the sources of ALERTS_SOURCES (for example cemaden) and deliver new alerts
+just sources       # search the catalog of official sources; BYOT tokens in ALERTS_TOKEN_<ID>
 just obsidian      # build the Obsidian plugin into target/obsidian/piabrota-alerts
 just mcp           # run the MCP server on stdio
 just py-build      # build the Python wheel
@@ -108,6 +112,8 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `alerts-crud` | lib | Loco-style models, controllers and migrations (SQLite) of the desktop app. `controllers::dispatch` is the one entry point. |
 | `alerts-rss` | lib | The RSS combinator: RSS and Atom items, a rule algebra (union, intersect, diff, filter, map, dedupe, take) and a pure evaluator. No I/O. See `docs/RSS.md`. |
 | `alerts-scaffold` | bin | `scaffold`: writes a new `alerts-crud` resource (`just generate scaffold`). |
+| `alerts-catalog` | lib | The curated catalog of official alert sources, in Brazil and in the world, and its search (`alerts sources`, MCP `search_sources`). A source that needs a token is BYOT: `ALERTS_TOKEN_<ID>`, never in the repo. No I/O. |
+| `alerts-source-cemaden` | lib | The CEMADEN source: the municipal alerts of `painelalertas.cemaden.gov.br/wsAlertas2` (`alerts poll cemaden`). An unknown field fails loudly. No I/O. |
 | `alerts-source-mock` | lib | The mock source: simulated test alerts (headline `TESTE:`, CAP status Test) for `alerts poll mock` and `just mock-alerts`. Never an agency. |
 
 `desktop/` is its own Cargo workspace, outside `crates/`: `desktop/app` (Tauri 2) and `desktop/ui` (Leptos,

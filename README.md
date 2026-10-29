@@ -1,4 +1,4 @@
-<!-- reading-time: 15 min -->
+<!-- reading-time: 17 min -->
 <div align="center">
 
 <table>
@@ -43,7 +43,8 @@
   [AstrBot](#who-will-use-alerts) plugin.
 - **Open by design.** Open standards (Atom, CAP 1.2), FOSS dependencies only, local models only.
   A paid API is never required.
-- **Status:** bootstrap. No agency source is implemented. The service sends a test message, and
+- **Status:** bootstrap. One agency source is implemented: the CEMADEN municipal alerts
+  (`alerts poll cemaden`). The service sends a test message, and
   `alerts poll mock` sends simulated test alerts through the harness to Discord and the feed. The Discord setup, step by step, is in [`docs/DISCORD.md`](docs/DISCORD.md).
 
 ## Sources
@@ -60,13 +61,33 @@ source are in [`docs/SOURCES.md`](docs/SOURCES.md).
 |---|---|---|---|---|---|
 | Defesa Civil (IDAP) | yes, not documented ⚠ | Atom with CAP 1.2 | none | reachable | v0 |
 | INMET | yes | RSS and CAP 1.2; undocumented JSON | none (warnings); token by email (stations) | reachable | v0 |
-| CEMADEN | yes (observations) | REST JSON | free registration (JWT) | reachable | v0 |
+| CEMADEN | yes (observations) | REST JSON; undocumented alerts JSON | none (alerts); free registration, JWT (observations) | reachable | v0, alerts done |
 | ANA | yes | REST JSON; legacy SOAP | registration with CPF/CNPJ (REST); none (SOAP) | reachable; registration can require a CPF/CNPJ ⚠ | planned |
 | CPTEC/INPE | yes, forecasts only | XML | none | reachable; non-commercial use | planned |
 | Epagri/Ciram (SC) | partial | WordPress RSS and JSON, free text | none (warnings); CPF (station data) | reachable | planned |
 | SGB (SACE) | no | HTML; PDF bulletins | none | reachable | planned |
 | Defesa Civil RS | no | PDF; undocumented ClimaRS JSON | none | reachable | planned |
 | SIMEPAR (PR) | none found | — | — | blocked from every country (Cloudflare) | planned |
+
+**Find a source, in Brazil or in the world.** `alerts sources` searches a curated catalog of
+official alert sources: Brazil first, then national weather services abroad (NWS, MeteoAlarm,
+Météo-France, AEMET, DWD, JMA, ECCC, SMN Argentina) and GDACS for the world. Each entry says the
+endpoint, the format, and whether it needs a token. The MCP tool `search_sources` gives the same
+search to an agent.
+
+```bash
+alerts sources --country BR --alerts   # the Brazilian alert sources
+alerts sources flood --no-token        # flood sources that need no token
+alerts tokens                          # which of your tokens are set (never their values)
+```
+
+**Bring your own token (BYOT).** alerts never ships a token. A source that needs one (CEMADEN
+PED, INMET stations, ANA, Météo-France, AEMET) reads your own token from `ALERTS_TOKEN_<ID>`, in
+the environment or in `.env` (`chmod 600 .env`). A token never reaches a message, a log or an
+error. To subscribe a server to sources, list them in `ALERTS_SOURCES`, for example
+`ALERTS_SOURCES=cemaden`, and run `alerts poll`. `ALERTS_UFS` selects the states (`all`, or for
+example `PR,SC,RS`, the default). The catalog is in
+[`docs/SOURCES.md`](docs/SOURCES.md#catalog-and-byot).
 
 **What each source requires from the code:**
 
@@ -79,6 +100,9 @@ source are in [`docs/SOURCES.md`](docs/SOURCES.md).
   new name ⚠. The RSS declares public domain, with citation of the source.
 - **CEMADEN:** the PED API (`sws.cemaden.gov.br/PED`) gives observations, not alerts. The
   municipal alerts exist only in an undocumented JSON (`painelalertas.cemaden.gov.br/wsAlertas2`).
+  `alerts-source-cemaden` reads it: floods and mass movements, at levels moderate, high and very
+  high. A field it does not know fails the poll, so a change of the panel never drops an alert in
+  silence.
   The limit is 12 requests per minute for an external user ⚠. CEMADEN requires citation.
 - **ANA:** the REST token is valid for 60 minutes. Frequent token requests can block the IP.
 - **CPTEC/INPE:** the terms forbid commercial use without authorization and require the citation

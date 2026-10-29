@@ -1,0 +1,15 @@
+[package]
+name = "alerts-source-cemaden"
+description = "The CEMADEN source: the municipal alerts of the CEMADEN alert panel as alerts"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+alerts-core = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }

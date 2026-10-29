@@ -20,6 +20,25 @@ struct CheckAlert {
     alert_json: String,
 }
 
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+struct SearchSources {
+    #[schemars(
+        description = "words that must all appear (agency, hazard, format...), any case or accent"
+    )]
+    #[serde(default)]
+    text: String,
+    #[schemars(
+        description = "an ISO 3166-1 alpha-2 country code, for example BR; world sources always match"
+    )]
+    country: Option<String>,
+    #[schemars(description = "only the sources that need no token (BYOT)")]
+    #[serde(default)]
+    no_token: bool,
+    #[schemars(description = "only the sources that give alerts, not observations")]
+    #[serde(default)]
+    alerts_only: bool,
+}
+
 #[tool_router]
 impl Alerts {
     #[tool(description = "List the Brazilian states (UF) that alerts v0 serves")]
@@ -29,6 +48,48 @@ impl Alerts {
             .map(|u| u.as_str())
             .collect::<Vec<_>>()
             .join(", ")
+    }
+
+    #[tool(
+        description = "Search the curated catalog of official alert sources, in Brazil and in the world. \
+                       Each result gives the endpoint, the format, and the environment variable of the token \
+                       when the source needs your own token (BYOT). Never returns a token."
+    )]
+    fn search_sources(&self, Parameters(q): Parameters<SearchSources>) -> String {
+        let found = alerts_catalog::search(&alerts_catalog::Query {
+            text: q.text,
+            country: q.country,
+            no_token: q.no_token,
+            alerts_only: q.alerts_only,
+        });
+        let rows: Vec<_> = found
+            .iter()
+            .map(|e| {
+                let (token_env, token_how) = match e.auth {
+                    alerts_catalog::Auth::None => (None, None),
+                    alerts_catalog::Auth::Token { env, how } => (Some(env), Some(how)),
+                };
+                serde_json::json!({
+                    "id": e.id,
+                    "name": e.name,
+                    "agency": e.agency,
+                    "countries": e.countries,
+                    "hazards": e.hazards,
+                    "kind": match e.kind {
+                        alerts_catalog::Kind::Alerts => "alerts",
+                        alerts_catalog::Kind::Observations => "observations",
+                    },
+                    "format": e.format,
+                    "url": e.url,
+                    "docs": e.docs,
+                    "token_env": token_env,
+                    "token_how": token_how,
+                    "module": e.module,
+                    "checked": e.checked,
+                })
+            })
+            .collect();
+        serde_json::Value::Array(rows).to_string()
     }
 
     #[tool(description = "Say whether the v0 harness keeps or drops an alert")]
