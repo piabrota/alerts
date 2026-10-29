@@ -151,12 +151,23 @@ impl Severity {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Hazard {
     Flood,
+    /// Landslides, mudslides and other mass movements (CEMADEN: "Movimentos de Massa").
+    Landslide,
 }
 
 impl Hazard {
     pub fn label_pt_br(self) -> &'static str {
         match self {
             Hazard::Flood => "Inundação",
+            Hazard::Landslide => "Movimento de massa",
+        }
+    }
+
+    /// The CAP 1.2 `<category>` of this hazard.
+    pub fn cap_category(self) -> &'static str {
+        match self {
+            Hazard::Flood => "Met",
+            Hazard::Landslide => "Geo",
         }
     }
 }

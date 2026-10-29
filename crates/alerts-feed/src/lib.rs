@@ -100,10 +100,11 @@ pub fn cap(a: &Alert, status: Status) -> Result<String, FeedError> {
         "<alert xmlns=\"{CAP_NS}\"><identifier>{}</identifier><sender>{SENDER}</sender>\
          <sent>{sent}</sent><status>{status}</status><msgType>Alert</msgType>\
          <source>{}</source><scope>Public</scope><info><language>pt-BR</language>\
-         <category>Met</category><event>{}</event><urgency>Unknown</urgency>\
+         <category>{}</category><event>{}</event><urgency>Unknown</urgency>\
          <severity>{}</severity><certainty>Unknown</certainty><headline>{}</headline>",
         escape(identifier(a)),
         escape(a.source.as_str()),
+        a.hazard.cap_category(),
         a.hazard.label_pt_br(),
         severity(a.severity),
         escape(a.headline.as_str()),

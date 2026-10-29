@@ -1,12 +1,14 @@
 //! The alerts service: publishes alerts to Discord and to an Atom + CAP 1.2 feed, and reads
 //! the RSS feeds that the rules of `alerts-crud` compose.
 
-use alerts::sources::{Channels, Fetch, Source, deliver, v0_harness, write_feed};
+use alerts::sources::{Channels, Fetch, Source, deliver, harness, ufs_of, write_feed};
 use alerts::{env, load_dotenv, now_utc, post, test_alert, write_atomic};
 use alerts_feed::{FeedMeta, Status};
 use std::error::Error;
 
-const USAGE: &str = "usage: alerts test-message | poll <source>... | rss-fetch | rss-atom <rule>
+const USAGE: &str =
+    "usage: alerts test-message | poll [<source>...] | sources [<filter>...] | tokens
+              | rss-fetch | rss-atom <rule>
 
 Publishes to every configured channel:
   DISCORD_WEBHOOK_URL   post to this Discord webhook
@@ -16,6 +18,10 @@ Publishes to every configured channel:
 Reads the sources and stores what it delivered:
   ALERTS_DB             the database file (default: alerts.db)
   MOCK_ALERTS_PATH      a JSON file of mock alerts, in place of the built-in scenarios
+  ALERTS_SOURCES        the sources that `poll` reads when it gets none, for example cemaden
+  ALERTS_UFS            the states that `poll` delivers: all, or for example PR,SC,RS
+                        (default: PR,SC,RS)
+  ALERTS_TOKEN_<ID>     BYOT: your own token for a catalog source that needs one
 
 Reads and composes RSS feeds in the same database.
 
@@ -23,8 +29,11 @@ Every variable can also come from a .env file in the current directory or a pare
 variable that is already set wins, and an empty one counts as not set.
 
   test-message     publish one test alert (CAP status Test)
-  poll <source>... read each source once, run the v0 harness, and deliver each new
-                   alert once (sources: mock)
+  poll <source>... read each source once, keep the alerts of ALERTS_UFS, and deliver
+                   each new alert once (sources: mock, cemaden; default: ALERTS_SOURCES)
+  sources [...]    search the curated catalog of official sources, in Brazil and in the
+                   world: words, --country <ISO code>, --no-token, --alerts
+  tokens           say which BYOT tokens are set (never their values)
   rss-fetch        read every enabled feed and store its items
   rss-atom <rule>  print the Atom feed of the rule with this slug";
 
@@ -51,6 +60,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Some("poll") => poll(&std::env::args().skip(2).collect::<Vec<_>>()).await,
+        Some("sources") => sources(&std::env::args().skip(2).collect::<Vec<_>>()),
+        Some("tokens") => {
+            for (entry, _) in alerts_catalog::byot() {
+                let state = alerts::tokens::state(entry, env);
+                println!("{:<16} {}", entry.id, state.describe());
+            }
+            Ok(())
+        }
         Some("rss-fetch") => rss_fetch(&open_db()?).await,
         Some("rss-atom") => {
             let Some(slug) = std::env::args().nth(2) else {
@@ -87,6 +104,15 @@ fn feed_meta() -> FeedMeta {
 /// Reads each source once and delivers its new alerts to every configured channel. A source
 /// that fails is reported, and the others still run; the command fails when any source failed.
 async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
+    let subscribed: Vec<String> = env("ALERTS_SOURCES")
+        .map(|v| {
+            v.split([',', ' '])
+                .filter(|s| !s.is_empty())
+                .map(str::to_owned)
+                .collect()
+        })
+        .unwrap_or_default();
+    let ids = if ids.is_empty() { &subscribed[..] } else { ids };
     if ids.is_empty() {
         eprintln!("{USAGE}");
         std::process::exit(2);
@@ -103,7 +129,7 @@ async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
         return Err("no channel: set DISCORD_WEBHOOK_URL or FEED_PATH".into());
     }
     let db = open_db()?;
-    let harness = v0_harness();
+    let harness = harness(ufs_of(env("ALERTS_UFS").as_deref())?);
     let ctx = Fetch {
         now: now_utc(),
         mock_file: env("MOCK_ALERTS_PATH"),
@@ -132,6 +158,61 @@ async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
     if failed > 0 {
         return Err(format!("{failed} sources failed").into());
     }
+    Ok(())
+}
+
+/// Prints the catalog entries that match the filters: one block per entry, with its token state.
+fn sources(args: &[String]) -> Result<(), Box<dyn Error>> {
+    let mut q = alerts_catalog::Query::default();
+    let mut words = Vec::new();
+    let mut args = args.iter();
+    while let Some(a) = args.next() {
+        match a.as_str() {
+            "--country" => {
+                q.country = Some(args.next().ok_or("--country needs an ISO code")?.clone())
+            }
+            "--no-token" => q.no_token = true,
+            "--alerts" => q.alerts_only = true,
+            _ if a.starts_with("--") => return Err(format!("unknown option {a}").into()),
+            _ => words.push(a.as_str()),
+        }
+    }
+    q.text = words.join(" ");
+    let found = alerts_catalog::search(&q);
+    for e in &found {
+        let countries = if e.countries.is_empty() {
+            "world".to_owned()
+        } else {
+            e.countries.join(" ")
+        };
+        let kind = match e.kind {
+            alerts_catalog::Kind::Alerts => "alerts",
+            alerts_catalog::Kind::Observations => "observations",
+        };
+        let module = e
+            .module
+            .map_or("catalog only".to_owned(), |m| format!("alerts poll {m}"));
+        println!("{} · {} · {}", e.id, e.agency, e.name);
+        println!(
+            "  {countries} · {kind} · {} · {}",
+            e.format,
+            e.hazards.join(", ")
+        );
+        println!("  {}", e.url);
+        if let Some(docs) = e.docs {
+            println!("  docs: {docs}");
+        }
+        println!("  {} · {module}", alerts::tokens::state(e, env).describe());
+        if let alerts_catalog::Auth::Token { how, .. } = e.auth {
+            println!("  get a token: {how}");
+        }
+        println!("  checked: {}", e.checked);
+    }
+    println!(
+        "{} of {} sources",
+        found.len(),
+        alerts_catalog::CATALOG.len()
+    );
     Ok(())
 }
 

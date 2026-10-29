@@ -8,6 +8,7 @@ use std::error::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub mod sources;
+pub mod tokens;
 
 /// Loads `.env` (from the current directory or a parent) into the environment. A variable that is
 /// already set wins, and a missing `.env` is fine. An invalid line fails without its text: the line

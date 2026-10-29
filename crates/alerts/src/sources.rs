@@ -16,14 +16,17 @@ use std::str::FromStr;
 pub enum Source {
     /// Simulated test alerts (`alerts-source-mock`). Never an agency.
     Mock,
+    /// The municipal alerts of the CEMADEN panel (`alerts-source-cemaden`).
+    Cemaden,
 }
 
 impl Source {
-    pub const ALL: &[Source] = &[Source::Mock];
+    pub const ALL: &[Source] = &[Source::Mock, Source::Cemaden];
 
     pub fn id(self) -> &'static str {
         match self {
             Source::Mock => alerts_source_mock::ID,
+            Source::Cemaden => alerts_source_cemaden::ID,
         }
     }
 
@@ -31,6 +34,7 @@ impl Source {
     pub fn status(self) -> Status {
         match self {
             Source::Mock => Status::Test,
+            Source::Cemaden => Status::Actual,
         }
     }
 
@@ -44,8 +48,24 @@ impl Source {
                 )?),
                 None => Ok(alerts_source_mock::scenarios(&ctx.now)),
             },
+            Source::Cemaden => Ok(alerts_source_cemaden::parse(
+                &get(alerts_source_cemaden::URL).await?,
+            )?),
         }
     }
+}
+
+/// The body of a `GET`, sent with the honest User-Agent.
+async fn get(url: &str) -> Result<String, Box<dyn Error>> {
+    Ok(reqwest::Client::builder()
+        .user_agent(alerts_core::USER_AGENT)
+        .build()?
+        .get(url)
+        .send()
+        .await?
+        .error_for_status()?
+        .text()
+        .await?)
 }
 
 impl fmt::Display for Source {
@@ -86,7 +106,32 @@ pub struct Fetch {
 
 /// The harness of v0: floods in PR, SC and RS.
 pub fn v0_harness() -> Harness {
-    Harness::new().then(only_ufs(Uf::V0.to_vec()))
+    harness(Uf::V0.to_vec())
+}
+
+/// The harness that keeps the alerts of these states.
+pub fn harness(ufs: Vec<Uf>) -> Harness {
+    Harness::new().then(only_ufs(ufs))
+}
+
+/// The states of `ALERTS_UFS`: `all` (every UF), or UFs separated by commas or spaces, for
+/// example `PR,SC,RS`. Not set: the states of v0.
+pub fn ufs_of(var: Option<&str>) -> Result<Vec<Uf>, alerts_core::UnknownUf> {
+    let Some(v) = var else {
+        return Ok(Uf::V0.to_vec());
+    };
+    if v.trim().eq_ignore_ascii_case("all") {
+        return Ok(Uf::ALL.to_vec());
+    }
+    let ufs = v
+        .split([',', ' '])
+        .filter(|s| !s.is_empty())
+        .map(str::parse)
+        .collect::<Result<Vec<Uf>, _>>()?;
+    if ufs.is_empty() {
+        return Ok(Uf::V0.to_vec());
+    }
+    Ok(ufs)
 }
 
 /// The channels of one poll. Each one is optional, but a poll needs at least one.
@@ -187,6 +232,50 @@ mod tests {
             assert_eq!(s.id().parse::<Source>(), Ok(s));
         }
         assert!("idap".parse::<Source>().is_err());
+    }
+
+    #[test]
+    fn every_agency_source_is_in_the_catalog() {
+        for &s in Source::ALL.iter().filter(|&&s| s != Source::Mock) {
+            let entry = alerts_catalog::get(s.id());
+            assert_eq!(entry.and_then(|e| e.module), Some(s.id()), "{s}");
+        }
+        for e in alerts_catalog::CATALOG {
+            if let Some(m) = e.module {
+                assert!(m.parse::<Source>().is_ok(), "{}: no source {m}", e.id);
+            }
+        }
+    }
+
+    #[test]
+    fn alerts_ufs() {
+        assert_eq!(ufs_of(None).unwrap(), Uf::V0);
+        assert_eq!(ufs_of(Some(" ")).unwrap(), Uf::V0);
+        assert_eq!(ufs_of(Some("all")).unwrap(), Uf::ALL);
+        assert_eq!(ufs_of(Some("ALL")).unwrap().len(), 27);
+        assert_eq!(ufs_of(Some("ba, sp")).unwrap(), vec![Uf::Ba, Uf::Sp]);
+        assert!(ufs_of(Some("PR,XX")).is_err());
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn every_uf_keeps_the_alerts_outside_v0() {
+        let db = alerts_crud::open_in_memory().unwrap();
+        let alerts = Source::Mock.fetch(&mock()).await.unwrap();
+        let r = deliver(
+            &db,
+            &harness(Uf::ALL.to_vec()),
+            &Channels::default(),
+            Source::Mock,
+            alerts,
+        )
+        .await
+        .unwrap();
+        assert_eq!(r.passed, 5);
+    }
+
+    #[test]
+    fn agency_sources_are_actual() {
+        assert_eq!(status_of("cemaden"), Status::Actual);
     }
 
     #[test]

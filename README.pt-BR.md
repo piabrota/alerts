@@ -1,4 +1,4 @@
-<!-- reading-time: 14 min -->
+<!-- reading-time: 16 min -->
 # alerts
 
 🇬🇧 [Read in English](README.md)
@@ -24,8 +24,8 @@ Alertas do século 22.
   início. Um plugin AstrBot vai usar esse pacote no futuro.
 - **Aberto por princípio.** Padrões abertos (Atom, CAP 1.2), só dependências FOSS, só modelos
   locais. Uma API paga nunca é obrigatória.
-- **Estado:** bootstrap. Nenhuma fonte de um órgão está implementada. O serviço envia uma mensagem
-  de teste. O comando `alerts poll mock` envia alertas simulados de teste ao Discord e ao feed, pelo harness. A configuração do Discord, passo a passo, está em [`docs/DISCORD.md`](docs/DISCORD.md).
+- **Estado:** bootstrap. Uma fonte de um órgão está implementada: os alertas municipais do
+  CEMADEN (`alerts poll cemaden`). O serviço envia uma mensagem de teste. O comando `alerts poll mock` envia alertas simulados de teste ao Discord e ao feed, pelo harness. A configuração do Discord, passo a passo, está em [`docs/DISCORD.md`](docs/DISCORD.md).
 
 ## fontes
 
@@ -41,13 +41,34 @@ cada fonte estão em [`docs/SOURCES.md`](docs/SOURCES.md).
 |---|---|---|---|---|---|
 | Defesa Civil (IDAP) | sim, sem documentação ⚠ | Atom com CAP 1.2 | nenhuma | acessível | v0 |
 | INMET | sim | RSS e CAP 1.2; JSON sem documentação | nenhuma (avisos); token por e-mail (estações) | acessível | v0 |
-| CEMADEN | sim (observações) | REST JSON | cadastro gratuito (JWT) | acessível | v0 |
+| CEMADEN | sim (observações) | REST JSON; JSON de alertas sem documentação | nenhuma (alertas); cadastro gratuito, JWT (observações) | acessível | v0, alertas prontos |
 | ANA | sim | REST JSON; SOAP legado | cadastro com CPF/CNPJ (REST); nenhuma (SOAP) | acessível; o cadastro pode exigir CPF/CNPJ ⚠ | planejada |
 | CPTEC/INPE | sim, só previsão | XML | nenhuma | acessível; uso não comercial | planejada |
 | Epagri/Ciram (SC) | parcial | RSS e JSON do WordPress, texto livre | nenhuma (avisos); CPF (dados de estação) | acessível | planejada |
 | SGB (SACE) | não | HTML; boletins em PDF | nenhuma | acessível | planejada |
 | Defesa Civil RS | não | PDF; JSON do ClimaRS sem documentação | nenhuma | acessível | planejada |
 | SIMEPAR (PR) | não encontrada | — | — | bloqueado em qualquer país (Cloudflare) | planejada |
+
+
+**Encontre uma fonte, no Brasil ou no mundo.** O comando `alerts sources` busca num catálogo
+curado de fontes oficiais de alertas: primeiro o Brasil, depois serviços meteorológicos nacionais
+de fora (NWS, MeteoAlarm, Météo-France, AEMET, DWD, JMA, ECCC, SMN da Argentina) e o GDACS para o
+mundo. Cada entrada informa o endpoint, o formato e se a fonte exige token. A ferramenta MCP
+`search_sources` faz a mesma busca para um agente.
+
+```bash
+alerts sources --country BR --alerts   # as fontes de alertas do Brasil
+alerts sources flood --no-token        # fontes de inundação que não exigem token
+alerts tokens                          # quais dos seus tokens estão definidos (nunca o valor)
+```
+
+**Traga seu próprio token (BYOT).** O alerts nunca distribui um token. Uma fonte que exige token
+(CEMADEN PED, estações do INMET, ANA, Météo-France, AEMET) lê o seu token de `ALERTS_TOKEN_<ID>`,
+no ambiente ou no `.env` (`chmod 600 .env`). Um token nunca aparece numa mensagem, num log ou num
+erro. Para inscrever um servidor em fontes, liste as fontes em `ALERTS_SOURCES`, por exemplo
+`ALERTS_SOURCES=cemaden`, e rode `alerts poll`. `ALERTS_UFS` escolhe os estados (`all`, ou por
+exemplo `PR,SC,RS`, o padrão). O catálogo está em
+[`docs/SOURCES.md`](docs/SOURCES.md#catalog-and-byot).
 
 **O que cada fonte exige do código:**
 
@@ -62,6 +83,9 @@ cada fonte estão em [`docs/SOURCES.md`](docs/SOURCES.md).
 - **CEMADEN:** a API PED (`sws.cemaden.gov.br/PED`) entrega observações, não alertas. Os alertas
   municipais só existem num JSON sem documentação (`painelalertas.cemaden.gov.br/wsAlertas2`). O
   limite é de 12 requisições por minuto para usuário externo ⚠. O CEMADEN exige citação.
+  O `alerts-source-cemaden` lê esse JSON: inundações e movimentos de massa, nos níveis moderado,
+  alto e muito alto. Um campo desconhecido faz a leitura falhar, então uma mudança no painel nunca
+  descarta um alerta em silêncio.
 - **ANA:** o token do REST vale 60 minutos. Pedidos de token frequentes podem bloquear o IP.
 - **CPTEC/INPE:** os termos proíbem uso comercial sem autorização e exigem a citação
   "CPTEC/INPE". O serviço não tem avisos.
