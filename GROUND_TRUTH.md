@@ -22,6 +22,12 @@ sources, filters them, and delivers them.
   rewrite alerts per channel.
 - **Python interface now:** `alerts-py` is a pip package from day one. The long-term
   consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
+- **South extensions in `forks/`:** `forks/br_south_disaster` and `forks/br_south_waterq` are git
+  submodules pinned to a commit, and they are the planned sources of `alerts` for the South. The
+  path is the extension id, because the host loads an extension only from a directory with that
+  name. Their Python stays in their own repositories: this repo holds the submodule links, never a
+  copied `.py` file. No crate reads them yet. `docs/br-south/index.html` shows how they load
+  and lists what the integration must solve. `just forks-init` gets them.
 - **Codeberg mirror without AI trace:** `codeberg.org/piabrota/alerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
   `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy

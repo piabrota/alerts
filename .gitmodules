@@ -2,3 +2,11 @@
 	path = vendor/archify
 	url = https://github.com/tt-a1i/archify.git
 	shallow = true
+[submodule "forks/br_south_disaster"]
+	path = forks/br_south_disaster
+	url = https://github.com/h0ffmann/astrbot_dw_ext_br_south_disaster.git
+	shallow = true
+[submodule "forks/br_south_waterq"]
+	path = forks/br_south_waterq
+	url = https://github.com/h0ffmann/astrbot_dw_ext_br_south_waterq.git
+	shallow = true

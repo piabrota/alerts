@@ -1,0 +1,89 @@
+<!-- reading-time: 2 min -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuração e status</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<nav aria-label="Páginas">
+  <a href="index.html">Visão geral</a>
+  <a href="carregamento.html">Carregamento</a>
+  <a href="painel.html" aria-current="page">Configuração e status</a>
+  <a href="mensagens.html">Mensagens</a>
+</nav>
+
+<h1>Configuração e status</h1>
+<p class="lead">O host não tem uma tela de extensões. O operador usa dois campos de configuração e um comando de chat.</p>
+
+<h2>Os dois campos</h2>
+<p>O grupo <code>extensions</code> do <a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/_conf_schema.json#L1530"><code>_conf_schema.json</code></a> tem estes campos. O painel do AstrBot mostra os campos com o texto em chinês do esquema.</p>
+<div class="scroll">
+<table>
+  <thead><tr><th>Campo</th><th>Rótulo no esquema</th><th>Tipo</th><th>Padrão</th></tr></thead>
+  <tbody>
+    <tr><td><code>enabled_ids</code></td><td>启用的扩展 ID 列表</td><td>lista</td><td><code>[]</code></td></tr>
+    <tr><td><code>settings</code></td><td>扩展私有配置（JSON）</td><td>texto JSON</td><td><code>{}</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Este exemplo ativa as duas extensões em português, só para SC:</p>
+<pre><code>{
+  "enabled_ids": ["br_south_disaster", "br_south_waterq"],
+  "settings": "{\"br_south_disaster\": {\"language\": \"pt-BR\", \"states\": [\"SC\"]}, \"br_south_waterq\": {\"language\": \"pt-BR\", \"states\": [\"SC\"]}}"
+}</code></pre>
+<p class="note">O valor de <code>settings</code> é texto. Um JSON inválido faz o host ignorar todas as configurações. O host trata o valor como <code>{}</code> e registra um aviso.</p>
+
+<h2>Configurações de cada extensão</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Extensão</th><th>Chave</th><th>Padrão</th></tr></thead>
+  <tbody>
+    <tr><td>as duas</td><td><code>language</code></td><td><code>zh-CN</code>; outros valores: <code>en</code>, <code>pt-BR</code>, <code>ja-JP</code></td></tr>
+    <tr><td>as duas</td><td><code>states</code></td><td>todas as UFs: RS, SC e PR</td></tr>
+    <tr><td><code>br_south_disaster</code></td><td><code>alerts_interval</code></td><td>300 s</td></tr>
+    <tr><td><code>br_south_disaster</code></td><td><code>rain_interval</code></td><td>300 s</td></tr>
+    <tr><td><code>br_south_disaster</code></td><td><code>rain_thresholds</code></td><td>nível 2: 20 mm/1 h ou 50 mm/24 h; nível 3: 30 ou 100; nível 4: 60 ou 150</td></tr>
+    <tr><td><code>br_south_waterq</code></td><td><code>poll_interval</code></td><td>21600 s</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>O comando de status</h2>
+<p>O comando <a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/plugin/commands/plugin_admin_command_service.py#L966"><code>/灾害预警扩展</code></a> é só para administradores. O texto abaixo segue o formato do código, com os ids e os nomes das duas extensões. Ninguém executou este comando para esta página.</p>
+
+<p class="note">Caso 1: as duas extensões carregam.</p>
+<div class="chat">
+  <div class="who">Operador</div>
+  <div class="bubble user">/灾害预警扩展</div>
+  <div class="who">Bot</div>
+  <div class="bubble ok">🧩 扩展状态
+🟢 Brazil - South (disasters) (br_south_disaster) v0.1.0
+   数据源: br_south_disaster_cemaden_alerts, br_south_disaster_cemaden_rain
+🟢 Brazil - South (water quality) (br_south_waterq) v0.1.0
+   数据源: br_south_waterq_balneabilidade</div>
+</div>
+
+<p class="note">Caso 2: o diretório usa o nome do repositório. O host procura o id, não acha o diretório e devolve <code>not_found</code>. O texto em chinês diz que o id não está em nenhuma raiz de extensões.</p>
+<div class="chat">
+  <div class="who">Bot</div>
+  <div class="bubble">🧩 扩展状态
+⚪ br_south_disaster (br_south_disaster)
+   错误: 未在任何扩展根目录中找到</div>
+</div>
+
+<p class="note">Caso 3: nenhuma extensão está ativa. Este é o padrão, e o host não muda de comportamento.</p>
+<div class="chat">
+  <div class="who">Bot</div>
+  <div class="bubble">🧩 未启用任何扩展
+💡 在配置 extensions.enabled_ids 中填写扩展 id 后重载插件</div>
+</div>
+
+<footer><a href="mensagens.html">Próxima página: mensagens</a></footer>
+</main>
+</body>
+</html>
