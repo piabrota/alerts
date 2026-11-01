@@ -8,7 +8,8 @@ O alerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`
 | `alerts-core` | lib | Os tipos do domínio (`Alert`, `Uf`, `Severity`, `Hazard`) e o harness. O núcleo não conhece Discord, Python nem MCP. |
 | `alerts` | bin | O serviço: publica no Discord e no feed. |
 | `alerts-feed` | lib | O canal Atom com CAP 1.2. |
-| `alerts-py` | cdylib | O pacote Python (PyO3 e maturin): `import piabrota_alerts`. |
+| `alerts-ext` | lib | A lógica comum das extensões do Sul, sem Python e sem rede. |
+| `alerts-py` | cdylib, rlib | O pacote Python (PyO3 e maturin): `import piabrota_alerts`. O módulo `piabrota_alerts.ext` serve às extensões. |
 | `alerts-mcp` | bin | O servidor MCP (rmcp, stdio). |
 
 ```mermaid

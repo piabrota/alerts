@@ -26,8 +26,11 @@ sources, filters them, and delivers them.
   submodules pinned to a commit, and they are the planned sources of `alerts` for the South. The
   path is the extension id, because the host loads an extension only from a directory with that
   name. Their Python stays in their own repositories: this repo holds the submodule links, never a
-  copied `.py` file. No crate reads them yet. `docs/br-south/index.html` shows how they load
-  and lists what the integration must solve. `just forks-init` gets them.
+  copied `.py` file. The code that both repeat lives in Rust: `alerts-ext`, which `alerts-py` gives
+  to Python as `piabrota_alerts.ext`. Python calls Rust, so no crate embeds an interpreter. The
+  extensions keep the HTTP session of the host, and `piabrota_alerts.ext` never reads the network.
+  No extension uses it yet. `docs/br-south/index.html` shows how they load, and
+  `docs/br-south/modulo-comum.html` lists what the migration needs. `just forks-init` gets them.
 - **Codeberg mirror without AI trace:** `codeberg.org/piabrota/alerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
   `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
@@ -111,7 +114,8 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `alerts` | bin + lib | The service: publishes to Discord and to the feed. `tests/marola_discord.rs` is the Marola Discord test. |
 | `alerts-obsidian` | cdylib (wasm32) | WeatherDisaster, the Obsidian plugin (id `piabrota-alerts`): an Atom/RSS feed of CAP alerts becomes one note per alert. Read `docs/OBSIDIAN.md`. |
 | `alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
-| `alerts-py` | cdylib | Python bindings (PyO3 + maturin): `import piabrota_alerts`. |
+| `alerts-ext` | lib | The logic that the South extensions have in common, with no Python and no I/O. |
+| `alerts-py` | cdylib, rlib | Python bindings (PyO3 + maturin, abi3 for Python 3.10+): `import piabrota_alerts`. `piabrota_alerts.ext` gives `alerts-ext` and the host helpers to the extensions. Its tests run Python in an interpreter inside the test binary, so `cargo test` needs Python. |
 | `alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
 | `alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
 | `alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |

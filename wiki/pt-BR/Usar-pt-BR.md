@@ -24,6 +24,8 @@ just py-build                               # gera o pacote Python
 
 O `just py-build` gera o pacote com o maturin. O módulo se chama `piabrota_alerts`.
 
+Para instalar do GitHub, use `pip install "piabrota-alerts @ git+https://github.com/piabrota/alerts#subdirectory=crates/alerts-py"`. O módulo `piabrota_alerts.ext` tem o código comum das extensões do Sul. A página `docs/br-south/modulo-comum.html` descreve esse módulo.
+
 ```python
 import piabrota_alerts
 
