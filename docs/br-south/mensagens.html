@@ -1,0 +1,68 @@
+<!-- reading-time: 2 min -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mensagens das extensões</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<nav aria-label="Páginas">
+  <a href="index.html">Visão geral</a>
+  <a href="carregamento.html">Carregamento</a>
+  <a href="painel.html">Configuração e status</a>
+  <a href="mensagens.html" aria-current="page">Mensagens</a>
+</nav>
+
+<h1>Mensagens no chat</h1>
+<p class="lead">O host envia estes textos às sessões inscritas. O idioma destes exemplos é <code>pt-BR</code>.</p>
+
+<div class="warn" role="note"><strong>TESTE.</strong> Estas mensagens não são alertas. Os dados vêm de fixtures de teste, e a data dos dados já passou. Sempre siga a Defesa Civil, as placas da praia e as autoridades locais.</div>
+
+<p>Um autor montou estes textos à mão com <code>presenter.py</code>, <code>locale/pt-BR.json</code> e as fixtures. Ninguém executou as extensões para esta página. Para ver a saída real, rode <code>just setup</code> e <code>just mock --offline</code> em cada submódulo.</p>
+
+<h2>Alerta do CEMADEN</h2>
+<p>Dados: linha <code>3141</code> de <code>tests/fixtures/cemaden_alertas.json</code> e última linha de <code>tests/fixtures/oni.ascii.txt</code>.</p>
+<div class="chat">
+  <div class="who">br_south_disaster · nível 3 · TESTE</div>
+  <div class="bubble l3">🟠 Alerta do CEMADEN: risco de inundação
+Nível alto em SÃO BORJA/RS
+Risco: inundação
+Emitido em: 2026-10-25 11:20 (horário de Brasília)
+Contexto: o fenômeno El Niño está ativo, com intensidade muito forte (ONI JAS 2026: +2,16). O fenômeno não é a causa deste alerta.
+Fonte: CEMADEN / NOAA CPC</div>
+</div>
+<p class="note">A linha de contexto só aparece com El Niño ou La Niña. Sem essa linha, a fonte é só <code>CEMADEN</code>.</p>
+
+<h2>Chuva forte</h2>
+<p>Nenhum pluviômetro das fixtures atinge um limiar. Por isso, esta seção mostra o modelo do <code>locale/pt-BR.json</code>, sem números:</p>
+<pre><code>{emoji} Chuva forte
+Chuva forte (nível {level}) em {municipio}/{uf}
+Chuva: {acc1hr} mm em 1 h | {acc24hr} mm em 24 h
+Emitido em: {time} (horário de Brasília)
+Fonte: CEMADEN</code></pre>
+<p class="note">A extensão calcula este alerta com os limiares de <code>rain_thresholds</code>. O CEMADEN não emite este alerta.</p>
+
+<h2>Balneabilidade</h2>
+<p>Dados: primeira linha de <code>tests/fixtures/ima_sc_mapa.json</code> e amostra mais recente de <code>tests/fixtures/ima_sc_analises.json</code>.</p>
+<div class="chat">
+  <div class="who">br_south_waterq · nível 2 · TESTE</div>
+  <div class="bubble l2">🟡 Alerta de balneabilidade: imprópria para banho
+Praia do Arroio do Silva - Ponto 03 - Balneário Arroio do Silva/SC
+Situação: imprópria para banho
+Data da coleta: 2026-10-19
+E. coli: 6131 NMP/100 mL
+Laboratório: IMA
+Posição: -28,9881; -49,4120
+Critério: CONAMA 274/2000
+Fonte: IMA/SC</div>
+</div>
+<p class="note">A fixture de amostras não diz a qual ponto pertence. Portanto, a data e o E. coli deste exemplo podem ser de outro ponto. Este exemplo não diz nada sobre a qualidade da água nessa praia.</p>
+<p>A extensão só envia uma mensagem quando um ponto muda. O primeiro poll grava a base e não envia nada. Uma amostra com mais de 90 dias não gera mensagem.</p>
+
+<footer><a href="index.html">Voltar à visão geral</a></footer>
+</main>
+</body>
+</html>

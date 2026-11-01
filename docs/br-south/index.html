@@ -1,0 +1,95 @@
+<!-- reading-time: 3 min -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extensões do Sul</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<nav aria-label="Páginas">
+  <a href="index.html" aria-current="page">Visão geral</a>
+  <a href="carregamento.html">Carregamento</a>
+  <a href="painel.html">Configuração e status</a>
+  <a href="mensagens.html">Mensagens</a>
+</nav>
+
+<h1>Extensões do Sul do Brasil</h1>
+<p class="lead">Estas páginas mostram como duas extensões funcionam dentro do AstrBot. As duas extensões são submódulos em <code>forks/</code>.</p>
+
+<div class="warn" role="note">Estas páginas são uma prévia estática. Nenhuma página mostra um AstrBot em execução. Nenhuma página mostra um alerta real.</div>
+
+<h2>As duas extensões</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Caminho</th><th>Commit</th><th>O que a extensão entrega</th><th>Fontes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>forks/br_south_disaster</code></td>
+      <td><a href="https://github.com/h0ffmann/astrbot_dw_ext_br_south_disaster/tree/a6675479bebcacb92b1d18f4931a7065a1f70178"><code>a667547</code></a></td>
+      <td>Alertas de inundação e de deslizamento, e alertas de chuva forte, em RS, SC e PR.</td>
+      <td>CEMADEN, NOAA CPC</td>
+    </tr>
+    <tr>
+      <td><code>forks/br_south_waterq</code></td>
+      <td><a href="https://github.com/h0ffmann/astrbot_dw_ext_br_south_waterq/tree/12b71ac048ad29b83bfc6aaa0149e011c66886ce"><code>12b71ac</code></a></td>
+      <td>Mudanças de balneabilidade em RS, SC e PR.</td>
+      <td>FEPAM, IMA, IAT</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>O nome do diretório é o id da extensão. O host exige esse nome e recusa o nome do repositório. Por isso, <code>forks/</code> pode servir de raiz de extensões. Para baixar os submódulos, rode <code>just forks-init</code>.</p>
+
+<h2>As três camadas</h2>
+<ol class="layers">
+  <li><strong>AstrBot</strong>: carrega plugins, chamados de Star.</li>
+  <li><strong><code>astrbot_plugin_disaster_warning</code></strong>: é o plugin, e é o host das extensões.</li>
+  <li><strong><code>br_south_disaster</code>, <code>br_south_waterq</code></strong>: são extensões. O AstrBot não conhece as extensões. Só o host conhece as extensões.</li>
+</ol>
+
+<h2>Estado do host</h2>
+<p>O sistema de extensões ainda não está em uma versão do host. O sistema está no <a href="https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning/pull/255">PR #255</a>, em rascunho. As duas extensões fixam o host em <code>h0ffmann/astrbot_plugin_disaster_warning@2d2f261</code>. As páginas descrevem esse commit.</p>
+
+<h2>O caminho até o alerts</h2>
+<p>O objetivo é que estes repositórios virem fontes do <code>piabrota/alerts</code>. Nenhum crate lê os submódulos ainda. Esta seção é a análise do autor destas páginas. A seção lista o que a integração precisa resolver:</p>
+<div class="scroll">
+<table>
+  <thead><tr><th>Ponto</th><th>Fato</th><th>Consequência</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Linguagem</td>
+      <td>As extensões são Python. O alerts é todo em Rust, e o <code>GROUND_TRUTH.md</code> proíbe <code>.py</code> neste repositório.</td>
+      <td>Os submódulos cumprem a regra, porque só o link fica aqui. Um crate não pode importar o código das extensões.</td>
+    </tr>
+    <tr>
+      <td>CEMADEN</td>
+      <td>O crate <code>alerts-source-cemaden</code> já lê os alertas do CEMADEN.</td>
+      <td><code>br_south_disaster</code> sobrepõe essa fonte. Os dois lados devem concordar sobre a mesma entrada.</td>
+    </tr>
+    <tr>
+      <td>Chuva forte</td>
+      <td>A extensão calcula esse alerta com limiares próprios sobre os pluviômetros. Nenhum órgão emite esse alerta.</td>
+      <td>A regra de fontes oficiais pede uma decisão humana antes de o alerts entregar esse alerta.</td>
+    </tr>
+    <tr>
+      <td>Balneabilidade</td>
+      <td>O catálogo <code>alerts-catalog</code> não tem FEPAM, IMA nem IAT.</td>
+      <td>Esta é a parte nova para o alerts. Cada órgão precisa de uma entrada no catálogo.</td>
+    </tr>
+    <tr>
+      <td>User-Agent</td>
+      <td>O host cria a sessão HTTP sem cabeçalho próprio, e as extensões não definem um cabeçalho.</td>
+      <td>Essas requisições não enviam <code>alerts_core::USER_AGENT</code>. Uma fonte do alerts deve enviar esse valor.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p><strong>Recomendação do autor:</strong> reescrever cada fonte em Rust. As fixtures em <code>tests/fixtures</code> dos submódulos podem servir de vetores de teste compartilhados. Assim, o alerts mantém a regra de Rust, e os submódulos continuam a ser a referência de comportamento. A decisão ainda está aberta.</p>
+
+<footer>MPL-2.0. O AstrBot e o host são AGPL-3.0: estas páginas só descrevem e citam esses projetos com links.</footer>
+</main>
+</body>
+</html>

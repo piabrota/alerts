@@ -1,0 +1,115 @@
+<!-- reading-time: 3 min -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carregamento das extensões</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<nav aria-label="Páginas">
+  <a href="index.html">Visão geral</a>
+  <a href="carregamento.html" aria-current="page">Carregamento</a>
+  <a href="painel.html">Configuração e status</a>
+  <a href="mensagens.html">Mensagens</a>
+</nav>
+
+<h1>Do AstrBot até a extensão</h1>
+<p class="lead">Esta página segue o código-fonte. Os links apontam para commits fixos: AstrBot <code>831abae</code> e host <code>2d2f261</code>.</p>
+
+<h2>1. O AstrBot carrega o plugin</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Passo</th><th>O que acontece</th><th>Código</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Descobrir</td>
+      <td>O AstrBot percorre o diretório de plugins. Um subdiretório vale como plugin quando tem <code>main.py</code> ou <code>&lt;nome&gt;.py</code>.</td>
+      <td><a href="https://github.com/AstrBotDevs/AstrBot/blob/831abae85da8b6e58dc44d4544d163f8f9459ba1/astrbot/core/star/star_manager.py#L291"><code>_get_modules</code></a></td>
+    </tr>
+    <tr>
+      <td>Ler os metadados</td>
+      <td>O AstrBot lê <code>metadata.yaml</code>. O arquivo dá o nome, a versão e a versão mínima do AstrBot.</td>
+      <td><a href="https://github.com/AstrBotDevs/AstrBot/blob/831abae85da8b6e58dc44d4544d163f8f9459ba1/astrbot/core/star/star_manager.py#L491"><code>_load_plugin_metadata</code></a></td>
+    </tr>
+    <tr>
+      <td>Importar</td>
+      <td>O AstrBot instala <code>requirements.txt</code>, lê <code>_conf_schema.json</code> e importa o módulo. A classe <code>Star</code> do plugin entra no registro.</td>
+      <td><a href="https://github.com/AstrBotDevs/AstrBot/blob/831abae85da8b6e58dc44d4544d163f8f9459ba1/astrbot/core/star/star_manager.py#L1076"><code>load</code></a></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>2. O host carrega a extensão</h2>
+<p>O AstrBot termina o trabalho no passo anterior. O host faz o resto dentro do próprio plugin.</p>
+<div class="scroll">
+<table>
+  <thead><tr><th>Passo</th><th>O que acontece</th><th>Código</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Procurar</td>
+      <td>O host lê <code>extensions.enabled_ids</code>. Para cada id, o host procura <code>&lt;raiz&gt;/&lt;id&gt;/extension.yaml</code> nas duas raízes: <code>extensions/</code> do plugin e <code>extensions/</code> do diretório de dados.</td>
+      <td><a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/core/extensions/manager.py#L128"><code>load_all</code></a></td>
+    </tr>
+    <tr>
+      <td>Validar</td>
+      <td>O id deve ser igual ao nome do diretório. O <code>api_version</code> deve ser 1. A versão do host deve atender <code>min_host_version</code>.</td>
+      <td><a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/core/extensions/manifest.py#L43"><code>load_manifest</code></a></td>
+    </tr>
+    <tr>
+      <td>Importar</td>
+      <td>O host importa o pacote com o nome privado <code>_dw_ext_&lt;id&gt;</code> e chama <code>setup(api)</code>. Uma falha coloca só essa extensão no estado de erro e remove os registros dela.</td>
+      <td><a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/core/extensions/manager.py#L155"><code>_load_one</code></a></td>
+    </tr>
+    <tr>
+      <td>Registrar</td>
+      <td><code>setup(api)</code> registra o presenter, as fontes e os pollers. <code>register_poller</code> exige a permissão <code>network</code> e aplica o intervalo mínimo de 60 s.</td>
+      <td><a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/core/extensions/api.py#L131"><code>register_poller</code></a></td>
+    </tr>
+    <tr>
+      <td>Rodar</td>
+      <td>O host cria uma tarefa por poller, com uma sessão HTTP compartilhada. Cada evento segue para <code>_handle_disaster_event</code>. Uma falha aumenta a espera até 10 vezes o intervalo.</td>
+      <td><a href="https://github.com/h0ffmann/astrbot_plugin_disaster_warning/blob/2d2f2612dece0100170151e63ec3d9c04327055d/core/extensions/manager.py#L227"><code>_run_poller</code></a></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>O que cada extensão registra</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Extensão</th><th>Fontes</th><th>Pollers com a configuração padrão</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>br_south_disaster</code></td>
+      <td><code>br_south_disaster_cemaden_alerts</code>, <code>br_south_disaster_cemaden_rain</code></td>
+      <td>1 de alertas e 3 de chuva, um por UF, a cada 300 s.</td>
+    </tr>
+    <tr>
+      <td><code>br_south_waterq</code></td>
+      <td><code>br_south_waterq_balneabilidade</code></td>
+      <td>3, um por UF, a cada 21600 s, com limite de 60 s por leitura.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Instalar à mão</h2>
+<p>O host ainda não tem um fluxo de instalação. Este exemplo instala as extensões no diretório de dados do plugin:</p>
+<pre><code>&lt;dados do plugin&gt;/extensions/
+├── br_south_disaster/   # extension.yaml, __init__.py, extension.py, locale/
+└── br_south_waterq/</code></pre>
+<p>Depois, o operador preenche <code>extensions.enabled_ids</code> e recarrega o plugin. A <a href="painel.html">próxima página</a> mostra a configuração.</p>
+
+<div class="warn" role="note">A extensão roda como código Python no mesmo processo do host. O host isola uma falha de carga, mas não limita o que a extensão pode fazer. A permissão <code>network</code> é uma declaração, não uma barreira.</div>
+
+<h2>E as páginas de plugin do AstrBot?</h2>
+<p>O AstrBot tem um recurso de páginas de plugin: <code>views/&lt;nome&gt;/index.html</code> dentro do plugin, com a ponte <code>window.AstrBotPluginView</code> e rotas de <code>context.register_web_api</code>. O host no commit fixo não tem <code>views/</code> nem <code>pages/</code>. Uma extensão também não pode declarar uma página, porque o AstrBot só procura páginas no plugin. Uma tela de extensões precisa de uma mudança no host.</p>
+
+<footer><a href="index.html">Voltar à visão geral</a></footer>
+</main>
+</body>
+</html>

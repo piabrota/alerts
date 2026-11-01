@@ -212,9 +212,13 @@ reading-time-check:
     for f in $(just _human-files); do grep -qm1 '^<!-- reading-time: [0-9]\+ min -->$' "$f" || { echo "reading-time-check: $f has no reading time; run just reading-time" >&2; bad=1; }; done
     exit $bad
 
+# Get the South extensions (git submodules in forks/) at the pinned commits. See docs/br-south/index.html.
+forks-init:
+    git submodule update --init --depth 1 forks/br_south_disaster forks/br_south_waterq
+
 # The code graph of this repository (picasso's code-graph, graphify's schema): build/graph/graph.html.
 graph:
-    code-graph extract . --out build/graph --exclude vendor --exclude target --exclude build --exclude scripts --exclude verbs --title alerts
+    code-graph extract . --out build/graph --exclude vendor --exclude forks --exclude target --exclude build --exclude scripts --exclude verbs --title alerts
     @echo "graph: build/graph/graph.html"
 
 # Build the static site into site/serve/ (Gleam on JavaScript, picasso's gleam-website toolchain), with
