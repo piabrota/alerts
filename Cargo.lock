@@ -70,6 +70,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "alerts-ext"
+version = "0.0.0"
+
+[[package]]
 name = "alerts-feed"
 version = "0.0.0"
 dependencies = [
@@ -106,6 +110,7 @@ name = "alerts-py"
 version = "0.0.0"
 dependencies = [
  "alerts-core",
+ "alerts-ext",
  "pyo3",
 ]
 
