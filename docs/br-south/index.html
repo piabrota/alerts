@@ -14,6 +14,7 @@
   <a href="carregamento.html">Carregamento</a>
   <a href="painel.html">Configuração e status</a>
   <a href="mensagens.html">Mensagens</a>
+  <a href="modulo-comum.html">Módulo comum</a>
 </nav>
 
 <h1>Extensões do Sul do Brasil</h1>
@@ -62,7 +63,7 @@
     <tr>
       <td>Linguagem</td>
       <td>As extensões são Python. O alerts é todo em Rust, e o <code>GROUND_TRUTH.md</code> proíbe <code>.py</code> neste repositório.</td>
-      <td>Os submódulos cumprem a regra, porque só o link fica aqui. Um crate não pode importar o código das extensões.</td>
+      <td>Os submódulos cumprem a regra, porque só o link fica aqui. O código comum fica em Rust: o crate <code>alerts-ext</code>, e o pacote Python o expõe com PyO3.</td>
     </tr>
     <tr>
       <td>CEMADEN</td>
@@ -87,7 +88,7 @@
   </tbody>
 </table>
 </div>
-<p><strong>Recomendação do autor:</strong> reescrever cada fonte em Rust. As fixtures em <code>tests/fixtures</code> dos submódulos podem servir de vetores de teste compartilhados. Assim, o alerts mantém a regra de Rust, e os submódulos continuam a ser a referência de comportamento. A decisão ainda está aberta.</p>
+<p><strong>Decisão:</strong> a lógica comum fica em Rust, e as extensões a usam pelo pacote <code>piabrota-alerts</code>. O sentido da chamada é Python para Rust, então o serviço não precisa embutir um interpretador. As extensões ficam finas. A sessão HTTP continua a ser a do host. A página <a href="modulo-comum.html">Módulo comum</a> mostra o estado atual e o que falta.</p>
 
 <footer>MPL-2.0. O AstrBot e o host são AGPL-3.0: estas páginas só descrevem e citam esses projetos com links.</footer>
 </main>

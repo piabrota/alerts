@@ -9,9 +9,15 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
-pyo3 = "0.30.1"
+# abi3: one wheel per platform serves Python 3.10 and newer.
+pyo3 = { version = "0.30.1", features = ["abi3-py310"] }
 alerts-core = { workspace = true }
+alerts-ext = { workspace = true }
+
+[dev-dependencies]
+# The tests of the bindings run Python code in an interpreter inside the test binary.
+pyo3 = { version = "0.30.1", features = ["abi3-py310", "auto-initialize"] }
 
 [lib]
 name = "piabrota_alerts"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
