@@ -184,6 +184,14 @@ pub async fn deliver(
     Ok(report)
 }
 
+/// Every stored alert, oldest first (the order of the store).
+pub fn stored(db: &alerts_crud::Db) -> Result<Vec<Alert>, Box<dyn Error>> {
+    Ok(alerts_crud::model::list::<AlertRecord>(db)?
+        .into_iter()
+        .map(Alert::from)
+        .collect())
+}
+
 /// Writes the feed of every stored alert, newest first. The feed and Discord read the same
 /// store, so every alert that reached Discord is in the feed, with the same text.
 pub fn write_feed(
@@ -192,13 +200,19 @@ pub fn write_feed(
     meta: &FeedMeta,
     now: &str,
 ) -> Result<usize, Box<dyn Error>> {
-    let mut alerts: Vec<Alert> = alerts_crud::model::list::<AlertRecord>(db)?
-        .into_iter()
-        .map(Alert::from)
-        .collect();
-    alerts.reverse();
+    write_feed_of(stored(db)?.iter(), path, meta, now)
+}
+
+/// Writes the feed of these alerts, newest first. `alerts` is in the order of the store: oldest
+/// first. Both `poll` and `publish` use this function, so the entries have one shape.
+pub fn write_feed_of<'a>(
+    alerts: impl DoubleEndedIterator<Item = &'a Alert>,
+    path: &str,
+    meta: &FeedMeta,
+    now: &str,
+) -> Result<usize, Box<dyn Error>> {
     let entries: Vec<Entry<'_>> = alerts
-        .iter()
+        .rev()
         .map(|a| Entry {
             id: format!("{}:{}", meta.id, alerts_feed::identifier(a)),
             title: &a.headline,

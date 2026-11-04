@@ -1,4 +1,4 @@
-<!-- reading-time: 5 min -->
+<!-- reading-time: 6 min -->
 # Hospedagem: piabrota.art no Codeberg Pages
 
 Esta página diz onde o site estático do alerts fica hospedado e como publicar o site. O autor
@@ -89,6 +89,17 @@ lida em 2026-10-26.
 - A palavra `repository` no nome do TXT é literal.
 - Um registro CAA, se existir, precisa liberar o Let's Encrypt. Os valores estão na documentação.
 - O `www` precisa de um webhook próprio, com Target URL `http://www.piabrota.art/`.
+
+## alerts.piabrota.art
+
+Os alertas reais não ficam no Codeberg Pages. Uma página de alertas reais pede um processo que lê
+as fontes oficiais a cada poucos minutos, e o Codeberg Pages só serve arquivos que mudam a cada
+deploy. Por isso o endereço `alerts.piabrota.art` (planejado ⚠: o autor ainda não fez o deploy) fica
+num servidor próprio. Um timer do systemd roda `alerts poll` e depois `alerts publish --out <pasta>`.
+O servidor web serve a pasta como arquivos. O comando, os arquivos, o formato do `alerts.json` e um
+exemplo de timer estão em [`docs/PUBLISH.md`](PUBLISH.md). O nginx, o TLS e o DNS desse endereço
+ficam no repositório `piabrota/nix-os`, não aqui. A decisão acima não muda: o site estático de
+`piabrota.art` continua no Codeberg Pages.
 
 ## Depois: o serviço do Discord
 

@@ -20,6 +20,7 @@ dependencies = [
  "alerts-source-cemaden",
  "alerts-source-mock",
  "dotenvy",
+ "quick-xml",
  "reqwest",
  "serde_json",
  "tokio",
