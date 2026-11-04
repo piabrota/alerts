@@ -7,6 +7,7 @@ use serde_json::{Value, json};
 use std::error::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+pub mod publish;
 pub mod sources;
 pub mod tokens;
 

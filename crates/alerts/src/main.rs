@@ -7,8 +7,9 @@ use alerts_feed::{FeedMeta, Status};
 use std::error::Error;
 
 const USAGE: &str =
-    "usage: alerts test-message | poll [<source>...] | sources [<filter>...] | tokens
-              | rss-fetch | rss-atom <rule>
+    "usage: alerts test-message | poll [<source>...] | publish --out <dir> [--days <N>]
+              | sources [<filter>...]
+              | tokens | rss-fetch | rss-atom <rule>
 
 Publishes to every configured channel:
   DISCORD_WEBHOOK_URL   post to this Discord webhook
@@ -31,6 +32,12 @@ variable that is already set wins, and an empty one counts as not set.
   test-message     publish one test alert (CAP status Test)
   poll <source>... read each source once, keep the alerts of ALERTS_UFS, and deliver
                    each new alert once (sources: mock, cemaden; default: ALERTS_SOURCES)
+  publish --out <dir> [--days <N>]
+                   write feed.atom, alerts.json, index.html and health.json into <dir>,
+                   from the stored alerts and with no network; the files show the alerts
+                   that were sent in the last N days (default: 7; 0: all stored alerts);
+                   the enabled sources on the page are those of ALERTS_SOURCES; FEED_ID
+                   names the feed; FEED_PATH of `poll` is not affected: it keeps all alerts
   sources [...]    search the curated catalog of official sources, in Brazil and in the
                    world: words, --country <ISO code>, --no-token, --alerts
   tokens           say which BYOT tokens are set (never their values)
@@ -60,6 +67,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Some("poll") => poll(&std::env::args().skip(2).collect::<Vec<_>>()).await,
+        Some("publish") => publish(&std::env::args().skip(2).collect::<Vec<_>>()),
         Some("sources") => sources(&std::env::args().skip(2).collect::<Vec<_>>()),
         Some("tokens") => {
             for (entry, _) in alerts_catalog::byot() {
@@ -101,17 +109,45 @@ fn feed_meta() -> FeedMeta {
     }
 }
 
-/// Reads each source once and delivers its new alerts to every configured channel. A source
-/// that fails is reported, and the others still run; the command fails when any source failed.
-async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
-    let subscribed: Vec<String> = env("ALERTS_SOURCES")
+/// The ids in `ALERTS_SOURCES`, separated by commas or spaces.
+fn subscribed() -> Vec<String> {
+    env("ALERTS_SOURCES")
         .map(|v| {
             v.split([',', ' '])
                 .filter(|s| !s.is_empty())
                 .map(str::to_owned)
                 .collect()
         })
-        .unwrap_or_default();
+        .unwrap_or_default()
+}
+
+/// Writes the site files into the folder of `--out` from the stored alerts of the window of
+/// `--days`. It reads no source and uses no network. A bad argument exits with code 2.
+fn publish(args: &[String]) -> Result<(), Box<dyn Error>> {
+    let args = alerts::publish::parse_args(args).unwrap_or_else(|e| {
+        eprintln!("alerts: {e}\n{USAGE}");
+        std::process::exit(2);
+    });
+    let sources = subscribed()
+        .iter()
+        .map(|id| id.parse::<Source>())
+        .collect::<Result<Vec<_>, _>>()?;
+    let (shown, total) = alerts::publish::publish(
+        &open_db()?,
+        &args.out,
+        &now_utc(),
+        &feed_meta(),
+        &sources,
+        args.days,
+    )?;
+    println!("publish: {shown} of {total} alerts written to {}", args.out);
+    Ok(())
+}
+
+/// Reads each source once and delivers its new alerts to every configured channel. A source
+/// that fails is reported, and the others still run; the command fails when any source failed.
+async fn poll(ids: &[String]) -> Result<(), Box<dyn Error>> {
+    let subscribed = subscribed();
     let ids = if ids.is_empty() { &subscribed[..] } else { ids };
     if ids.is_empty() {
         eprintln!("{USAGE}");

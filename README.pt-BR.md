@@ -1,4 +1,4 @@
-<!-- reading-time: 16 min -->
+<!-- reading-time: 17 min -->
 # alerts
 
 🇬🇧 [Read in English](README.md)
@@ -118,6 +118,10 @@ Os dois canais leem a mesma saída do harness: um alerta que chega ao Discord ta
 feed, com o mesmo texto. O feed não depende de empresa: Atom e CAP são padrões abertos. O feed
 tem o mesmo formato do feed nacional da Defesa Civil (IDAP), e qualquer leitor de feed abre o
 arquivo. Um alerta de teste sai com `<status>Test</status>`.
+
+A página web e o feed dos alertas guardados estão planejados em <https://alerts.piabrota.art> (ainda
+sem deploy). O `alerts publish --out <pasta>` grava os dois como arquivos: veja
+[`docs/PUBLISH.md`](docs/PUBLISH.md).
 
 ## quem vai usar o alerts
 

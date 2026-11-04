@@ -20,3 +20,6 @@ alerts-rss = { workspace = true }
 alerts-source-cemaden = { workspace = true }
 alerts-source-mock = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros"] }
+
+[dev-dependencies]
+quick-xml = "0.42.0"
