@@ -7,7 +7,7 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny reuse docs-stale pins figure-check reading-time-check desktop-check obsidian-check marola-discord
+check: fmt-check lint test deny reuse docs-stale pins figure-check proofs-check reading-time-check desktop-check obsidian-check marola-discord
 
 fmt:
     cargo fmt --all
@@ -262,6 +262,24 @@ pins:
 wave:
     cargo run -q -p alerts-drawings --bin wave > docs/drawings/wave.svg
     cargo run -q -p alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json
+
+# Write the domain facts as RDF and the invariants as SMT (docs/proofs/). Read docs/PROOFS.md.
+proofs:
+    cargo run -q -p alerts-proofs
+
+# In `just check`: the exhaustive Rust checks hold and docs/proofs/ is the output of the code.
+proofs-check:
+    cargo run -q -p alerts-proofs -- --check
+
+# Prove the SMT conjectures with z3 (in the dev shell). Every answer must be unsat.
+prove: proofs-check
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for f in docs/proofs/*.smt2; do
+        out="$(z3 "$f")"
+        [ "$(printf '%s\n' "$out" | sort -u)" = "unsat" ] || { echo "prove: $f answered: $out" >&2; exit 1; }
+        echo "prove: $f: unsat ($(grep -c check-sat "$f") conjectures)"
+    done
 
 # Record Ammonite by Harry Chen (Desmos) as docs/drawings/ammonite-harry-chen.gif. Needs Chrome or
 # Chromium (CHROME names the binary) and access to desmos.com.
