@@ -16,6 +16,6 @@ path = "src/main.rs"
 
 [dependencies]
 alerts-core = { workspace = true }
-
-[dev-dependencies]
 alerts-catalog = { workspace = true }
+alerts-feed = { workspace = true }
+alerts-rss = { workspace = true }
