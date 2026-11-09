@@ -1,0 +1,21 @@
+[package]
+name = "alerts-proofs"
+description = "Writes the alert domain as RDF and its invariants as SMT conjectures, and checks them in Rust"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "proofs"
+path = "src/main.rs"
+
+[dependencies]
+alerts-core = { workspace = true }
+
+[dev-dependencies]
+alerts-catalog = { workspace = true }

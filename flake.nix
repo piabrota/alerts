@@ -25,6 +25,7 @@
             cargo-deny maturin python3 just
             cffconvert uv
             jq
+            z3 # `just prove`
             zip # `just pack-verbs`
             miniserve # `just site-serve`
             nodejs # vendor/archify (`just figure`); Chrome comes from the host

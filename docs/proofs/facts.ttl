@@ -1,0 +1,92 @@
+# The alert domain of piabrota/alerts as RDF, written by `just proofs`
+# (crates/alerts-proofs). Do not edit: `just proofs-check` compares this file
+# with the code.
+@prefix al: <https://github.com/piabrota/alerts/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+al:br-uf-RO a al:Uf ;
+    al:ibgePrefix "11"^^xsd:integer .
+al:br-uf-AC a al:Uf ;
+    al:ibgePrefix "12"^^xsd:integer .
+al:br-uf-AM a al:Uf ;
+    al:ibgePrefix "13"^^xsd:integer .
+al:br-uf-RR a al:Uf ;
+    al:ibgePrefix "14"^^xsd:integer .
+al:br-uf-PA a al:Uf ;
+    al:ibgePrefix "15"^^xsd:integer .
+al:br-uf-AP a al:Uf ;
+    al:ibgePrefix "16"^^xsd:integer .
+al:br-uf-TO a al:Uf ;
+    al:ibgePrefix "17"^^xsd:integer .
+al:br-uf-MA a al:Uf ;
+    al:ibgePrefix "21"^^xsd:integer .
+al:br-uf-PI a al:Uf ;
+    al:ibgePrefix "22"^^xsd:integer .
+al:br-uf-CE a al:Uf ;
+    al:ibgePrefix "23"^^xsd:integer .
+al:br-uf-RN a al:Uf ;
+    al:ibgePrefix "24"^^xsd:integer .
+al:br-uf-PB a al:Uf ;
+    al:ibgePrefix "25"^^xsd:integer .
+al:br-uf-PE a al:Uf ;
+    al:ibgePrefix "26"^^xsd:integer .
+al:br-uf-AL a al:Uf ;
+    al:ibgePrefix "27"^^xsd:integer .
+al:br-uf-SE a al:Uf ;
+    al:ibgePrefix "28"^^xsd:integer .
+al:br-uf-BA a al:Uf ;
+    al:ibgePrefix "29"^^xsd:integer .
+al:br-uf-MG a al:Uf ;
+    al:ibgePrefix "31"^^xsd:integer .
+al:br-uf-ES a al:Uf ;
+    al:ibgePrefix "32"^^xsd:integer .
+al:br-uf-RJ a al:Uf ;
+    al:ibgePrefix "33"^^xsd:integer .
+al:br-uf-SP a al:Uf ;
+    al:ibgePrefix "35"^^xsd:integer .
+al:br-uf-PR a al:Uf ;
+    al:ibgePrefix "41"^^xsd:integer .
+al:br-uf-SC a al:Uf ;
+    al:ibgePrefix "42"^^xsd:integer .
+al:br-uf-RS a al:Uf ;
+    al:ibgePrefix "43"^^xsd:integer .
+al:br-uf-MS a al:Uf ;
+    al:ibgePrefix "50"^^xsd:integer .
+al:br-uf-MT a al:Uf ;
+    al:ibgePrefix "51"^^xsd:integer .
+al:br-uf-GO a al:Uf ;
+    al:ibgePrefix "52"^^xsd:integer .
+al:br-uf-DF a al:Uf ;
+    al:ibgePrefix "53"^^xsd:integer .
+
+al:severity-menor a al:Severity ;
+    al:rank 0 ;
+    al:labelPtBr "menor" .
+al:severity-moderada a al:Severity ;
+    al:rank 1 ;
+    al:labelPtBr "moderada" .
+al:severity-severa a al:Severity ;
+    al:rank 2 ;
+    al:labelPtBr "severa" .
+al:severity-extrema a al:Severity ;
+    al:rank 3 ;
+    al:labelPtBr "extrema" .
+
+al:v0 a al:Scope ;
+    al:serves al:br-uf-PR, al:br-uf-SC, al:br-uf-RS .
+
+al:source-cemaden a al:Source ;
+    al:agency "CEMADEN (Centro Nacional de Monitoramento e Alertas de Desastres Naturais)" ;
+    al:format "JSON" ;
+    al:areaEncoding al:IbgeMunicipality ;
+    al:official true .
+al:source-defesa-civil-idap a al:Source ;
+    al:agency "Defesa Civil Nacional (MIDR)" ;
+    al:format "Atom + CAP 1.2" ;
+    al:areaEncoding al:IbgeMunicipality ;
+    al:official true .
+
+al:channel-discord a al:Channel ;
+    al:readsHarness al:harness .
+al:channel-feed a al:Channel ;
+    al:readsHarness al:harness .
