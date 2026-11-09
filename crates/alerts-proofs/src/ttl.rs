@@ -1,7 +1,7 @@
 //! The facts as RDF 1.1 Turtle: the vocabulary a SPARQL store, the wiki or a future SHACL shape
 //! reads. One file, stable order, written only from [`Facts`].
 
-use crate::facts::{Facts, CHANNELS, SEVERITIES, SOURCES};
+use crate::facts::{CHANNELS, Facts, SEVERITIES, SOURCES};
 use alerts_core::Uf;
 
 pub fn facts_ttl(facts: &Facts) -> String {

@@ -106,6 +106,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "alerts-proofs"
+version = "0.0.0"
+dependencies = [
+ "alerts-catalog",
+ "alerts-core",
+ "alerts-feed",
+ "alerts-rss",
+]
+
+[[package]]
 name = "alerts-py"
 version = "0.0.0"
 dependencies = [

@@ -50,7 +50,9 @@ pub fn routing_smt(facts: &Facts) -> String {
         .map(|(p, _)| format!("(= p {p})"))
         .collect::<Vec<_>>()
         .join(" ");
-    t.push_str(&format!("(define-fun valid ((p Int)) Bool (or {valid}))\n\n"));
+    t.push_str(&format!(
+        "(define-fun valid ((p Int)) Bool (or {valid}))\n\n"
+    ));
 
     t.push_str("; c1: no valid prefix of a municipality code is unrouted.\n");
     t.push_str("(push)\n(assert (exists ((m Int)) (and (muni m) (valid (prefix m)) (= (route (prefix m)) Unrouted))))\n(check-sat)\n(pop)\n\n");
@@ -68,7 +70,9 @@ pub fn routing_smt(facts: &Facts) -> String {
         "(push)\n(assert (exists ((m Int)) (and (muni m) (<= 41 (prefix m)) (<= (prefix m) 43) (not (or {v0})))))\n(check-sat)\n(pop)\n\n"
     ));
 
-    t.push_str("; c4: the table is deterministic: two different valid prefixes never share a UF.\n");
+    t.push_str(
+        "; c4: the table is deterministic: two different valid prefixes never share a UF.\n",
+    );
     t.push_str("(push)\n(assert (exists ((p Int) (q Int)) (and (valid p) (valid q) (distinct p q) (= (route p) (route q)))))\n(check-sat)\n(pop)\n");
     t
 }
@@ -77,8 +81,13 @@ pub fn routing_smt(facts: &Facts) -> String {
 /// dropping a higher one, and the lowest threshold passes everything.
 pub fn severity_smt() -> String {
     let mut t = String::new();
-    header(&mut t, "P2: the min_severity stage is monotone in CAP severity");
-    t.push_str("; Severities as ranks: Minor 0, Moderate 1, Severe 2, Extreme 3 (alerts_core order).\n");
+    header(
+        &mut t,
+        "P2: the min_severity stage is monotone in CAP severity",
+    );
+    t.push_str(
+        "; Severities as ranks: Minor 0, Moderate 1, Severe 2, Extreme 3 (alerts_core order).\n",
+    );
     t.push_str("(define-fun sev ((x Int)) Bool (and (<= 0 x) (<= x 3)))\n");
     t.push_str("(define-fun pass ((m Int) (x Int)) Bool (>= x m))\n\n");
 
@@ -86,7 +95,9 @@ pub fn severity_smt() -> String {
     t.push_str("(push)\n(assert (exists ((m Int) (s Int) (s2 Int)) (and (sev m) (sev s) (sev s2) (pass m s) (<= s s2) (not (pass m s2)))))\n(check-sat)\n(pop)\n\n");
 
     t.push_str("; c2: the Minor threshold passes every severity.\n");
-    t.push_str("(push)\n(assert (exists ((s Int)) (and (sev s) (not (pass 0 s)))))\n(check-sat)\n(pop)\n");
+    t.push_str(
+        "(push)\n(assert (exists ((s Int)) (and (sev s) (not (pass 0 s)))))\n(check-sat)\n(pop)\n",
+    );
     t
 }
 
@@ -95,7 +106,10 @@ pub fn severity_smt() -> String {
 /// rewrite alerts per channel).
 pub fn stages_smt() -> String {
     let mut t = String::new();
-    header(&mut t, "P3: only_ufs and min_severity commute; channels have parity");
+    header(
+        &mut t,
+        "P3: only_ufs and min_severity commute; channels have parity",
+    );
     t.push_str("(declare-sort Alert 0)\n");
     t.push_str("(declare-fun touches-kept-uf (Alert) Bool)\n");
     t.push_str("(declare-fun sev-at-least (Alert) Bool)\n\n");

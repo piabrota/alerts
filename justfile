@@ -271,15 +271,10 @@ proofs:
 proofs-check:
     cargo run -q -p alerts-proofs -- --check
 
-# Prove the SMT conjectures with z3 (in the dev shell). Every answer must be unsat.
-prove: proofs-check
-    #!/usr/bin/env bash
-    set -euo pipefail
-    for f in docs/proofs/*.smt2; do
-        out="$(z3 "$f")"
-        [ "$(printf '%s\n' "$out" | sort -u)" = "unsat" ] || { echo "prove: $f answered: $out" >&2; exit 1; }
-        echo "prove: $f: unsat ($(grep -c check-sat "$f") conjectures)"
-    done
+# Prove every statement of docs/proofs/*.smt2 with z3 (in the dev shell), by refutation: one line
+# per statement. `unsat` proves it; a statement marked `expect: sat` must have a counterexample.
+prove:
+    cargo run -q --release -p alerts-proofs -- --prove
 
 # Record Ammonite by Harry Chen (Desmos) as docs/drawings/ammonite-harry-chen.gif. Needs Chrome or
 # Chromium (CHROME names the binary) and access to desmos.com.

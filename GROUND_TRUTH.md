@@ -119,7 +119,7 @@ live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 | `alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
 | `alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
 | `alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
-| `alerts-proofs` | bin | `proofs`: the domain facts as RDF (`docs/proofs/facts.ttl`) and the routing, severity and parity invariants as SMT conjectures, checked exhaustively in Rust (`just proofs-check`, in `just check`) and proved with z3 (`just prove`). Read `docs/PROOFS.md`. No I/O beyond `docs/proofs/`. |
+| `alerts-proofs` | bin | `proofs`: the domain facts as RDF (`docs/proofs/facts.ttl`) and the routing, severity and parity invariants as SMT conjectures, checked exhaustively in Rust (`just proofs-check`, in `just check`) and proved with z3 (`just prove`), and statements about the code of `alerts-rss`, `alerts-feed` and `alerts-obsidian` (P4 to P6), each counterexample replayed through the real Rust. Read `docs/PROOFS.md`. No I/O beyond `docs/proofs/` and the z3 process of `just prove`. |
 | `alerts-crud` | lib | Loco-style models, controllers and migrations (SQLite) of the desktop app. `controllers::dispatch` is the one entry point. |
 | `alerts-rss` | lib | The RSS combinator: RSS and Atom items, a rule algebra (union, intersect, diff, filter, map, dedupe, take) and a pure evaluator. No I/O. See `docs/RSS.md`. |
 | `alerts-scaffold` | bin | `scaffold`: writes a new `alerts-crud` resource (`just generate scaffold`). |
