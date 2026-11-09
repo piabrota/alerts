@@ -59,6 +59,10 @@ mcp:
 test-message:
     cargo run -q -p alerts -- test-message
 
+# Write the static site (feed.atom, alerts.json, index.html, health.json) from the stored alerts.
+publish out="serve-alerts":
+    cargo run -q -p alerts -- publish --out {{out}}
+
 # MOCK_ALERTS_PATH names a JSON file of mock alerts in place of the built-in scenarios;
 # crates/alerts-source-mock/tests/fixtures/alerts.json is an example. Each alert is delivered once per id.
 # Deliver the mock alerts (TESTE, CAP status Test) to DISCORD_WEBHOOK_URL and/or FEED_PATH.

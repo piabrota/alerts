@@ -46,3 +46,6 @@ site/serve
 desktop/ui/dist
 desktop/ui/vendor
 desktop/app/gen
+
+# The output of `just publish` (the static alerts site)
+/serve-alerts/

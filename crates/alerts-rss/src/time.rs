@@ -5,10 +5,13 @@
 
 /// A feed time in the UTC form, or `None` when the text is not RFC 3339 or RFC 822.
 pub fn normalize(s: &str) -> Option<String> {
+    epoch_secs(s).map(rfc3339_utc)
+}
+
+/// Seconds since 1970-01-01T00:00:00Z of an RFC 3339 or RFC 822 time, or `None`.
+pub fn epoch_secs(s: &str) -> Option<i64> {
     let s = s.trim();
-    parse_rfc3339(s)
-        .or_else(|| parse_rfc822(s))
-        .map(rfc3339_utc)
+    parse_rfc3339(s).or_else(|| parse_rfc822(s))
 }
 
 /// Seconds since 1970-01-01T00:00:00Z as `YYYY-MM-DDThh:mm:ss+00:00`.

@@ -1,4 +1,4 @@
-<!-- reading-time: 17 min -->
+<!-- reading-time: 19 min -->
 <div align="center">
 
 <table>
@@ -136,6 +136,10 @@ Both channels read the same harness output: an alert that reaches Discord also r
 with the same text. The feed depends on no company: Atom and CAP are open standards. The feed has
 the same shape as the national Civil Defense feed (IDAP), and any feed reader opens the file. A
 test alert has `<status>Test</status>`.
+
+The web page and the feed of the stored alerts are planned at <https://alerts.piabrota.art> (not
+deployed yet). `alerts publish --out <dir>` writes them as plain files: see
+[`docs/PUBLISH.md`](docs/PUBLISH.md).
 
 ## Who will use alerts
 
