@@ -152,6 +152,11 @@ A plugin calls the package: alerts copies no AGPL code. More in
 
 ## Architecture
 
+The source of `alerts` is Haskell (`haskell/`), and its meaning is an Agda specification
+(`spec/`) with proofs of the routing, severity, harness and identifier invariants. The Rust crates
+below are the previous implementation: they stay until their Haskell port lands, stage by stage.
+Read [`docs/SPEC.md`](docs/SPEC.md).
+
 ```mermaid
 %% figure: crates
 %% title: Which crates exist, and which crate depends on which?

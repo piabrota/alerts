@@ -7,7 +7,7 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny reuse docs-stale pins figure-check proofs-check reading-time-check desktop-check obsidian-check marola-discord
+check: fmt-check lint test deny reuse docs-stale pins figure-check spec hs-test proofs-check reading-time-check desktop-check obsidian-check marola-discord
 
 fmt:
     cargo fmt --all
@@ -264,6 +264,14 @@ wave:
     cargo run -q -p alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json
 
 # Write the domain facts as RDF and the invariants as SMT (docs/proofs/). Read docs/PROOFS.md.
+# In `just check`: type-check the Agda specification (spec/, --safe, no postulates).
+spec:
+    cd spec && LC_ALL=C.UTF-8 agda Everything.agda
+
+# In `just check`: build the Haskell code and replay the theorems of the spec on it.
+hs-test:
+    cd haskell/alerts-core && cabal test --offline
+
 proofs:
     cargo run -q -p alerts-proofs
 

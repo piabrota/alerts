@@ -1,6 +1,8 @@
 <!-- reading-time: 6 min -->
 # Proofs
 
+The Agda specification proves P1 to P3 and P6 for every input: see [`SPEC.md`](SPEC.md).
+
 `alerts-proofs` writes the alert domain as RDF and its invariants as SMT conjectures, from one
 set of facts read out of `alerts-core` at run time — so the proofs cannot drift from the code.
 The outputs live in `docs/proofs/` and are committed, like the README drawing: `just proofs`
