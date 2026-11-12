@@ -40,13 +40,16 @@ sources, filters them, and delivers them.
 
 ## Hard rules
 
-- **Full Rust.** Every program, script and tool written for this repo is Rust. Python enters
-  only as a third-party dependency: maturin builds the pip package, `uvx reuse` checks the
-  licenses, and the pip package itself is Rust (PyO3). Never commit a `.py` file. A shell recipe
-  in the `justfile` may call tools, but a recipe that needs logic becomes a Rust binary. One
-  exception: `crates/alerts-obsidian/plugin/main.js`, because Obsidian loads only JavaScript. It
-  is only the bridge to the Obsidian API (HTTP, files, notices, settings). The plugin logic is the
-  Rust of `alerts-obsidian`, built to WebAssembly. Never add logic to that file.
+- **Haskell is the source, Agda is the specification.** New code for `alerts` is Haskell
+  (`haskell/`), and its meaning is the Agda specification in `spec/` (`--safe`, no postulate). A
+  Haskell module states which Agda definitions it implements, and its test suite replays the
+  theorems of the spec on the code, one check per theorem name (`just spec`, `just hs-test`, in
+  `just check`). A change of behavior changes the spec first. The Rust in `crates/` and
+  `desktop/` is the previous implementation: it stays until its Haskell port lands, crate by crate
+  (`docs/SPEC.md` lists the stages), and it gets only fixes, never new features. Never commit a
+  `.py` file: Python enters only as a third-party dependency. One exception stays:
+  `crates/alerts-obsidian/plugin/main.js`, because Obsidian loads only JavaScript. It is only the
+  bridge to the Obsidian API. Never add logic to that file.
 - **No CI.** Do not add `.github/workflows` or any other CI. `just check` is the gate, run by hand
   before a PR.
 - **Every PR delivers a test alert to the official Marola Discord.** `just marola-discord` (in
@@ -105,7 +108,12 @@ just py-build      # build the Python wheel
 
 ## Repo layout
 
-A Cargo workspace. Each crate is a directory in `crates/`. Shared dependency versions and lints
+The Agda specification is `spec/` (`spec/Alerts/Core.agda`, `spec/Alerts/Properties.agda`), and the
+Haskell source is `haskell/`, one cabal package per directory: `haskell/alerts-core` is the port of
+`alerts-core` and of the CAP identifier of `alerts-feed`. `docs/SPEC.md` maps each theorem to its
+z3 statement and to its Haskell check.
+
+The previous implementation is a Cargo workspace. Each crate is a directory in `crates/`. Shared dependency versions and lints
 live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
 
 | Crate | Kind | Role |
@@ -200,12 +208,14 @@ plain SQL), the accounts and the server-side HTML. Read the skills before you wo
 The desktop app (`docs/DESKTOP.md`) is the first interface: a CRUD page per `alerts-crud` resource and
 a map page. The interface never creates an alert.
 
-## Why Rust
+## Why Haskell and Agda
 
-The choice is for a compiler, safety and long-term robustness (antifragility). Rust gives
-algebraic types and pattern matching, one static binary without a runtime, a stable language
-(editions), and PyO3 for the Python package. Scala needs the JVM and cannot ship a clean pip
-package. Haskell has a thinner library ecosystem for this work.
+The choice is for a compiler, safety and long-term robustness (antifragility), with a proof of
+what the code means. Haskell gives algebraic types, pattern matching and pure functions by default:
+the FP harness is Kleisli composition (`>=>`) in the language itself. Agda states the semantics and
+proves the invariants for every input, where the z3 statements of `docs/proofs/` and the checks of
+`alerts-proofs` cover finite domains. The Haskell keeps the names of the Agda definitions, so a
+reader can put a theorem next to the code it is about.
 
 ## Documentation
 

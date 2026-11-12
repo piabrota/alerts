@@ -26,6 +26,8 @@
             cffconvert uv
             jq
             z3 # `just prove`
+            (agda.withPackages (p: [ p.standard-library ])) # `just spec`
+            ghc cabal-install haskell-language-server # `just hs-test`: the Haskell source
             zip # `just pack-verbs`
             miniserve # `just site-serve`
             nodejs # vendor/archify (`just figure`); Chrome comes from the host

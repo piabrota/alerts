@@ -134,6 +134,11 @@ Um plugin chama o pacote: o alerts não copia código AGPL. Mais em
 
 ## arquitetura
 
+O código-fonte do `alerts` é Haskell (`haskell/`). O significado do código é uma especificação
+em Agda (`spec/`), com provas das invariantes de roteamento, de severidade, do harness e do
+identificador. As crates de Rust abaixo são a implementação anterior. Elas ficam até o port para
+Haskell chegar, etapa por etapa. Leia [`docs/SPEC.md`](docs/SPEC.md).
+
 ```mermaid
 %% figure: crates
 %% title: Quais crates existem e quem depende de quem?

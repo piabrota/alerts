@@ -1,0 +1,32 @@
+cabal-version:      3.0
+name:               alerts-core
+version:            0.0.0
+synopsis:           Domain types and the FP harness of alerts
+description:
+  The domain of alerts (UF, severity, hazard, alert) and the FP harness: a
+  composition of pure stages. The reference is the Agda specification in
+  spec/Alerts/Core.agda; test/Spec.hs replays its theorems on this code.
+license:            MPL-2.0
+author:             M.Hoffmann and the alerts contributors
+homepage:           https://github.com/piabrota/alerts
+build-type:         Simple
+
+common warnings
+  ghc-options:      -Wall -Wcompat -Wincomplete-uni-patterns -Wincomplete-record-updates
+  default-language: GHC2021
+
+library
+  import:           warnings
+  hs-source-dirs:   src
+  exposed-modules:  Alerts.Core
+                    Alerts.Cap
+  other-modules:    Paths_alerts_core
+  autogen-modules:  Paths_alerts_core
+  build-depends:    base >=4.18 && <5
+
+test-suite spec
+  import:           warnings
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          Spec.hs
+  build-depends:    base, alerts-core

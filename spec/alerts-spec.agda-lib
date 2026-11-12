@@ -1,0 +1,4 @@
+name: alerts-spec
+depend: standard-library
+include: .
+flags: --safe --without-K

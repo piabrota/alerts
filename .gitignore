@@ -46,3 +46,8 @@ site/serve
 desktop/ui/dist
 desktop/ui/vendor
 desktop/app/gen
+
+# Agda (spec/) and Haskell (haskell/) build outputs
+_build/
+*.agdai
+dist-newstyle/
