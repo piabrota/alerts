@@ -64,7 +64,7 @@
       "lane": "nucleo",
       "col": 1,
       "type": "backend",
-      "label": "crate de fonte",
+      "label": "módulo de fonte",
       "sublabel": "um por fonte",
       "width": 150
     },

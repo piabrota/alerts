@@ -64,7 +64,7 @@
       "lane": "nucleo",
       "col": 1,
       "type": "backend",
-      "label": "source crate",
+      "label": "source module",
       "sublabel": "one per source",
       "width": 150
     },

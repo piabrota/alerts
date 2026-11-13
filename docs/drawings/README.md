@@ -4,18 +4,17 @@
 ## `wave.svg`
 
 A wave and an abstract bell, by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)), 2026.
-The Rust binary `wave` (crate `alerts-drawings`) writes the drawing in two formats from one
-geometry. `just wave` writes both files:
+The drawing exists in two formats from one geometry. Both files are committed. The generator was
+part of the previous implementation and left with it ⚠: a change to the drawing is a change to
+both files, by hand.
 
-| File | Command | What it is |
-|---|---|---|
-| `wave.svg` | `cargo run -q -p alerts-drawings --bin wave > docs/drawings/wave.svg` | The README drawing |
-| `wave.desmos.json` | `cargo run -q -p alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json` | The same drawing as a Desmos graph state |
+| File | What it is |
+|---|---|
+| `wave.svg` | The README drawing |
+| `wave.desmos.json` | The same drawing as a Desmos graph state |
 
 **The wave is a Fibonacci spiral.** It has eight quarter-circle arcs. The radii are
-5 × (21, 13, 8, 5, 3, 2, 1, 1). Each arc fills one square of side 5 × Fₙ:
-`cargo run -q -p alerts-drawings --bin wave squares` draws the squares. A test checks that
-the committed `wave.svg` and `wave.desmos.json` are the output of the binary.
+5 × (21, 13, 8, 5, 3, 2, 1, 1). Each arc fills one square of side 5 × Fₙ.
 
 **The bell** is a half circle (radius 14), a rim, a clapper dot and two sound arcs (radius 18).
 

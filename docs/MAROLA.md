@@ -84,7 +84,7 @@ open. marola has not chosen one of them yet.
 | Region | the coast, RJ first; all 27 UFs in the store | PR, SC, RS |
 | Sources | INMET; the Navy later | Defesa Civil (IDAP), INMET, CEMADEN |
 | Delivery | a page and a banner; no push | a push to Discord, and an Atom feed of CAP 1.2 alerts with the same text |
-| Language | Scala (the app), Python (scripts) | Rust, with a Python package |
+| Language | Scala (the app), Python (scripts) | Haskell, with an Agda specification |
 | Model | none on the alert path | deterministic harness; a local model only as a `Stage`, later |
 | Issuer text | verbatim, with a link | verbatim, `write-pt-br` (`estrito`) |
 
@@ -140,13 +140,13 @@ some of the open items in MIP-0071 §4.1.
    (not seen in a sample). It can replace part of MIP-0071 §4.3.
 4. **Fail loudly.** A failed fetch must not look like "no warning" (see "Conflict: a failed
    fetch"). This is a proposal to marola. marola has not accepted it.
-5. **A reusable library.** `alerts-py` is a pip package. A marola Python script can use it
-   to read official alerts, if marola wants that. Nobody decided this.
+5. **A reusable feed.** A marola script can read the Atom + CAP 1.2 feed of alerts to get the
+   official alerts, if marola wants that. Nobody decided this.
 
 ## Open questions
 
 1. Can both projects share one CAP parser and one INMET adapter? The languages differ (Scala and
-   Rust). A shared fixture set (real CAP documents) is cheaper than shared code.
+   Haskell). A shared fixture set (real CAP documents) is cheaper than shared code.
 2. Does IDAP carry coastal events (COBRADE 1.3.1.1.2, storm tide and ressaca) for SC and RJ? ⚠
    Check one month of the feed.
 3. Ask the Navy for a feed one time, for both projects. MIP-0034 §11.3 already plans the e-mail.

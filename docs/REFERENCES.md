@@ -5,7 +5,7 @@ Esta página lista ferramentas e serviços externos que alguém propôs para o a
 página não lista fontes de alerta: as fontes estão em `docs/SOURCES.md`.
 
 Uma entrada desta página não foi adotada. Cada entrada diz o que o recurso é, a licença, o custo e
-a relevância. Uma dependência nova ainda precisa passar no `just deny`. Um recurso pago precisa da
+a relevância. Uma dependência nova ainda precisa de uma licença da lista do `GROUND_TRUTH.md`. Um recurso pago precisa da
 confirmação explícita de um humano (`GROUND_TRUTH.md`).
 
 Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e Seabase).
@@ -25,8 +25,8 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
 - **Plugins.** O AstrBot tem um mercado com mais de 1000 plugins, instalados com um clique. Um
   plugin é escrito em Python. O AstrBot pede Python 3.12 ou mais novo.
 - **Licença.** O arquivo `LICENSE` do repositório é a AGPL-3.0.
-- **Relação com o alerts.** O pacote `alerts-py` existe para um plugin do AstrBot
-  usar. O plugin chama o pacote: o alerts não copia código do AstrBot. A licença AGPL-3.0
+- **Relação com o alerts.** Um plugin do AstrBot pode ler o feed Atom com CAP 1.2. O plugin
+  lê o feed: o alerts não copia código do AstrBot. A licença AGPL-3.0
   não é compatível com uma cópia de código dentro de um repositório MPL-2.0.
 - **Não conferido:** como um plugin publica uma mensagem no Discord pelo AstrBot ⚠.
 
@@ -45,7 +45,7 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
 - **Licença.** O arquivo `LICENSE` é a AGPL-3.0. A descrição de alguns forks diz que o plugin foi
   feito com IA.
 - **Relação com o alerts.** O plugin pode receber alertas do Sul do Brasil pelo
-  `alerts-py` ou pelo feed Atom com CAP 1.2. O texto do alerta continua em pt-BR, igual ao
+  feed Atom com CAP 1.2. O texto do alerta continua em pt-BR, igual ao
   texto do Discord. O alerts não reescreve um alerta para um canal.
 - **Não conferido:** se o plugin aceita uma fonte nova sem mudança no código do plugin ⚠.
 
@@ -66,8 +66,8 @@ Conferido em 2026-10-26 (AstrBot e plugin de desastres) e em 2026-10-22 (Onyx e 
   instalador instala o Docker quando o Docker falta.
 - **Fora da página de início rápido:** a memória e a CPU necessárias, os modelos suportados (um
   modelo local pelo Ollama ⚠), os conectores e o funcionamento da indexação.
-- **Regras do repositório.** O Onyx é um serviço separado, não uma dependência Rust, então o
-  `just deny` não confere o Onyx. Rode o Onyx na máquina local. Não coloque o Onyx no repositório
+- **Regras do repositório.** O Onyx é um serviço separado, não uma dependência do Haskell, então o
+  build não confere o Onyx. Rode o Onyx na máquina local. Não coloque o Onyx no repositório
   como código ou como CI.
 - **Antes de usar:** leia o `docs/SURVEY_NLP.md`. Use a ferramenta mais barata que resolve o
   problema.

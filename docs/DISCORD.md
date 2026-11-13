@@ -29,7 +29,7 @@ repository uses a bot today.
 
 Both variables come from your environment. They never enter the repository, a commit, a PR, an
 issue or a log (`GROUND_TRUTH.md`, "No secrets in the repo"). The code never prints the URL: a
-failed request drops the URL from its error (`crates/alerts/src/lib.rs`, `post`).
+failed request drops the URL from its error (`haskell/alerts/src/Alerts/Http.hs`, `send`).
 
 ## 1. Prepare the Marola server
 
@@ -66,7 +66,7 @@ The URL must not land in a commit or in your shell history. Pick one of the two 
 
 Git ignores `.env` (and `.env.*`, except the empty template `.env.example`). `just` loads it
 into every recipe (`set dotenv-load`), and the `alerts` binary and the Marola test load it too,
-from the current directory or a parent. So `cargo run -p alerts -- ...` works without `just`.
+from the current directory or a parent. So `cabal run alerts -- ...` works without `just`.
 
 ```console
 cp .env.example .env
@@ -131,16 +131,14 @@ A git history rewrite does not help: assume that a pushed URL was copied.
 
 ## 3. Get the toolchain
 
-The workspace is Rust edition 2024, so it needs rustc 1.85 or newer.
+The code is Haskell (GHC 9.10, cabal 3.12) with an Agda specification (Agda 2.8, standard library 2.4).
 
-- **With Nix:** `nix develop`, then run every command below inside it.
-- **Without Nix:** install [rustup](https://rustup.rs). `rust-toolchain.toml` pins the
-  toolchain, so the first `cargo` command installs it. This works only when `cargo` is rustup's
-  `~/.cargo/bin/cargo`. Homebrew's `cargo` ignores the file, may be older than 1.85, and fails with
-  ``feature `edition2024` is required`` or `` `resolver` setting `3` is not valid``. Put
-  `~/.cargo/bin` first in `PATH` (in `~/.zshrc`), or run `brew uninstall rust`. Check with
-  `rustc --version`: it prints the version in `rust-toolchain.toml`.
-- `just`: `brew install just`, or `cargo install just`.
+- **With Nix:** `nix develop`, then run every command below inside it. The shell has GHC with
+  every library, cabal, Agda and `just`.
+- **Without Nix:** install [GHCup](https://www.haskell.org/ghcup/), then `ghcup install ghc 9.10`
+  and `ghcup install cabal 3.12`. The first `cabal build` downloads the libraries from Hackage.
+  Check with `ghc --version`.
+- `just`: `brew install just`.
 
 The first build takes a few minutes. The next ones take seconds.
 
@@ -185,7 +183,7 @@ result in **Testado** (`GROUND_TRUTH.md`). Write the message id, never the URL.
 
 ## 6. Test 3: mock alerts
 
-The mock source (`crates/alerts-source-mock`) makes simulated alerts. They go through the same
+The mock source (`Alerts.Source.Mock`) makes simulated alerts. They go through the same
 path as a real alert: the v0 harness, then Discord, then the store and the feed. Every mock alert
 is a test:
 
@@ -225,7 +223,7 @@ is never sent twice.
 ### Your own mock alerts
 
 Write a JSON array and name it in `MOCK_ALERTS_PATH`. An example is
-`crates/alerts-source-mock/tests/fixtures/alerts.json`:
+`haskell/alerts/test/fixtures/alerts.json`:
 
 ```json
 [
@@ -246,7 +244,7 @@ Write a JSON array and name it in `MOCK_ALERTS_PATH`. An example is
 ```
 
 ```console
-MOCK_ALERTS_PATH=crates/alerts-source-mock/tests/fixtures/alerts.json just mock-alerts
+MOCK_ALERTS_PATH=haskell/alerts/test/fixtures/alerts.json just mock-alerts
 ```
 
 ```text
@@ -281,11 +279,6 @@ mock: 5 read, 4 passed the harness, 4 delivered
 feed: 8 entries written to /var/folders/.../feed.atom
 ```
 
-### See them on the map
-
-The desktop app reads the same database. With the same `ALERTS_DB`, `just desktop-dev` shows the
-mock alerts on the map, each with its `TESTE` headline. See `docs/DESKTOP.md`.
-
 ## 7. When it fails
 
 | Message | Cause | Fix |
@@ -294,14 +287,12 @@ mock alerts on the map, each with its `TESTE` headline. See `docs/DESKTOP.md`.
 | `set MAROLA_DISCORD_WEBHOOK_URL to the webhook of the official Marola Discord` | `just marola-discord` without the variable, or with an empty value in `.env` | Step 2 |
 | `.env: invalid line near character N (...)` | A line of `.env` is not `NAME=value`, for example an open quote | Fix the line in the editor; the error never prints it |
 | `the webhook URL is not a Discord webhook URL` | The URL does not start with `https://discord.com/api/webhooks/` or `https://discordapp.com/api/webhooks/`. A URL from Discord Canary or PTB starts with `canary.discord.com` or `ptb.discord.com`. | Copy the URL again, or change the host to `discord.com` |
-| `reqwest::Error { kind: Status(404, None) }` | The webhook was deleted, or the URL is cut short | Make a new webhook (step 1.4) |
-| `Status(400, ...)` | A forum channel, or a field that Discord refuses | Use a text channel |
-| `Status(429, ...)` | Too many posts in a short time (rate limit) | Wait one minute, then run again |
+| `Discord: HTTP status 404` | The webhook was deleted, or the URL is cut short | Make a new webhook (step 1.4) |
+| `Discord: HTTP status 400` | A forum channel, or a field that Discord refuses | Use a text channel |
+| `Discord: HTTP status 429` | Too many posts in a short time (rate limit) | Wait one minute, then run again |
 | `mock: the mock file has no alert` | `MOCK_ALERTS_PATH` names an empty array | Add one alert |
 | ``mock: invalid mock file: unknown variant `Big`, expected one of `Minor`, `Moderate`, `Severe`, `Extreme` `` | A value outside the table above | Fix the field it names |
 | `mock: 5 read, 4 passed the harness, 0 delivered` | The store already had these ids | Use a new `ALERTS_DB`, or run again |
-| ``feature `edition2024` is required`` | cargo older than 1.85 | Step 3 |
-| `` `resolver` setting `3` is not valid`` | cargo older than 1.85 | Step 3 |
 | `warning: other users can read .../.env (mode 644)` | `.env` is readable by other users | `chmod 600 .env` (step 2) |
 
 A failed source never looks like "no alert": `alerts poll` prints the error, ends with

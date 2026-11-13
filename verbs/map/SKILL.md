@@ -14,18 +14,15 @@ first, no paid API).
 | Part | Choice | License | Why |
 |---|---|---|---|
 | Web renderer | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | BSD-3-Clause | The open fork of Mapbox GL JS v1. No token. |
-| Native renderer | [MapLibre Native](https://github.com/maplibre/maplibre-native) | BSD-2-Clause ⚠ | Static images (for Discord) and mobile apps. |
+| Native renderer | [MapLibre Native](https://github.com/maplibre/maplibre-native) | BSD-2-Clause ⚠ | Static images (for Discord). |
 | Base tiles | [OpenFreeMap](https://openfreemap.org) or a self-hosted [Protomaps](https://protomaps.com) PMTiles file | code MIT / BSD-3-Clause; data ODbL (OpenStreetMap) | No key and no account. PMTiles is one static file. |
 | Municipal borders | IBGE malhas API (`servicodados.ibge.gov.br/api/v3/malhas/...`) | public data ⚠ (terms not checked) | The official borders of PR, SC and RS. |
 
 - Never use a Mapbox, Google or other paid tile style. A paid tile service needs explicit human
   confirmation.
 - Always show the attribution control: "© OpenStreetMap contributors" and the tile provider.
-- The desktop app (`desktop/ui/src/map.rs`, its home page) uses MapLibre GL JS 5.24.0 (the UMD
-  build, global `maplibregl`) from `just desktop-vendor`, the OpenFreeMap `positron` style (muted,
-  so the alert colors stand out), and the IBGE UF borders that the same recipe fetches. Each UF
-  takes the color of the highest severity of the alerts that name it (`alert_view::by_uf`). MapLibre 6 ships only
-  ES modules, and its worker URL needs an `http(s)` page ⚠, so the app stays on 5.x for now.
+- Use the OpenFreeMap `positron` style (muted, so the alert colors stand out). Each UF takes the
+  color of the highest severity of the alerts that name it (`severityCssColor` in `alerts-core`).
 - Pin the MapLibre GL JS version (`maplibre-gl@<x.y.z>`), and load it from npm or a pinned CDN URL.
 
 ## From CAP 1.2 to GeoJSON
@@ -44,7 +41,7 @@ A CAP `<area>` can hold `<polygon>`, `<circle>` and `<geocode>`. Convert each on
    shape. Show the UF borders and the area text instead.
 
 Today `Alert` keeps only `area: String`. A geometry field is a core change: propose it as a new
-type in `alerts-core`, and keep the conversion in a `Stage` or in the channel crate.
+type in `alerts-core`, and keep the conversion in a `Stage` or in the channel module.
 
 ## Style
 

@@ -1,38 +1,36 @@
 <!-- reading-time: 4 min -->
 # Arquitetura
 
-O alerts é um workspace Cargo em Rust. Cada crate é um diretório em `crates/`.
+O código do alerts é Haskell, em pacotes do cabal em `haskell/`. O significado do código é uma
+especificação em Agda, em `spec/`.
 
-| Crate | Tipo | Papel |
+| Pacote ou pasta | Tipo | Papel |
 |---|---|---|
-| `alerts-core` | lib | Os tipos do domínio (`Alert`, `Uf`, `Severity`, `Hazard`) e o harness. O núcleo não conhece Discord, Python nem MCP. |
-| `alerts` | bin | O serviço: publica no Discord e no feed. |
-| `alerts-feed` | lib | O canal Atom com CAP 1.2. |
-| `alerts-ext` | lib | A lógica comum das extensões do Sul, sem Python e sem rede. |
-| `alerts-py` | cdylib, rlib | O pacote Python (PyO3 e maturin): `import piabrota_alerts`. O módulo `piabrota_alerts.ext` serve às extensões. |
-| `alerts-mcp` | bin | O servidor MCP (rmcp, stdio). |
+| `spec/` | Agda | A especificação: as definições (`Core.agda`) e as provas (`Properties.agda`). |
+| `alerts-core` | lib | Os tipos do domínio (`Alert`, `Uf`, `Severity`, `Hazard`), o harness e o identificador CAP. O núcleo não conhece Discord nem MCP. |
+| `alerts` | lib, bin | O serviço: as fontes, o feed Atom com CAP 1.2, as regras de RSS, o store em SQLite e o Discord. |
+| `alerts-mcp` | bin | O servidor MCP (JSON-RPC em stdio). |
 
 ```mermaid
-%% figure: crates
-%% title: Quais crates existem e quem depende de quem?
+%% figure: packages
+%% title: Quais módulos existem e quem depende de quem?
 flowchart LR
-    S["alerts-source-*<br/>(uma por fonte)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
+    Spec["spec/ (Agda)"] -. "os testes repetem" .-> C
+    S["Alerts.Source.*<br/>(um por fonte)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
     D["alerts<br/>serviço"] --> C
-    D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
-    P["alerts-py<br/>pacote Python"] --> C
+    D --> F["Alerts.Feed<br/>Atom + CAP 1.2"] --> C
     M["alerts-mcp<br/>servidor MCP"] --> C
 ```
 
 <details open>
 <summary>Como ler esta figura</summary>
 
-**Em uma frase.** Todo crate depende do `alerts-core`. O núcleo não depende de nenhum crate.
+**Em uma frase.** Todo módulo depende do `alerts-core`. O núcleo não depende de nenhum módulo.
 
-**Como ler.** Cada seta vai do crate que usa para o crate usado.
+**Como ler.** Cada seta cheia vai do módulo que usa para o módulo usado. A seta tracejada são os
+testes, que repetem cada teorema do Agda no código.
 
-**Fora da figura.** Os crates de fonte ainda não existem.
-
-**Evidência.** O `Cargo.toml` de cada crate em `crates/`.
+**Evidência.** O arquivo `.cabal` de cada pacote em `haskell/`.
 
 </details>
 
@@ -41,22 +39,21 @@ flowchart LR
 O desenho segue o artigo [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv
 2610.28380) e traduz o artigo para composição de funções.
 
-- Um estágio (`Stage`) é uma função `Fn(Alert) -> Option<Alert>`. O estágio passa o alerta
+- Um estágio (`Stage`) é uma função `Alert -> Maybe Alert`. O estágio passa o alerta
   adiante, talvez mudado, ou descarta o alerta.
-- O `Harness::then` acrescenta um estágio. O `Harness::run` aplica os estágios em ordem, com um
-  `try_fold`.
-- O núcleo tem dois estágios: `only_ufs` (mantém os alertas de certos estados) e `min_severity`
+- O `andThen` acrescenta um estágio. O `run` aplica os estágios em ordem: `foldr (>=>) Just`.
+- O núcleo tem dois estágios: `onlyUfs` (mantém os alertas de certos estados) e `minSeverity`
   (mantém os alertas a partir de uma severidade).
-- Uma especialização compõe um estágio novo. O alerts não usa hierarquias de traits parecidas com
+- Uma especialização compõe um estágio novo. O alerts não usa hierarquias de classes parecidas com
   herança.
 
 | Harness orientado a objetos | alerts |
 |---|---|
-| Uma subclasse sobrescreve um método | Um `Stage` novo envolve o pipeline: `Harness::then` |
+| Uma subclasse sobrescreve um método | Um `Stage` novo envolve o pipeline: `andThen` |
 | `super()` | Os estágios anteriores na composição |
-| Cadeia de herança | Composição de funções (`try_fold` sobre os estágios) |
+| Cadeia de herança | Composição de Kleisli (`>=>` sobre os estágios) |
 | Um roteador escolhe uma classe | Uma função pura casa um enum e devolve um `Harness` |
-| Volta para o harness base | `Option` ou `Result` volta para o harness base |
+| Volta para o harness base | `Maybe` ou `Either` volta para o harness base |
 
 ## Modelos locais, no futuro
 

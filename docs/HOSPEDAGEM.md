@@ -19,7 +19,6 @@ comprou o domínio `piabrota.art` em 2026-10-26.
 | `/index.html` | A home de piabrota.art | `site/src/home.gleam` |
 | `/alerts/` | A página do alerts, a figura e o desenho | `site/src/site.gleam` |
 | `/alerts/grafo/graph.html` | O grafo do código | `code-graph` |
-| `/alerts/obsidian/main.js`, `/alerts/obsidian/manifest.json` | O plugin WeatherDisaster do Obsidian | `just obsidian` (`crates/alerts-obsidian`) |
 | `/alerts/feed.atom` | Um feed Atom + CAP 1.2 com um só alerta, de status CAP Test | `alerts test-message` |
 
 O código Gleam são dois módulos pequenos, sem dependência do Hex. Todo link é relativo.
@@ -44,7 +43,7 @@ pede CI e combina com o espelho no Codeberg. O endereço do site é só `piabrot
 
 ## Como publicar
 
-O deploy roda na máquina do autor, porque o repositório não tem CI.
+O deploy roda na máquina do autor, porque a CI não faz deploy.
 
 ### Uma vez
 

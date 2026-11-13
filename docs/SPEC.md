@@ -7,7 +7,7 @@ test suite replays every theorem on the code.
 
 ```bash
 just spec      # agda type-checks spec/Everything.agda (--safe: no postulate)
-just hs-test   # cabal test in haskell/alerts-core: one check per theorem
+just test      # cabal test: one check per theorem, and every other test
 ```
 
 ## Three layers
@@ -25,8 +25,9 @@ identifier.
 
 ## The theorems
 
-The names follow the z3 statements of [`PROOFS.md`](PROOFS.md) and the checks of
-`crates/alerts-proofs`. z3 proves a statement over a model; Agda proves it over the definitions.
+The names follow the z3 statements (P1 to P6) and the exhaustive checks (C1 to C7) of the previous
+implementation: see [`PROOFS.md`](PROOFS.md). z3 proved a statement over a model; Agda proves it
+over the definitions.
 
 | Agda theorem | z3 / check | Says |
 |---|---|---|
@@ -52,21 +53,10 @@ The theorem records the rule of `GROUND_TRUTH.md` ("never filter or rewrite aler
 as a type. `identifier-unique` is about the identifier before the CAP replacement (`capSafe`), as
 in the z3 statement: the ids it covers have no character that CAP forbids.
 
-## Not yet specified
+## Tested, not yet proved
 
-P4 (feed times) and P5 (the rule algebra) are about `alerts-rss`. They enter the spec with the
-Haskell port of that crate.
-
-## Port stages
-
-The Rust stays until each part has its Haskell port and its spec. One PR per stage:
-
-1. `alerts-core` and the CAP identifier: this spec, `haskell/alerts-core`.
-2. `alerts-rss`: the rule algebra and the feed times, with P4 and P5 in Agda.
-3. `alerts-feed`: the Atom + CAP 1.2 channel.
-4. The sources: `alerts-source-cemaden`, `alerts-source-mock`, `alerts-catalog`.
-5. The service `alerts` (Discord, the feed, `just marola-discord`) and `alerts-mcp`.
-6. `alerts-crud` and the desktop app. ⚠ Tauri and Leptos have no Haskell twin: this stage needs a
-   decision.
-7. `alerts-py` (PyO3) and `alerts-obsidian` (wasm32). ⚠ A pip package and a WebAssembly plugin from
-   Haskell need a decision: the GHC wasm backend, or keep these two in Rust over the Haskell core.
+P4 (the feed times) and P5 (the rule algebra) are tested on the Haskell code, not yet proved in
+Agda. `haskell/alerts/test/Main.hs` checks the calendar for every day of 1900 to 2100 (P4
+`civil_round_trip`), the set laws of `union`, `intersect`, `diff` and `filter` (P5), and replays
+the counterexamples W1 to W6 (`PROOFS.md`). An Agda model of `Alerts.Rss.Expr` and `Alerts.Time`
+is the next step.

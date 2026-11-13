@@ -2,11 +2,12 @@
 -- @identifier@ in @spec/Alerts/Core.agda@; @identifier-unique@ in
 -- @spec/Alerts/Properties.agda@ states when it is unique.
 module Alerts.Cap
-  ( sender
-  , identChars
-  , capSafe
-  , identifier
-  ) where
+  ( sender,
+    identChars,
+    capSafe,
+    identifier,
+  )
+where
 
 import Alerts.Core (Alert (..))
 import Data.Char (isSpace)

@@ -63,7 +63,7 @@ means that the endpoint works, but the agency does not document it: it can chang
 | `http://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=PR` | JSON, rain accumulation 1 h to 96 h | none | undocumented ⚠ |
 
 - The official API has observations, not alerts. The municipal alerts exist only in `wsAlertas2`.
-- `alerts-source-cemaden` reads `wsAlertas2` (`alerts poll cemaden`). Checked on 2026-10-28: 14
+- `Alerts.Source.Cemaden` reads `wsAlertas2` (`alerts poll cemaden`). Checked on 2026-10-28: 14
   alerts, all with `status` 1, the events `Risco Hidrológico` and `Movimentos de Massa`, and the
   levels `Moderado` and `Alto`.
 
@@ -145,7 +145,7 @@ means that the endpoint works, but the agency does not document it: it can chang
 
 ## Catalog and BYOT
 
-`alerts-catalog` is the curated catalog of official alert sources: the Brazilian sources of this
+`Alerts.Catalog` is the curated catalog of official alert sources: the Brazilian sources of this
 page, and the national weather services and global systems that a person outside Brazil can use.
 `alerts sources` searches it (words, `--country <ISO code>`, `--no-token`, `--alerts`), and the
 MCP tool `search_sources` gives the same search to an agent. A catalog entry is not a source
@@ -188,7 +188,7 @@ alerts: 6 of them were outside the South (BA, GO, MT and SP).
 
 ## Mock source (tests only)
 
-`alerts-source-mock` is not an agency. It gives simulated alerts, so that a person can try the
+`Alerts.Source.Mock` is not an agency. It gives simulated alerts, so that a person can try the
 harness and the channels before a real source exists.
 
 | Input | Format | Auth | Status |
@@ -201,7 +201,7 @@ harness and the channels before a real source exists.
 - Each run is a new simulated event: the alert ids hold the time of the run.
 - An empty or invalid mock file is an error, never an empty list.
 - Run it with `just mock-alerts` (or `alerts poll mock`). Example file:
-  `crates/alerts-source-mock/tests/fixtures/alerts.json`.
+  `haskell/alerts/test/fixtures/alerts.json`.
 
 ## Not verified
 

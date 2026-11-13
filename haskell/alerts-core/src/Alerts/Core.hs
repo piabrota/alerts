@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 -- | Domain types and the FP harness of alerts.
 --
 -- A harness is a composition of pure stages. Each stage takes an 'Alert' and
@@ -10,46 +12,54 @@
 -- theorems of @spec/Alerts/Properties.agda@ on this code.
 module Alerts.Core
   ( -- * Identity
-    userAgent
+    userAgent,
+
     -- * UF
-  , Uf (..)
-  , allUfs
-  , v0
-  , ufText
-  , parseUf
-  , ibgeCode
-  , ufOfPrefix
-  , fromIbge
-  , trim
+    Uf (..),
+    allUfs,
+    v0,
+    ufText,
+    parseUf,
+    ibgeCode,
+    ufOfPrefix,
+    fromIbge,
+    trim,
+
     -- * Severity and hazard
-  , Severity (..)
-  , allSeverities
-  , rank
-  , severityLabelPtBr
-  , severityColor
-  , severityCssColor
-  , Hazard (..)
-  , hazardLabelPtBr
-  , capCategory
+    Severity (..),
+    allSeverities,
+    rank,
+    severityLabelPtBr,
+    severityColor,
+    severityCssColor,
+    Hazard (..),
+    hazardLabelPtBr,
+    capCategory,
+
     -- * Alerts
-  , Alert (..)
+    Alert (..),
+    parseUfExact,
+
     -- * The FP harness
-  , Stage
-  , Harness
-  , emptyHarness
-  , andThen
-  , stages
-  , run
-  , keepIf
-  , onlyUfs
-  , minSeverity
-  , deliver
-  ) where
+    Stage,
+    Harness,
+    emptyHarness,
+    andThen,
+    stages,
+    run,
+    keepIf,
+    onlyUfs,
+    minSeverity,
+    deliver,
+  )
+where
 
 import Control.Monad ((>=>))
+import Data.Aeson (FromJSON (..), ToJSON (..), object, withObject, withText, (.:), (.:?), (.=))
 import Data.Char (isDigit, isSpace, ord, toUpper)
 import Data.List (dropWhileEnd, find)
 import Data.Maybe (mapMaybe)
+import Data.Text qualified as T
 import Data.Version (showVersion)
 import Numeric (showHex)
 import Paths_alerts_core (version)
@@ -64,8 +74,33 @@ userAgent = "piabrota-alerts/" <> showVersion version <> " (+https://github.com/
 
 -- | A Brazilian federative unit (state or Distrito Federal).
 data Uf
-  = AC | AL | AP | AM | BA | CE | DF | ES | GO | MA | MT | MS | MG | PA
-  | PB | PR | PE | PI | RJ | RN | RS | RO | RR | SC | SP | SE | TO
+  = AC
+  | AL
+  | AP
+  | AM
+  | BA
+  | CE
+  | DF
+  | ES
+  | GO
+  | MA
+  | MT
+  | MS
+  | MG
+  | PA
+  | PB
+  | PR
+  | PE
+  | PI
+  | RJ
+  | RN
+  | RS
+  | RO
+  | RR
+  | SC
+  | SP
+  | SE
+  | TO
   deriving (Show, Read, Eq, Ord, Enum, Bounded)
 
 allUfs :: [Uf]
@@ -82,14 +117,47 @@ ufText = show
 parseUf :: String -> Maybe Uf
 parseUf s = find ((== map toUpper (trim s)) . ufText) allUfs
 
+-- | The JSON form of a UF is its uppercase code, exactly: @"RS"@.
+parseUfExact :: String -> Maybe Uf
+parseUfExact s = find ((== s) . ufText) allUfs
+
+instance ToJSON Uf where
+  toJSON = toJSON . ufText
+
+instance FromJSON Uf where
+  parseJSON = withText "Uf" $ \t ->
+    maybe (fail ("unknown UF: " <> show t)) pure (parseUfExact (T.unpack t))
+
 -- | The two-digit IBGE code of a UF.
 ibgeCode :: Uf -> Int
 ibgeCode u = case u of
-  RO -> 11; AC -> 12; AM -> 13; RR -> 14; PA -> 15; AP -> 16; TO -> 17
-  MA -> 21; PI -> 22; CE -> 23; RN -> 24; PB -> 25; PE -> 26; AL -> 27; SE -> 28; BA -> 29
-  MG -> 31; ES -> 32; RJ -> 33; SP -> 35
-  PR -> 41; SC -> 42; RS -> 43
-  MS -> 50; MT -> 51; GO -> 52; DF -> 53
+  RO -> 11
+  AC -> 12
+  AM -> 13
+  RR -> 14
+  PA -> 15
+  AP -> 16
+  TO -> 17
+  MA -> 21
+  PI -> 22
+  CE -> 23
+  RN -> 24
+  PB -> 25
+  PE -> 26
+  AL -> 27
+  SE -> 28
+  BA -> 29
+  MG -> 31
+  ES -> 32
+  RJ -> 33
+  SP -> 35
+  PR -> 41
+  SC -> 42
+  RS -> 43
+  MS -> 50
+  MT -> 51
+  GO -> 52
+  DF -> 53
 
 -- | The UF of a two-digit prefix: the inverse of 'ibgeCode', read off it.
 ufOfPrefix :: Int -> Maybe Uf
@@ -102,7 +170,9 @@ trim = dropWhileEnd isSpace . dropWhile isSpace
 -- whose first two digits are the UF code.
 fromIbge :: String -> Maybe Uf
 fromIbge raw
-  | all isAsciiDigit cs, length cs `elem` [2, 7], (a : b : _) <- cs =
+  | all isAsciiDigit cs,
+    length cs `elem` [2, 7],
+    (a : b : _) <- cs =
       ufOfPrefix (10 * digit a + digit b)
   | otherwise = Nothing
   where
@@ -152,6 +222,20 @@ data Hazard
     Landslide
   deriving (Show, Read, Eq, Ord, Enum, Bounded)
 
+instance ToJSON Severity where
+  toJSON = toJSON . show
+
+instance FromJSON Severity where
+  parseJSON = withText "Severity" $ \t ->
+    maybe (fail ("unknown severity: " <> show t)) pure (find ((== T.unpack t) . show) allSeverities)
+
+instance ToJSON Hazard where
+  toJSON = toJSON . show
+
+instance FromJSON Hazard where
+  parseJSON = withText "Hazard" $ \t ->
+    maybe (fail ("unknown hazard: " <> show t)) pure (find ((== T.unpack t) . show) [minBound .. maxBound :: Hazard])
+
 hazardLabelPtBr :: Hazard -> String
 hazardLabelPtBr Flood = "Inundação"
 hazardLabelPtBr Landslide = "Movimento de massa"
@@ -165,21 +249,50 @@ capCategory Landslide = "Geo"
 -- Alerts
 
 data Alert = Alert
-  { alertId :: String
-  -- ^ Stable id given by the source, used for deduplication.
-  , source :: String
-  -- ^ Source module id, for example @inmet@.
-  , hazard :: Hazard
-  , severity :: Severity
-  , ufs :: [Uf]
-  , headline :: String
-  -- ^ Controlled pt-BR text, one statement per sentence.
-  , area :: String
-  , sent :: String
-  -- ^ ISO 8601 time the source sent the alert.
-  , url :: Maybe String
+  { -- | Stable id given by the source, used for deduplication.
+    alertId :: String,
+    -- | Source module id, for example @inmet@.
+    source :: String,
+    hazard :: Hazard,
+    severity :: Severity,
+    ufs :: [Uf],
+    -- | Controlled pt-BR text, one statement per sentence.
+    headline :: String,
+    area :: String,
+    -- | ISO 8601 time the source sent the alert.
+    sent :: String,
+    url :: Maybe String
   }
   deriving (Show, Eq)
+
+-- | The JSON form of the previous implementation: @id@, @source@, @hazard@, @severity@, @ufs@,
+-- @headline@, @area@, @sent@, @url@.
+instance ToJSON Alert where
+  toJSON a =
+    object
+      [ "id" .= alertId a,
+        "source" .= source a,
+        "hazard" .= hazard a,
+        "severity" .= severity a,
+        "ufs" .= ufs a,
+        "headline" .= headline a,
+        "area" .= area a,
+        "sent" .= sent a,
+        "url" .= url a
+      ]
+
+instance FromJSON Alert where
+  parseJSON = withObject "Alert" $ \o ->
+    Alert
+      <$> o .: "id"
+      <*> o .: "source"
+      <*> o .: "hazard"
+      <*> o .: "severity"
+      <*> o .: "ufs"
+      <*> o .: "headline"
+      <*> o .: "area"
+      <*> o .: "sent"
+      <*> o .:? "url"
 
 ------------------------------------------------------------------------
 -- The FP harness

@@ -14,7 +14,6 @@
   <a href="carregamento.html">Carregamento</a>
   <a href="painel.html">Configuração e status</a>
   <a href="mensagens.html">Mensagens</a>
-  <a href="modulo-comum.html">Módulo comum</a>
 </nav>
 
 <h1>Extensões do Sul do Brasil</h1>
@@ -55,19 +54,19 @@
 <p>O sistema de extensões ainda não está em uma versão do host. O sistema está no <a href="https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning/pull/255">PR #255</a>, em rascunho. As duas extensões fixam o host em <code>h0ffmann/astrbot_plugin_disaster_warning@2d2f261</code>. As páginas descrevem esse commit.</p>
 
 <h2>O caminho até o alerts</h2>
-<p>O objetivo é que estes repositórios virem fontes do <code>piabrota/alerts</code>. Nenhum crate lê os submódulos ainda. Esta seção é a análise do autor destas páginas. A seção lista o que a integração precisa resolver:</p>
+<p>O objetivo é que estes repositórios virem fontes do <code>piabrota/alerts</code>. Nenhum módulo do alerts lê os submódulos ainda. Esta seção é a análise do autor destas páginas. A seção lista o que a integração precisa resolver:</p>
 <div class="scroll">
 <table>
   <thead><tr><th>Ponto</th><th>Fato</th><th>Consequência</th></tr></thead>
   <tbody>
     <tr>
       <td>Linguagem</td>
-      <td>As extensões são Python. O alerts é todo em Rust, e o <code>GROUND_TRUTH.md</code> proíbe <code>.py</code> neste repositório.</td>
-      <td>Os submódulos cumprem a regra, porque só o link fica aqui. O código comum fica em Rust: o crate <code>alerts-ext</code>, e o pacote Python o expõe com PyO3.</td>
+      <td>As extensões são Python. O alerts é todo em Haskell, com especificação em Agda, e o <code>GROUND_TRUTH.md</code> proíbe <code>.py</code> neste repositório.</td>
+      <td>Os submódulos cumprem a regra, porque só o link fica aqui. O alerts não tem mais pacote Python: uma extensão lê o feed Atom com CAP 1.2.</td>
     </tr>
     <tr>
       <td>CEMADEN</td>
-      <td>O crate <code>alerts-source-cemaden</code> já lê os alertas do CEMADEN.</td>
+      <td>O módulo <code>Alerts.Source.Cemaden</code> já lê os alertas do CEMADEN.</td>
       <td><code>br_south_disaster</code> sobrepõe essa fonte. Os dois lados devem concordar sobre a mesma entrada.</td>
     </tr>
     <tr>
@@ -77,18 +76,18 @@
     </tr>
     <tr>
       <td>Balneabilidade</td>
-      <td>O catálogo <code>alerts-catalog</code> não tem FEPAM, IMA nem IAT.</td>
+      <td>O catálogo <code>Alerts.Catalog</code> não tem FEPAM, IMA nem IAT.</td>
       <td>Esta é a parte nova para o alerts. Cada órgão precisa de uma entrada no catálogo.</td>
     </tr>
     <tr>
       <td>User-Agent</td>
       <td>O host cria a sessão HTTP sem cabeçalho próprio, e as extensões não definem um cabeçalho.</td>
-      <td>Essas requisições não enviam <code>alerts_core::USER_AGENT</code>. Uma fonte do alerts deve enviar esse valor.</td>
+      <td>Essas requisições não enviam <code>Alerts.Core.userAgent</code>. Uma fonte do alerts deve enviar esse valor.</td>
     </tr>
   </tbody>
 </table>
 </div>
-<p><strong>Decisão:</strong> a lógica comum fica em Rust, e as extensões a usam pelo pacote <code>piabrota-alerts</code>. O sentido da chamada é Python para Rust, então o serviço não precisa embutir um interpretador. As extensões ficam finas. A sessão HTTP continua a ser a do host. A página <a href="modulo-comum.html">Módulo comum</a> mostra o estado atual e o que falta.</p>
+<p><strong>Decisão:</strong> o alerts não embute um interpretador Python nem expõe um pacote Python. Uma extensão lê o feed Atom com CAP 1.2, com o mesmo texto do Discord. A lógica comum das duas extensões (o antigo módulo <code>piabrota_alerts.ext</code>) saiu com a implementação anterior ⚠: uma extensão que precisar dela mantém o próprio código.</p>
 
 <footer>MPL-2.0. O AstrBot e o host são AGPL-3.0: estas páginas só descrevem e citam esses projetos com links.</footer>
 </main>

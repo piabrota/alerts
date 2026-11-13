@@ -8,6 +8,10 @@ alert, without a paid API.
 Sizes and licenses were read on 2026-10-22 from GitHub release assets, the GitHub license API
 and the Hugging Face model API. A size is the download, not the memory at run time.
 
+⚠ The survey was written for the previous implementation, in Rust. The Rust libraries below
+(marked "Rust crate") are kept as a map of the tools. A Haskell port picks a Haskell library or
+calls the tool as a separate local process.
+
 ## The cost ladder
 
 Use the cheapest tier that does the job. Each tier is a `Stage` in the harness. A stage at a
@@ -43,7 +47,7 @@ below.
 
 | Tier | Cost per alert | Typical tools |
 |---|---|---|
-| 0: typed parser | microseconds | `quick-xml`, `serde_json` |
+| 0: typed parser | microseconds | `xml-conduit`, `aeson` |
 | 1: rules and gazetteer | microseconds | `regex`, `aho-corasick`, IBGE municipality list |
 | 2: small encoder | tens of ms on CPU ⚠ | GLiNER, GLiClass, embeddings (ONNX) |
 | 3: small LLM | seconds on CPU ⚠ | llama.cpp with a 0.8B model and a JSON grammar |
@@ -61,8 +65,8 @@ for the planned free-text sources: Epagri/Ciram (RSS), SGB and Defesa Civil RS (
 
 | Tool | License | Form | Use |
 |---|---|---|---|
-| [`quick-xml`](https://github.com/tafia/quick-xml) | MIT | Rust crate | CAP 1.2, Atom, RSS, CPTEC XML, ANA SOAP |
-| `serde_json` (already in the workspace) | MIT or Apache-2.0 | Rust crate | CEMADEN, INMET JSON, ClimaRS |
+| [`xml-conduit`](https://hackage.haskell.org/package/xml-conduit) (in use) | MIT | Haskell library | CAP 1.2, Atom, RSS, CPTEC XML, ANA SOAP |
+| [`aeson`](https://hackage.haskell.org/package/aeson) (in use) | BSD-3-Clause | Haskell library | CEMADEN, INMET JSON, ClimaRS |
 
 ### Text from HTML and PDF
 
@@ -125,7 +129,7 @@ still checks that every value appears in the source text: a model never invents 
 
 | Tool | License | Size | Form | Use | Verdict |
 |---|---|---|---|---|---|
-| Templates (`format!`) | — | — | Rust | the alert text, from the `Alert` fields | use: no model writes alert text |
+| Templates (string concatenation) | — | — | Haskell | the alert text, from the `Alert` fields | use: no model writes alert text |
 | [Vale](https://github.com/vale-cli/vale) | MIT | 12 MB (3.25.1, Linux) | single binary | check the pt-BR text against `write-pt-br` rules written as Vale styles | use, in `just check` for the templates |
 | [Harper](https://github.com/Automattic/harper) | Apache-2.0 | 12 MB (2.13.0 CLI) | single binary | grammar check | English only ⚠: docs in EN only |
 | [translateLocally](https://github.com/XapaJIaMnu/translateLocally) | MIT | — | desktop and CLI | offline translation (Bergamot models) | later: EN, ZH, JA alerts ⚠ model coverage not checked |
@@ -149,7 +153,7 @@ that runs on every template, with no model.
 
 ## Recommendation
 
-1. **v0:** tier 0 (`quick-xml`, `serde_json`) and tier 1 (`aho-corasick` with the IBGE
+1. **v0:** tier 0 (`xml-conduit`, `aeson`) and tier 1 (`aho-corasick` with the IBGE
    gazetteer). No model. Add Vale for the alert templates.
 2. **First free-text source (Epagri/Ciram):** add tier 2 with `gline-rs` and a quantized GLiNER,
    behind the deterministic stages.

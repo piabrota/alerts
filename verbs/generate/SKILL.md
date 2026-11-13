@@ -1,6 +1,6 @@
 ---
 name: generate
-description: Generates the boilerplate for a new alerts app, source crate, harness stage or channel, in the spirit of `cargo loco generate`. Use when the user asks to add an app, a source (an agency), a stage (a filter) or a channel (a delivery target).
+description: Generates the boilerplate for a new alerts app, source module, harness stage or channel, in the spirit of the Loco `generate`. Use when the user asks to add an app, a source (an agency), a stage (a filter) or a channel (a delivery target).
 ---
 
 # generate
@@ -12,43 +12,36 @@ skill first.
 
 | Kind | Writes | Must not touch |
 |---|---|---|
-| `app <app>` | `apps/<app>/app.toml`, `README.md`, `evals/` | any crate |
-| `source <id>` | `crates/alerts-source-<id>/` (lib), workspace member, `docs/SOURCES.md` row | `alerts-core` |
-| `stage <name>` | one function `pub fn <name>(...) -> Stage` and its tests | the other stages |
-| `channel <id>` | `crates/alerts-<id>/` (lib), workspace member | the harness output |
-| `scaffold <name> <field:kind>...` | `alerts-crud`: `models/<name>.rs`, `controllers/<name>.rs`, a migration, and one line at each `// scaffold:` marker | the other resources, the interface |
+| `app <app>` | `apps/<app>/app.toml`, `README.md`, `evals/` | any package |
+| `source <id>` | `haskell/alerts/src/Alerts/Source/<Id>.hs`, its line in `alerts.cabal`, a fixture, a `docs/SOURCES.md` row | `alerts-core` |
+| `stage <name>` | one function `<name> :: ... -> Stage` and its tests | the other stages |
+| `channel <id>` | `haskell/alerts/src/Alerts/<Id>.hs`, its line in `alerts.cabal` | the harness output |
 
-## Scaffold
+There is no generator recipe yet ⚠: write the files by hand, and say so in the PR.
 
-`just generate scaffold <name> <field:kind>...` exists (crate `alerts-scaffold`). `<name>` is the plural
-snake_case table name. The kinds are `string`, `string?`, `text`, `url`, `slug`, `bool` and `int`.
-
-1. Run it, then write the pt-BR labels of `SPEC` and any other check in the model.
-2. Never edit a merged migration: a schema change is a new migration.
-3. The desktop interface draws the page from the spec. Do not add interface code for a CRUD page.
-4. A resource never creates an alert. Alerts come only from a source module (`models::alerts::record`).
-
-## Source crate
+## Source module
 
 ```text
-crates/alerts-source-<id>/
-  Cargo.toml      # version, edition, lints, license from the workspace
-  src/lib.rs      # pub fn fetch(client) -> Result<Vec<Alert>, Error>
-  tests/fixtures/ # one recorded real response per format
+haskell/alerts/src/Alerts/Source/<Id>.hs   -- sourceId, the endpoint URL, parse :: ByteString -> Either Error [Alert]
+haskell/alerts/test/fixtures/<id>.json     -- one recorded real response per format
 ```
 
-1. Send `alerts_core::USER_AGENT` on every request. Never send another User-Agent.
+1. Keep the module pure: `Alerts.Service` fetches the URL and calls `parse`. Add the source to
+   `Alerts.Service` (`sourceIdOf` and the fetch). `Alerts.Http` sends `Alerts.Core.userAgent` on every request. Never send another
+   User-Agent.
 2. Parse into `Alert`. Fill only the fields that the source states.
 3. An undocumented endpoint must fail loudly: return an error on an unknown shape, never an empty
    list.
 4. Record the endpoint, the format, the authentication and the rate limit in `docs/SOURCES.md`.
-5. Use `[workspace.dependencies]`. A new dependency must pass `just deny`.
-6. No `unwrap` or `expect` outside tests.
+5. A new library must be FOSS. Add it to `alerts.cabal` and to the `ghcWithPackages` list of
+   `flake.nix`.
+6. No partial function (`head`, `fromJust`, `error`) outside tests. The build uses `-Werror`.
 
 ## Stage
 
-A stage is `Fn(Alert) -> Option<Alert>`. Return `None` to drop the alert. Do not add a trait
-hierarchy. Test it with one alert that passes and one alert that drops.
+A stage is `Alert -> Maybe Alert`. Return `Nothing` to drop the alert. Do not add a class
+hierarchy. Test it with one alert that passes and one alert that drops. When the stage states a
+fact for every input, add its theorem to `spec/Alerts/Properties.agda`.
 
 ## Channel
 

@@ -3,9 +3,9 @@
 
 ## Antes de um PR
 
-- O repositório não tem CI. O `just check` é a verificação, e a pessoa autora roda o `just check`
-  antes de cada PR.
-- Uma dependência nova deve passar no `just deny`. O arquivo `deny.toml` lista as licenças aceitas.
+- O `just check` é a verificação, e a pessoa autora roda o `just check` antes de cada PR. A CI
+  (`.github/workflows/haskell.yml`) compila e roda os testes.
+- Uma dependência nova deve ter uma licença FOSS da lista do `GROUND_TRUTH.md` ("FOSS first").
 - Um arquivo novo deve manter o `just reuse` verde.
 
 ## Pull requests

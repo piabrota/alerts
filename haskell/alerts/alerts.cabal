@@ -1,0 +1,70 @@
+cabal-version:      3.0
+name:               alerts
+version:            0.0.0
+synopsis:           The alerts service: sources, the RSS rule algebra, Discord and Atom + CAP 1.2
+description:
+  Collects alerts from official sources, filters them with the harness of alerts-core, and
+  delivers them to Discord and to an Atom + CAP 1.2 feed. Also an MCP server for agents.
+license:            MPL-2.0
+author:             M.Hoffmann and the alerts contributors
+homepage:           https://github.com/piabrota/alerts
+build-type:         Simple
+extra-source-files: test/fixtures/*.json
+
+common warnings
+  ghc-options:      -Wall -Wcompat -Wincomplete-uni-patterns -Wincomplete-record-updates
+  default-language: GHC2021
+
+library
+  import:           warnings
+  hs-source-dirs:   src
+  exposed-modules:  Alerts.Time
+                    Alerts.Feed
+                    Alerts.Rss.Item
+                    Alerts.Rss.Parse
+                    Alerts.Rss.Expr
+                    Alerts.Catalog
+                    Alerts.Source.Cemaden
+                    Alerts.Source.Mock
+                    Alerts.Env
+                    Alerts.Tokens
+                    Alerts.Http
+                    Alerts.Discord
+                    Alerts.Store
+                    Alerts.Service
+  build-depends:    base >=4.18 && <5
+                  , alerts-core
+                  , aeson >=2.1
+                  , bytestring
+                  , containers
+                  , directory
+                  , filepath
+                  , http-client >=0.7
+                  , http-client-tls >=0.3
+                  , http-types
+                  , sqlite-simple >=0.4
+                  , text
+                  , time
+                  , unix
+                  , xml-conduit >=1.9
+
+executable alerts
+  import:           warnings
+  hs-source-dirs:   app/alerts
+  main-is:          Main.hs
+  build-depends:    base, alerts, alerts-core, aeson, bytestring, text
+
+executable alerts-mcp
+  import:           warnings
+  hs-source-dirs:   app/mcp
+  main-is:          Main.hs
+  build-depends:    base, alerts, alerts-core, aeson, bytestring, text
+
+test-suite spec
+  import:           warnings
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          Main.hs
+  -- A test may match the one shape it expects: a failed match fails the test.
+  ghc-options:      -Wno-incomplete-uni-patterns -Wno-x-partial
+  build-depends:    base, alerts, alerts-core, aeson, bytestring, containers, directory, filepath, text, xml-conduit
