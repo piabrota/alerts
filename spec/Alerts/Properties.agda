@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------
 -- alerts: the facts of the specification, proved.
 --
--- The names follow the z3 statements of docs/proofs/ (P1, P2, P3, P6) and
--- the exhaustive checks of crates/alerts-proofs (C1 to C5, W6). Here they
+-- The names follow the z3 statements (P1, P2, P3, P6) and the exhaustive
+-- checks (C1 to C5, W6) of the previous implementation (docs/PROOFS.md). Here they
 -- hold for every input, not only for the finite domains those checks walk.
 -- haskell/alerts-core/test replays each one on the Haskell code.
 ------------------------------------------------------------------------

@@ -24,17 +24,14 @@ pub fn page() -> String {
   <> item("Só fontes oficiais.", "O alerts nunca inventa um alerta, uma área, um horário ou uma ação que a fonte não diz.")
   <> item("Primeiro risco: inundação no Brasil.", "A v0 atende a Região Sul: PR, SC e RS.")
   <> item("Dois canais, o mesmo texto.", "Discord e um feed Atom com alertas CAP 1.2.")
-  <> item("Estado: bootstrap.", "Nenhuma fonte está implementada.")
+  <> item("Estado: bootstrap.", "Uma fonte está implementada: os alertas municipais do CEMADEN.")
   <> "</ul>"
-  <> "<h2>Plugin do Obsidian</h2>"
-  <> "<p>O WeatherDisaster (id <code>piabrota-alerts</code>) lê um feed Atom ou RSS de alertas CAP 1.2 e grava uma nota por alerta no cofre. O frontmatter tem os campos CAP, e o texto do emissor fica literal. Um Update reescreve a nota, e um Cancel marca a nota como cancelada.</p>"
-  <> "<p>Para instalar, baixe os dois arquivos para <code>&lt;cofre&gt;/.obsidian/plugins/piabrota-alerts/</code> e ative o plugin em Configurações → Plugins da comunidade.</p>"
+  <> "<h2>Haskell e Agda</h2>"
+  <> "<p>O código é Haskell. Uma especificação em Agda diz o que o código significa e prova as invariantes para toda entrada: o roteamento por código do IBGE, a ordem das severidades, o harness e o identificador CAP.</p>"
   <> "<nav>"
-  <> link("obsidian/main.js", "main.js")
-  <> link("obsidian/manifest.json", "manifest.json")
   <> link("feed.atom", "feed de teste")
   <> "</nav>"
-  <> "<p>O feed de teste tem só um alerta com status CAP Test. Para ver o plugin funcionar, use o endereço do feed de teste e ative \"Alertas de teste\" nas configurações do plugin.</p>"
+  <> "<p>O feed de teste tem só um alerta com status CAP Test.</p>"
   <> "<img class=\"figure\" src=\"fluxo-alerta.png\" alt=\"Como um alerta oficial chega ao Discord e ao feed\">"
   <> "<nav>"
   <> link("https://github.com/piabrota/alerts", "código")

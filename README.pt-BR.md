@@ -20,8 +20,9 @@ Alertas do século 22.
 - **O primeiro risco é inundação no Brasil.** A v0 atende a Região Sul: Paraná (PR),
   Santa Catarina (SC) e Rio Grande do Sul (RS).
 - **A v0 entrega um serviço para Discord** e um feed Atom com alertas CAP 1.2, com os mesmos
-  alertas e o mesmo texto. O pacote Python `piabrota-alerts` existe desde o
-  início. Um plugin AstrBot vai usar esse pacote no futuro.
+  alertas e o mesmo texto. Um servidor MCP dá o catálogo e o harness aos agentes.
+- **Haskell, com especificação em Agda.** O código é Haskell. O Agda diz o que o código significa
+  e prova as invariantes para toda entrada.
 - **Aberto por princípio.** Padrões abertos (Atom, CAP 1.2), só dependências FOSS, só modelos
   locais. Uma API paga nunca é obrigatória.
 - **Estado:** bootstrap. Uma fonte de um órgão está implementada: os alertas municipais do
@@ -83,7 +84,7 @@ exemplo `PR,SC,RS`, o padrão). O catálogo está em
 - **CEMADEN:** a API PED (`sws.cemaden.gov.br/PED`) entrega observações, não alertas. Os alertas
   municipais só existem num JSON sem documentação (`painelalertas.cemaden.gov.br/wsAlertas2`). O
   limite é de 12 requisições por minuto para usuário externo ⚠. O CEMADEN exige citação.
-  O `alerts-source-cemaden` lê esse JSON: inundações e movimentos de massa, nos níveis moderado,
+  O `Alerts.Source.Cemaden` lê esse JSON: inundações e movimentos de massa, nos níveis moderado,
   alto e muito alto. Um campo desconhecido faz a leitura falhar, então uma mudança no painel nunca
   descarta um alerta em silêncio.
 - **ANA:** o token do REST vale 60 minutos. Pedidos de token frequentes podem bloquear o IP.
@@ -125,51 +126,50 @@ arquivo. Um alerta de teste sai com `<status>Test</status>`.
 |---|---|---|---|
 | Discord | O servidor da v0, que já existe | webhook (push) | v0 |
 | Qualquer leitor de feed | Atom (RFC 4287) com CAP 1.2 em cada entrada | o arquivo do feed (pull) | v0 |
-| [Obsidian](https://obsidian.md) | O plugin WeatherDisaster: uma nota por alerta, para um segundo cérebro | o feed (pull) | novo |
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot para apps de mensagem (AGPL-3.0) | o pacote Python `piabrota-alerts` num plugin | planejado |
-| [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | Plugin de alertas de desastre para o AstrBot: terremoto, tsunami, tempo (AGPL-3.0) | o pacote Python ou o feed, para alertas do Brasil | planejado |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | Plataforma livre de chatbot para apps de mensagem (AGPL-3.0) | o feed, num plugin | planejado |
+| [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | Plugin de alertas de desastre para o AstrBot: terremoto, tsunami, tempo (AGPL-3.0) | o feed, para alertas do Brasil | planejado |
 
-Um plugin chama o pacote: o alerts não copia código AGPL. Mais em
+Um plugin lê o feed: o alerts não copia código AGPL. Mais em
 [`docs/REFERENCES.md`](docs/REFERENCES.md).
 
 ## arquitetura
 
 O código-fonte do `alerts` é Haskell (`haskell/`). O significado do código é uma especificação
 em Agda (`spec/`), com provas das invariantes de roteamento, de severidade, do harness e do
-identificador. As crates de Rust abaixo são a implementação anterior. Elas ficam até o port para
-Haskell chegar, etapa por etapa. Leia [`docs/SPEC.md`](docs/SPEC.md).
+identificador. A suíte de testes repete cada teorema no código Haskell. Leia
+[`docs/SPEC.md`](docs/SPEC.md).
 
 ```mermaid
-%% figure: crates
-%% title: Quais crates existem e quem depende de quem?
+%% figure: packages
+%% title: Quais módulos existem e quem depende de quem?
 flowchart LR
-    S["alerts-source-*<br/>(uma por fonte)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
-    D["alerts<br/>serviço"] --> C
-    D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
-    P["alerts-py<br/>pacote Python"] --> C
+    Spec["spec/ (Agda)<br/>Core, Properties"] -. "os testes repetem" .-> C
+    S["Alerts.Source.*<br/>(um por fonte)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
+    D["alerts<br/>CLI, Alerts.Service"] --> C
+    D --> F["Alerts.Feed<br/>Atom + CAP 1.2"] --> C
+    D --> X["Alerts.Rss.*<br/>regras de RSS"] --> F
+    D --> St["Alerts.Store<br/>SQLite"]
     M["alerts-mcp<br/>servidor MCP"] --> C
-    R["alerts-crud<br/>models, controllers"] --> C
-    R --> X["alerts-rss<br/>regras de RSS"] --> F
-    T["desktop/app<br/>Tauri 2"] --> R
 ```
 
 <details open>
 <summary>Como ler esta figura</summary>
 
-**Em uma frase.** Todo crate depende do `alerts-core`. O núcleo não depende de nenhum crate.
+**Em uma frase.** Todo módulo depende do `alerts-core`. O núcleo não depende de nenhum módulo.
 
-**Como ler.** Cada seta vai do crate que usa para o crate usado.
+**Como ler.** Cada seta cheia vai do módulo que usa para o módulo usado. A seta tracejada é a
+suíte de testes do `alerts-core`, que repete cada teorema do Agda.
 
-**Fora da figura.** As crates de fonte ainda não existem. O gerador `alerts-scaffold` escreve código no `alerts-crud` e não depende de nenhum crate. O harness compõe estágios puros
-(`Fn(Alert) -> Option<Alert>`): veja `GROUND_TRUTH.md`.
+**Fora da figura.** O `scripts/export-codeberg`, que não depende de nenhum módulo. O harness compõe
+estágios puros (`Alert -> Maybe Alert`): veja `GROUND_TRUTH.md`.
 
-**Evidência.** `Cargo.toml` de cada crate em `crates/` e em `desktop/`.
+**Evidência.** O arquivo `.cabal` de cada pacote em `haskell/`.
 
 </details>
 
 ### o caminho de um alerta
 
-![Como um alerta oficial chega ao Discord e ao feed: três fontes oficiais, um crate de fonte, o tipo Alert, o harness, e então o Discord e o feed Atom com o mesmo texto](docs/img/fluxo-alerta.png)
+![Como um alerta oficial chega ao Discord e ao feed: três fontes oficiais, um módulo de fonte, o tipo Alert, o harness, e então o Discord e o feed Atom com o mesmo texto](docs/img/fluxo-alerta.png)
 
 <details open>
 <summary>Como ler esta figura</summary>
@@ -181,8 +181,7 @@ que acontece.
 
 **Fora da figura.** As fontes planejadas, os modelos locais e os alertas que o harness descarta.
 
-**Evidência.** As seções fontes, canais e arquitetura deste README. Nenhum crate de fonte existe
-ainda. A fonte: [`docs/archify/fluxo-alerta.json`](docs/archify/fluxo-alerta.json).
+**Evidência.** As seções fontes, canais e arquitetura deste README. A fonte: [`docs/archify/fluxo-alerta.json`](docs/archify/fluxo-alerta.json).
 
 </details>
 
@@ -190,51 +189,23 @@ ainda. A fonte: [`docs/archify/fluxo-alerta.json`](docs/archify/fluxo-alerta.jso
 
 ```console
 nix develop
-just check                                  # formatação, clippy, testes, licenças
+just check                                  # formatação, build (-Werror), testes, Agda, o teste do Marola
+just spec                                   # verifica a especificação em Agda
+just test                                   # os teoremas da spec no código, e todos os testes
 DISCORD_WEBHOOK_URL=... just test-message   # envia uma mensagem de teste ao Discord
 FEED_PATH=alerts.atom just test-message     # grava o feed Atom + CAP 1.2 com um alerta de teste
 MAROLA_DISCORD_WEBHOOK_URL=... just marola-discord   # um alerta de teste ao Discord oficial do Marola
-just obsidian                               # gera o plugin WeatherDisaster do Obsidian
+FEED_PATH=alerts.atom just mock-alerts      # os alertas simulados de teste, pelo harness
+just sources --country BR --alerts          # busca no catálogo de fontes oficiais
 just mcp                                    # servidor MCP em stdio
-just py-build                               # gera o pacote Python
 just reading-time                           # grava o tempo de leitura de cada arquivo para humanos
 just figure                                 # desenha docs/archify/*.json com o Archify
 just graph                                  # o grafo do código: build/graph/graph.html
 just site                                   # o site estático de piabrota.art/alerts/
-just desktop-dev                            # o app desktop (Tauri 2), com recarga ao vivo
-just generate scaffold rivers slug:slug name:string   # um recurso CRUD novo no alerts-crud
 ```
 
-## app desktop
-
-O app desktop configura os apps numa janela: as fontes, os canais e os apps. Ele segue as convenções
-de CRUD do Loco: cada recurso tem um model, um controller e uma migration. O app também lista os
-alertas que as fontes entregaram, ao lado de um mapa. O app nunca cria um alerta.
-
-- `crates/alerts-crud`: os models, os controllers e as migrations, em SQLite. Toda operação passa
-  por `controllers::dispatch`.
-- `crates/alerts-rss`: o combinador de RSS. Cada usuário tem áreas, projetos e tarefas, e cada um
-  deles tem feeds RSS e regras que combinam os feeds. Veja [`docs/RSS.md`](docs/RSS.md).
-- `desktop/app`: o Tauri 2. Os dois comandos dele (`modules`, `crud`) chamam o `alerts-crud`.
-- `desktop/ui`: a interface, em Rust (Leptos, compilado para wasm32). A interface desenha cada página
-  a partir da spec de um recurso. Um recurso do `just generate scaffold` ganha a página sem código de interface.
-- O mapa usa o MapLibre GL JS 5.24.0 e os tiles do OpenFreeMap: sem chave e sem conta.
-
-![A página Apps do app desktop: o formulário de edição do app sul-enchentes](docs/screenshots/desktop/edit.png)
-
-Mais em [`docs/DESKTOP.md`](docs/DESKTOP.md). O caminho até a App Store e o Google Play, como
-"marola alertas", está mapeado em [`docs/STORES.md`](docs/STORES.md).
-
-## plugin do Obsidian
-
-O WeatherDisaster (id `piabrota-alerts`) leva os alertas oficiais para um cofre do Obsidian. O
-plugin lê um feed Atom ou RSS de alertas CAP 1.2 e grava uma nota por alerta. O frontmatter tem os
-campos CAP, e o texto do emissor fica literal. Um `Update` do CAP reescreve a nota, e um `Cancel`
-do CAP marca a nota como cancelada. Os filtros são UF, município do IBGE e severidade mínima. Uma
-leitura que falha aparece como falha, nunca como "nenhum alerta". A lógica é Rust
-(`crates/alerts-obsidian`), compilada para WebAssembly.
-
-Mais em [`docs/OBSIDIAN.md`](docs/OBSIDIAN.md) (em inglês).
+As regras de RSS (`docs/RSS.md`) ficam no store: `alerts feed-add <slug> <url>`, depois
+`alerts rule-add <slug> <título> <json>`, `alerts rss-fetch` e `alerts rss-atom <slug>`.
 
 ## documentação
 
@@ -252,12 +223,12 @@ As ideias para hospedar o site em `piabrota.art/alerts` estão em [`docs/HOSPEDA
 - O desenho é de Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). O render sai das
   expressões do Desmos. A onda junta a espiral de Fibonacci e *A Grande Onda de Kanagawa*, de Katsushika Hokusai
   (c. 1831). Outros artistas desenharam ondas de Fibonacci antes: os créditos estão em [`docs/drawings/README.md`](docs/drawings/README.md).
-- As convenções de app (geradores, doctor, agendador, tarefas) seguem o [Loco](https://loco.rs)
-  (Apache-2.0). As capturas de tela do bootstrap estão em [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
-  O layout de CRUD do `alerts-crud` (models, controllers, migrations, scaffold) também segue o Loco.
-- O mapa do app desktop usa o [MapLibre GL JS](https://maplibre.org) (BSD-3-Clause), os tiles do
-  [OpenFreeMap](https://openfreemap.org) e dados do OpenStreetMap (ODbL). O app desktop usa o [Tauri](https://tauri.app)
-  (Apache-2.0 ou MIT) e o [Leptos](https://leptos.dev) (MIT).
+- As convenções de app (doctor, agendador, tarefas) seguem o [Loco](https://loco.rs) (Apache-2.0).
+- A especificação usa o [Agda](https://github.com/agda/agda) e a
+  [biblioteca padrão](https://github.com/agda/agda-stdlib) dele (MIT). O Haskell usa
+  [aeson](https://hackage.haskell.org/package/aeson), [http-client](https://hackage.haskell.org/package/http-client),
+  [sqlite-simple](https://hackage.haskell.org/package/sqlite-simple) e
+  [xml-conduit](https://hackage.haskell.org/package/xml-conduit) (BSD-3-Clause ou MIT).
 
 - O harness funcional traduz o
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) para composição

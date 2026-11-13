@@ -5,20 +5,20 @@ description: Manages alerts apps — one deployment that joins sources, a harnes
 
 # manage-apps
 
-The layout copies the idea of [Loco](https://loco.rs) ("Rust on Rails"): convention over
+The layout copies the idea of [Loco](https://loco.rs): convention over
 configuration, one command per job, and generators that write the boilerplate. It keeps only what
 alerts needs. There is no ORM, no mailer and no server-side HTML in v0.
 
 ## What an app is
 
 An app is one deployment for one audience. Example: the v0 Discord server for floods in PR, SC
-and RS. An app joins three parts. Each part already exists as a crate or a function.
+and RS. An app joins three parts. Each part already exists as a module or a function.
 
 | Part | Where it lives | Loco equivalent |
 |---|---|---|
-| Sources | `crates/alerts-source-<id>` | models (the data comes in) |
-| Harness | stages in `alerts-core`, composed with `Harness::then` | controller logic |
-| Channels | `crates/alerts` (Discord), `crates/alerts-feed` (Atom + CAP 1.2) | views |
+| Sources | `Alerts.Source.<Id>` in `haskell/alerts` | models (the data comes in) |
+| Harness | stages in `alerts-core`, composed with `andThen` | controller logic |
+| Channels | `Alerts.Discord`, `Alerts.Feed` (Atom + CAP 1.2) | views |
 | Schedule | `apps/<app>/app.toml`, `[schedule]` | scheduler |
 | Tasks | `apps/<app>/tasks/` (replay, eval, backfill) | tasks |
 
@@ -46,8 +46,7 @@ cemaden = "every 30s"            # at most 12 requests per minute
 inmet = "every 10m"
 ```
 
-The desktop app (`docs/DESKTOP.md`) edits sources, channels and apps, and its `app_toml` action
-writes this file. The secrets are never in `app.toml`. `DISCORD_WEBHOOK_URL` and `FEED_PATH` come from the
+The secrets are never in `app.toml`. `DISCORD_WEBHOOK_URL` and `FEED_PATH` come from the
 environment.
 
 ## Commands (planned recipes ⚠)
@@ -56,8 +55,6 @@ environment.
 |---|---|---|
 | New app | `just app-new <app>` | `generate` |
 | New source, stage or channel | `just generate <kind> <name>` | `generate` |
-| New CRUD resource (exists) | `just generate scaffold <name> <field:kind>...` | `generate` |
-| Configure apps in a window (exists) | `just desktop-dev` | `docs/DESKTOP.md` |
 | Check an app | `just diagnose <app>` | `diagnose` |
 | Poll the sources | `just app-start <app>` | `schedule` |
 | One-off job | `just app-task <app> <task>` | `schedule` |
@@ -70,4 +67,4 @@ Until a recipe exists, do the steps of its skill by hand, and say so in the PR.
 2. A new app changes no other app and does not change `alerts-core`.
 3. A new hazard or UF needs a source that states it. Do not widen `ufs` without one.
 4. An app has eval cases before its first real message.
-5. `just check` passes before a PR. There is no CI.
+5. `just check` passes before a PR. CI runs the build and the tests (`.github/workflows/haskell.yml`).

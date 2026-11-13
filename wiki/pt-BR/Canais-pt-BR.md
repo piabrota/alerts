@@ -41,7 +41,7 @@ Na versão 0, o texto dos alertas é só em pt-BR, no nível `estrito` do ptbr-w
 
 | Consumidor | Como lê o alerts |
 |---|---|
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | o pacote Python `piabrota-alerts` num plugin |
-| [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | o pacote Python ou o feed, para alertas do Brasil |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | o feed, num plugin |
+| [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | o feed, para alertas do Brasil |
 
-Um plugin chama o pacote. O alerts não copia código AGPL-3.0.
+Um plugin lê o feed. O alerts não copia código AGPL-3.0.

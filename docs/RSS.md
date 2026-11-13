@@ -2,10 +2,9 @@
 
 # The RSS combinator
 
-The RSS combinator reads RSS and Atom feeds and composes them with rules. Each user has a PARA
-tree: areas, projects and tasks. Each area, project or task can own feeds and rules. A rule is an
-expression in a small algebra. The result of a rule is an Atom feed, written by the Atom + CAP 1.2
-channel of `alerts-feed`.
+The RSS combinator reads RSS and Atom feeds and composes them with rules. A rule is an expression
+in a small algebra. The result of a rule is an Atom feed, written by the Atom + CAP 1.2 channel of
+`Alerts.Feed`.
 
 The combinator never creates an alert. A rule can read the official alerts that the sources stored,
 and it can filter them, but it cannot change them.
@@ -14,42 +13,34 @@ and it can filter them, but it cannot change them.
 
 | Path | Job |
 |---|---|
-| `crates/alerts-rss/` | No I/O. The `Item` type, the RSS and Atom parser, the rule algebra (`Expr`), the evaluator (`eval`) and the Atom output (`atom`) |
-| `crates/alerts-crud/` | The resources `users`, `areas`, `projects`, `tasks`, `feeds`, `rules` and `feed_items`, on SQLite |
-| `crates/alerts/` | `alerts rss-fetch` reads each enabled feed and stores its items. `alerts rss-atom <rule>` prints the Atom feed of a rule |
+| `haskell/alerts/src/Alerts/Rss/` | No I/O. The `Item` type (`Item.hs`), the RSS and Atom parser (`Parse.hs`), the rule algebra `Expr`, the evaluator `eval` and the Atom output `atom` (`Expr.hs`) |
+| `haskell/alerts/src/Alerts/Store.hs` | The tables `feeds`, `feed_items` and `rules`, on SQLite |
+| `haskell/alerts/app/alerts/` | `feed-add`, `rule-add`, `rss-fetch` (reads each enabled feed and stores its items) and `rss-atom <rule>` (prints the Atom feed of a rule) |
 
 ```console
-ALERTS_DB=alerts.db cargo run -q -p alerts -- rss-fetch
-ALERTS_DB=alerts.db cargo run -q -p alerts -- rss-atom sul > sul.atom
+ALERTS_DB=alerts.db cabal run -v0 alerts -- feed-add g1-sc https://g1.globo.com/rss/g1/sc/
+ALERTS_DB=alerts.db cabal run -v0 alerts -- rule-add sul "Sul" '{"op": "feed", "feed": "g1-sc"}'
+ALERTS_DB=alerts.db cabal run -v0 alerts -- rss-fetch
+ALERTS_DB=alerts.db cabal run -v0 alerts -- rss-atom sul > sul.atom
 ```
 
-`rss-fetch` sends `alerts_core::USER_AGENT`. A feed that fails is reported, the other feeds still
+`rss-fetch` sends `Alerts.Core.userAgent`. A feed that fails is reported, the other feeds still
 run, and the command fails at the end.
 
-## The resources
+## The store
 
-All operations go through `controllers::dispatch`, as the other resources do. The desktop app
-draws a page for each resource from its spec.
-
-| Resource | Operations | Notes |
-|---|---|---|
-| `users` | CRUD, `para` | No login. `para` gives the tree of the user as text, with the feeds and rules of each level. |
-| `areas` | CRUD | `user_id` must exist. `slug` is unique in the user. |
-| `projects` | CRUD | `area_id` must exist. `slug` is unique in the area. |
-| `tasks` | CRUD | `project_id` must exist. |
-| `feeds` | CRUD | `scope` is `area`, `project` or `task`, and `scope_id` must exist. `url` is HTTPS. The slug `alerts` is reserved. A feed that a rule reads cannot be deleted or renamed. |
-| `rules` | CRUD, `atom` | `expr` is the JSON of an `Expr`. The controller evaluates it on empty feeds before it stores it: an unknown feed or rule, a bad time and a cycle are field errors on `expr`. `atom` evaluates the rule on the stored items. |
-| `feed_items` | list, show, delete | Written only by `rss-fetch`. The same `(feed, key)` is one record. |
-
-A delete goes down the tree. A deleted user deletes its areas, projects and tasks, and the feeds,
-rules and items they own.
+| Table | Notes |
+|---|---|
+| `feeds` | `slug` is unique. `feed-add` with a known slug replaces the feed. There is no delete command yet. |
+| `rules` | `expr` is the JSON of an `Expr`. `rule-add` evaluates it on empty feeds before it stores it: an unknown feed or rule, a bad time and a cycle are errors. |
+| `feed_items` | Written only by `rss-fetch`. The same `(feed, key)` is one record. A deleted feed deletes its items (`ON DELETE CASCADE`). |
 
 ## The algebra
 
 A rule works on item *sets*. The identity of an item is its key: the link, else the guid or Atom
 id, else the title. Each result is in one canonical form: one item per key, the newest first. So
 `union` and `intersect` are associative, commutative and idempotent, and `filter` distributes over
-`union`. The tests of `crates/alerts-rss/src/expr.rs` check these laws.
+`union`. The tests in `haskell/alerts/test/Main.hs` check these laws (P5 of [`SPEC.md`](SPEC.md)).
 
 | `op` | Fields | Result |
 |---|---|---|
@@ -90,8 +81,7 @@ text as every other channel.
 ## Not done
 
 - No schedule: a person or a timer runs `rss-fetch`. The `schedule` skill describes the rates.
+- No PARA tree (users, areas, projects, tasks) and no delete command: the Rust CRUD layer had them,
+  and the Haskell store keeps only the three tables above ⚠.
 - No HTTP server: `rss-atom` prints the feed. Serving it is part of the hosting choice in
-  `READINESS.md`.
-- The desktop pages use plain id fields for `user_id`, `area_id`, `project_id` and `scope_id`. A
-  picker is the next step.
-- Nobody ran `just desktop-check` on this change ⚠: the test machine has no WebKitGTK.
+  `docs/HOSPEDAGEM.md`.

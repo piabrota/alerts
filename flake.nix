@@ -1,5 +1,5 @@
 {
-  description = "alerts: dev shell (Rust workspace, maturin, just)";
+  description = "alerts: dev shell (Haskell, Agda, just)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -21,26 +21,21 @@
       devShells = forAll (system: pkgs: {
         default = pkgs.mkShell {
           packages = with pkgs; [
-            cargo rustc clippy rustfmt rust-analyzer
-            cargo-deny maturin python3 just
-            cffconvert uv
-            jq
-            z3 # `just prove`
+            # The Haskell source (`just hs-test`): GHC with every library of the cabal packages,
+            # so cabal builds offline from the pinned nixpkgs.
+            (haskellPackages.ghcWithPackages (h: with h; [
+              aeson http-client http-client-tls http-types sqlite-simple xml-conduit
+            ]))
+            cabal-install haskell-language-server ormolu # `just fmt`
             (agda.withPackages (p: [ p.standard-library ])) # `just spec`
-            ghc cabal-install haskell-language-server # `just hs-test`: the Haskell source
+            just jq
+            cffconvert uv # `just reuse`
             zip # `just pack-verbs`
             miniserve # `just site-serve`
             nodejs # vendor/archify (`just figure`); Chrome comes from the host
             ptbr-tools.packages.${system}.default # `just reading-time`
             code-graph.packages.${system}.default # `just graph`
-            trunk wasm-bindgen-cli lld # desktop/ui: the interface, built for wasm32
-          ] ++ pkgs.lib.optional pkgs.stdenv.hostPlatform.isLinux pkgs.chromium # `just desmos-gif`; on macOS, CHROME names Chrome
-          # desktop/app: Tauri 2 on WebKitGTK. On macOS, Tauri uses the system WebView.
-          ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (with pkgs; [
-            pkg-config openssl glib glib-networking gtk3 webkitgtk_4_1 libsoup_3 librsvg cairo pango gdk-pixbuf atk
-          ]);
-          # WebKitGTK needs glib-networking for HTTPS (the map tiles).
-          GIO_MODULE_DIR = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux "${pkgs.glib-networking}/lib/gio/modules/";
+          ];
         };
         # `just site`: the Gleam site in site/.
         site = pkgs.mkShell {

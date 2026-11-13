@@ -14,8 +14,8 @@ região ou um canal é um módulo. O núcleo não muda quando alguém adiciona u
 - **Fontes:** Defesa Civil, INMET e CEMADEN.
 - **Canais:** um serviço para Discord e um feed Atom com alertas CAP 1.2. Os dois canais recebem os
   mesmos alertas, com o mesmo texto em pt-BR.
-- **Pacote Python:** o pacote `alerts` existe desde o início. Um plugin do AstrBot vai usar
-  esse pacote no futuro.
+- **Haskell e Agda:** o código é Haskell, e uma especificação em Agda prova as invariantes para
+  toda entrada.
 
 ## Estado
 
@@ -37,7 +37,7 @@ mensagem de teste.
 |---|---|
 | [Fontes](Fontes-pt-BR) | As fontes oficiais, o formato e a autenticação de cada uma |
 | [Canais](Canais-pt-BR) | O Discord e o feed Atom com CAP 1.2 |
-| [Arquitetura](Arquitetura-pt-BR) | Os crates e o harness funcional |
-| [Usar](Usar-pt-BR) | Os comandos, o pacote Python e o servidor MCP |
+| [Arquitetura](Arquitetura-pt-BR) | Os pacotes, a especificação e o harness funcional |
+| [Usar](Usar-pt-BR) | Os comandos e o servidor MCP |
 | [Contribuir](Contribuir-pt-BR) | As regras para uma mudança no repositório |
 | [Citar](Citar-pt-BR) | A citação, a licença e os créditos |

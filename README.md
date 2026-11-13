@@ -24,7 +24,7 @@
 [![hazard: floods](https://img.shields.io/badge/first%20hazard-floods-1682D4?style=flat-square)](#in-one-minute)
 [![region: PR, SC, RS](https://img.shields.io/badge/v0-PR%20%C2%B7%20SC%20%C2%B7%20RS-1682D4?style=flat-square)](#sources)
 [![alerts: CAP 1.2](https://img.shields.io/badge/alerts-CAP%201.2-1682D4?style=flat-square)](#channels)
-[![rust](https://img.shields.io/badge/rust-workspace-1682D4?style=flat-square&logo=rust&logoColor=white)](#architecture)
+[![haskell + agda](https://img.shields.io/badge/haskell-%2B%20agda-1682D4?style=flat-square&logo=haskell&logoColor=white)](#architecture)
 [![license: MPL-2.0](https://img.shields.io/badge/license-MPL--2.0-1682D4?style=flat-square)](#license)
 
 </div>
@@ -39,8 +39,9 @@
 - **The first hazard is floods in Brazil.** v0 serves the South region: Paraná (PR),
   Santa Catarina (SC) and Rio Grande do Sul (RS).
 - **v0 delivers a Discord service** and an Atom feed with CAP 1.2 alerts, with the same alerts
-  and the same text. The Python package `piabrota-alerts` exists from the start, for an
-  [AstrBot](#who-will-use-alerts) plugin.
+  and the same text. An MCP server gives the catalog and the harness to agents.
+- **Haskell, with an Agda specification.** The code is Haskell. Agda states what the code means
+  and proves its invariants for every input.
 - **Open by design.** Open standards (Atom, CAP 1.2), FOSS dependencies only, local models only.
   A paid API is never required.
 - **Status:** bootstrap. One agency source is implemented: the CEMADEN municipal alerts
@@ -100,7 +101,7 @@ example `PR,SC,RS`, the default). The catalog is in
   new name ⚠. The RSS declares public domain, with citation of the source.
 - **CEMADEN:** the PED API (`sws.cemaden.gov.br/PED`) gives observations, not alerts. The
   municipal alerts exist only in an undocumented JSON (`painelalertas.cemaden.gov.br/wsAlertas2`).
-  `alerts-source-cemaden` reads it: floods and mass movements, at levels moderate, high and very
+  `Alerts.Source.Cemaden` reads it: floods and mass movements, at levels moderate, high and very
   high. A field it does not know fails the poll, so a change of the panel never drops an alert in
   silence.
   The limit is 12 requests per minute for an external user ⚠. CEMADEN requires citation.
@@ -143,51 +144,49 @@ test alert has `<status>Test</status>`.
 |---|---|---|---|
 | [Discord](https://discord.com/developers/docs/resources/webhook) | The v0 server, which already exists | webhook (push) | v0 |
 | Any feed reader | Atom (RFC 4287) with CAP 1.2 in each entry | the feed file (pull) | v0 |
-| [Obsidian](https://obsidian.md) | The plugin WeatherDisaster: one note per alert, for a second brain | the feed (pull) | new |
-| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | An open-source chatbot platform for messaging apps (AGPL-3.0) | the Python package `piabrota-alerts` in a plugin | planned |
-| [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | A disaster warning plugin for AstrBot: earthquakes, tsunamis, weather (AGPL-3.0) | the Python package or the feed, for alerts from Brazil | planned |
+| [AstrBot](https://github.com/AstrBotDevs/AstrBot) | An open-source chatbot platform for messaging apps (AGPL-3.0) | the feed, in a plugin | planned |
+| [astrbot_plugin_disaster_warning](https://github.com/Pancakes-Labs/astrbot_plugin_disaster_warning) | A disaster warning plugin for AstrBot: earthquakes, tsunamis, weather (AGPL-3.0) | the feed, for alerts from Brazil | planned |
 
-A plugin calls the package: alerts copies no AGPL code. More in
+A plugin reads the feed: alerts copies no AGPL code. More in
 [`docs/REFERENCES.md`](docs/REFERENCES.md) (pt-BR).
 
 ## Architecture
 
-The source of `alerts` is Haskell (`haskell/`), and its meaning is an Agda specification
-(`spec/`) with proofs of the routing, severity, harness and identifier invariants. The Rust crates
-below are the previous implementation: they stay until their Haskell port lands, stage by stage.
-Read [`docs/SPEC.md`](docs/SPEC.md).
+The code of `alerts` is Haskell (`haskell/`). Its meaning is an Agda specification (`spec/`),
+with proofs of the routing, severity, harness and identifier invariants. The test suite replays
+each theorem on the Haskell code. Read [`docs/SPEC.md`](docs/SPEC.md).
 
 ```mermaid
-%% figure: crates
-%% title: Which crates exist, and which crate depends on which?
+%% figure: packages
+%% title: Which modules exist, and which module depends on which?
 flowchart LR
-    S["alerts-source-*<br/>(one per source)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
-    D["alerts<br/>service"] --> C
-    D --> F["alerts-feed<br/>Atom + CAP 1.2"] --> C
-    P["alerts-py<br/>Python package"] --> C
+    Spec["spec/ (Agda)<br/>Core, Properties"] -. "the tests replay" .-> C
+    S["Alerts.Source.*<br/>(one per source)"] --> C["alerts-core<br/>Alert, Uf, Harness"]
+    D["alerts<br/>CLI, Alerts.Service"] --> C
+    D --> F["Alerts.Feed<br/>Atom + CAP 1.2"] --> C
+    D --> X["Alerts.Rss.*<br/>RSS rules"] --> F
+    D --> St["Alerts.Store<br/>SQLite"]
     M["alerts-mcp<br/>MCP server"] --> C
-    R["alerts-crud<br/>models, controllers"] --> C
-    R --> X["alerts-rss<br/>RSS rules"] --> F
-    T["desktop/app<br/>Tauri 2"] --> R
 ```
 
 <details open>
 <summary>How to read this figure</summary>
 
-**In one sentence.** Every crate depends on `alerts-core`. The core depends on no crate.
+**In one sentence.** Every module depends on `alerts-core`. The core depends on no module.
 
-**How to read.** Each arrow goes from the crate that uses to the crate that is used.
+**How to read.** Each solid arrow goes from the module that uses to the module that is used. The
+dashed arrow is the test suite of `alerts-core`, which replays each Agda theorem.
 
-**Not shown.** The source crates do not exist yet. The `alerts-scaffold` generator writes code into `alerts-crud` and depends on no crate. The harness composes pure stages
-(`Fn(Alert) -> Option<Alert>`): see `GROUND_TRUTH.md`.
+**Not shown.** `scripts/export-codeberg`, which depends on no module. The harness composes pure
+stages (`Alert -> Maybe Alert`): see `GROUND_TRUTH.md`.
 
-**Evidence.** The `Cargo.toml` of each crate in `crates/` and `desktop/`.
+**Evidence.** The `.cabal` file of each package in `haskell/`.
 
 </details>
 
 ### The path of an alert
 
-![How an official alert reaches Discord and the feed: three official sources, a source crate, the Alert type, the harness, then Discord and the Atom feed with the same text](docs/img/en/fluxo-alerta.png)
+![How an official alert reaches Discord and the feed: three official sources, a source module, the Alert type, the harness, then Discord and the Atom feed with the same text](docs/img/en/fluxo-alerta.png)
 
 <details open>
 <summary>How to read this figure</summary>
@@ -199,8 +198,7 @@ what happens.
 
 **Not shown.** The planned sources, the local models and the alerts that the harness drops.
 
-**Evidence.** The Sources, Channels and Architecture sections of this README. No source crate
-exists yet. The source: [`docs/archify/en/fluxo-alerta.json`](docs/archify/en/fluxo-alerta.json).
+**Evidence.** The Sources, Channels and Architecture sections of this README. The source: [`docs/archify/en/fluxo-alerta.json`](docs/archify/en/fluxo-alerta.json).
 
 </details>
 
@@ -208,50 +206,23 @@ exists yet. The source: [`docs/archify/en/fluxo-alerta.json`](docs/archify/en/fl
 
 ```console
 nix develop
-just check                                  # formatting, clippy, tests, licenses
+just check                                  # format, build (-Werror), tests, Agda, the Marola test
+just spec                                   # type-check the Agda specification
+just test                                   # the spec theorems on the code, and every test
 DISCORD_WEBHOOK_URL=... just test-message   # send a test message to Discord
 FEED_PATH=alerts.atom just test-message     # write the Atom + CAP 1.2 feed with a test alert
 MAROLA_DISCORD_WEBHOOK_URL=... just marola-discord   # a test alert to the official Marola Discord
-just obsidian                               # build the Obsidian plugin WeatherDisaster
+FEED_PATH=alerts.atom just mock-alerts      # the simulated test alerts, through the harness
+just sources --country BR --alerts          # search the catalog of official sources
 just mcp                                    # MCP server on stdio
-just py-build                               # build the Python package
 just reading-time                           # write the reading time of every file for humans
 just figure                                 # draw docs/archify/*.json with Archify
 just graph                                  # the code graph: build/graph/graph.html
 just site                                   # the static site for piabrota.art/alerts/
-just desktop-dev                            # the desktop app (Tauri 2), with live reload
-just generate scaffold rivers slug:slug name:string   # a new CRUD resource in alerts-crud
 ```
 
-## Desktop app
-
-The desktop app configures apps in a window: the sources, the channels and the apps. It follows the
-CRUD conventions of Loco: each resource has a model, a controller and a migration. The app also lists
-the alerts that the sources delivered, next to a map. The app never creates an alert.
-
-- `crates/alerts-crud`: the models, the controllers and the migrations, on SQLite. Every operation
-  goes through `controllers::dispatch`.
-- `crates/alerts-rss`: the RSS combinator. Each user has areas, projects and tasks, and each of
-  them owns RSS feeds and rules that compose the feeds. See [`docs/RSS.md`](docs/RSS.md).
-- `desktop/app`: Tauri 2. Its two commands (`modules`, `crud`) call `alerts-crud`.
-- `desktop/ui`: the interface, in Rust (Leptos, compiled to wasm32). It draws each page from the
-  spec of a resource, so a resource from `just generate scaffold` gets its page with no interface code.
-- The map uses MapLibre GL JS 5.24.0 and OpenFreeMap tiles: no key and no account.
-
-![The Apps page of the desktop app: the edit form of the app sul-enchentes](docs/screenshots/desktop/edit.png)
-
-More in [`docs/DESKTOP.md`](docs/DESKTOP.md). The way to the App Store and Google Play, as
-"marola alertas", is mapped in [`docs/STORES.md`](docs/STORES.md).
-
-## Obsidian plugin
-
-WeatherDisaster (id `piabrota-alerts`) feeds official alerts into an Obsidian vault. It reads an
-Atom or RSS feed of CAP 1.2 alerts and writes one note per alert, with the CAP fields in the
-frontmatter and the issuer's text verbatim. A CAP `Update` rewrites the note, and a CAP `Cancel`
-marks it as cancelled. Filters: UF, IBGE municipality and lowest severity. A failed read shows as a
-failure, never as "no alert". The logic is Rust (`crates/alerts-obsidian`), built to WebAssembly.
-
-More in [`docs/OBSIDIAN.md`](docs/OBSIDIAN.md).
+The RSS rules (`docs/RSS.md`) live in the store: `alerts feed-add <slug> <url>`, then
+`alerts rule-add <slug> <title> <json>`, `alerts rss-fetch` and `alerts rss-atom <slug>`.
 
 ## Documentation
 
@@ -269,12 +240,12 @@ to host the site at `piabrota.art/alerts` are in [`docs/HOSPEDAGEM.md`](docs/HOS
 - The drawing is by Matheus Hoffmann ([@h0ffmann](https://github.com/h0ffmann)). It is rendered from its
   Desmos expressions. The wave joins the Fibonacci spiral and Katsushika Hokusai's *The Great Wave off Kanagawa*
   (c. 1831). Other artists drew Fibonacci waves before: credits in [`docs/drawings/README.md`](docs/drawings/README.md).
-- The app conventions (generators, doctor, scheduler, tasks) follow [Loco](https://loco.rs)
-  (Apache-2.0). Screenshots of its bootstrap are in [`docs/screenshots/loco-bootstrap/`](docs/screenshots/loco-bootstrap).
-  The CRUD layout of `alerts-crud` (models, controllers, migrations, scaffold) also follows Loco.
-- The desktop map uses [MapLibre GL JS](https://maplibre.org) (BSD-3-Clause), [OpenFreeMap](https://openfreemap.org) tiles
-  and OpenStreetMap data (ODbL). The desktop app uses [Tauri](https://tauri.app) (Apache-2.0 or MIT) and
-  [Leptos](https://leptos.dev) (MIT).
+- The app conventions (doctor, scheduler, tasks) follow [Loco](https://loco.rs) (Apache-2.0).
+- The specification uses [Agda](https://github.com/agda/agda) and its
+  [standard library](https://github.com/agda/agda-stdlib) (MIT). The Haskell uses
+  [aeson](https://hackage.haskell.org/package/aeson), [http-client](https://hackage.haskell.org/package/http-client),
+  [sqlite-simple](https://hackage.haskell.org/package/sqlite-simple) and
+  [xml-conduit](https://hackage.haskell.org/package/xml-conduit) (BSD-3-Clause or MIT).
 
 - The functional harness translates the
   [Object-Oriented Harness](https://arxiv.org/abs/2610.28380) (arXiv 2610.28380) into function
@@ -294,7 +265,7 @@ gives the license and the copyright of each file, and the citation rules for age
 | What | Terms |
 |---|---|
 | The code and the documentation | [MPL-2.0](LICENSE) |
-| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository: a Fibonacci spiral that `just wave` draws (Rust), also as a Desmos file. The idea follows Hokusai's *Great Wave* and earlier Fibonacci waves by other artists: see [`docs/drawings/README.md`](docs/drawings/README.md) |
+| The drawing in [`docs/drawings/`](docs/drawings) | MPL-2.0; an original work for this repository: a Fibonacci spiral, also as a Desmos file. The idea follows Hokusai's *Great Wave* and earlier Fibonacci waves by other artists: see [`docs/drawings/README.md`](docs/drawings/README.md) |
 | The source data | the terms of each agency ([`docs/SOURCES.md`](docs/SOURCES.md)): INMET is public domain with citation; CPTEC/INPE forbids commercial use without authorization |
 | AstrBot and its plugins | AGPL-3.0, their own repositories; nothing here vendors their code |
 

@@ -22,7 +22,7 @@ library
                     Alerts.Cap
   other-modules:    Paths_alerts_core
   autogen-modules:  Paths_alerts_core
-  build-depends:    base >=4.18 && <5
+  build-depends:    base >=4.18 && <5, aeson >=2.1, text
 
 test-suite spec
   import:           warnings

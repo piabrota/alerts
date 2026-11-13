@@ -7,38 +7,27 @@ default:
     @just --list
 
 # Everything a PR must pass.
-check: fmt-check lint test deny reuse docs-stale pins figure-check spec hs-test proofs-check reading-time-check desktop-check obsidian-check marola-discord
+check: fmt-check build test reuse docs-stale pins figure-check spec reading-time-check marola-discord
 
+# Format the Haskell source (ormolu, in the dev shell through haskell-language-server's tools).
 fmt:
-    cargo fmt --all
-    cargo fmt --manifest-path desktop/Cargo.toml --all
-    cargo fmt --manifest-path scripts/export-codeberg/Cargo.toml
+    git ls-files '*.hs' | xargs ormolu --mode inplace
 
 fmt-check:
-    cargo fmt --all --check
-    cargo fmt --manifest-path scripts/export-codeberg/Cargo.toml --check
+    git ls-files '*.hs' | xargs ormolu --mode check
 
-lint:
-    cargo clippy --workspace --all-targets -- -D warnings
-    cargo clippy --manifest-path scripts/export-codeberg/Cargo.toml --all-targets -- -D warnings
+# Build every Haskell package with -Wall: a warning is a failure.
+build:
+    cabal build all --offline --ghc-options=-Werror
 
+# The tests of every package: the spec theorems replayed on alerts-core, the service, the export.
 test:
-    cargo test --workspace
-    cargo test --manifest-path scripts/export-codeberg/Cargo.toml
-
-# FOSS license policy and advisories (deny.toml).
-deny:
-    cargo deny check
-    cargo deny --manifest-path scripts/export-codeberg/Cargo.toml check
+    cabal test all --offline
 
 # Copyright and license of every file (REUSE.toml) and the citation file (CITATION.cff).
 reuse:
     uvx reuse@6.2.0 lint
     cffconvert --validate
-
-# Build the alerts Python wheel into target/wheels.
-py-build:
-    maturin build --release -m crates/alerts-py/Cargo.toml
 
 # Zip each skill in verbs/ into target/verbs/<verb>.zip, to upload as a project skill.
 pack-verbs:
@@ -53,52 +42,31 @@ pack-verbs:
 
 # Run the MCP server on stdio.
 mcp:
-    cargo run -q -p alerts-mcp
+    cabal run -v0 --offline alerts-mcp
 
 # Publish one test alert to every configured channel (DISCORD_WEBHOOK_URL, FEED_PATH).
 test-message:
-    cargo run -q -p alerts -- test-message
+    cabal run -v0 --offline alerts -- test-message
 
 # MOCK_ALERTS_PATH names a JSON file of mock alerts in place of the built-in scenarios;
-# crates/alerts-source-mock/tests/fixtures/alerts.json is an example. Each alert is delivered once per id.
+# haskell/alerts/test/fixtures/alerts.json is an example. Each alert is delivered once per id.
 # Deliver the mock alerts (TESTE, CAP status Test) to DISCORD_WEBHOOK_URL and/or FEED_PATH.
 mock-alerts:
-    cargo run -q -p alerts -- poll mock
+    cabal run -v0 --offline alerts -- poll mock
 
 # Read the sources of ALERTS_SOURCES (for example cemaden) and deliver each new alert once to
 # DISCORD_WEBHOOK_URL and/or FEED_PATH.
 poll:
-    cargo run -q -p alerts -- poll
+    cabal run -v0 --offline alerts -- poll
 
 # Search the curated catalog of official sources, for example: just sources --country BR --alerts
 sources *args:
-    cargo run -q -p alerts -- sources {{args}}
+    cabal run -v0 --offline alerts -- sources {{args}}
 
 # Hard rule: deliver one test alert to the official Marola Discord. Part of `just check`. The webhook
 # comes from MAROLA_DISCORD_WEBHOOK_URL and never enters the repository.
 marola-discord:
-    cargo test -q -p alerts --test marola_discord -- --ignored --nocapture
-
-# Build the Obsidian plugin WeatherDisaster (id piabrota-alerts) into target/obsidian/piabrota-alerts:
-# main.js is the wasm-bindgen glue, the WebAssembly of alerts-obsidian in base64, and plugin/main.js.
-# Copy that folder to <vault>/.obsidian/plugins/ to install the plugin.
-obsidian:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cargo build -q --release -p alerts-obsidian --target wasm32-unknown-unknown
-    out=target/obsidian/piabrota-alerts; glue=target/obsidian/glue
-    rm -rf "$out" "$glue" && mkdir -p "$out"
-    wasm-bindgen --target no-modules --no-typescript --out-dir "$glue" target/wasm32-unknown-unknown/release/alerts_obsidian.wasm
-    { cat "$glue/alerts_obsidian.js"
-      printf 'const WASM_BASE64 = "%s";\n' "$(base64 < "$glue/alerts_obsidian_bg.wasm" | tr -d '\n')"
-      cat crates/alerts-obsidian/plugin/main.js; } > "$out/main.js"
-    cp crates/alerts-obsidian/plugin/manifest.json "$out/"
-    echo "obsidian: $out"
-
-# The plugin builds, its main.js parses, and the wasm32 lints pass. Part of `just check`.
-obsidian-check: obsidian
-    cargo clippy --release -p alerts-obsidian --target wasm32-unknown-unknown -- -D warnings
-    node --check target/obsidian/piabrota-alerts/main.js
+    cabal run -v0 --offline alerts -- marola-discord
 
 # List zh/ja wiki pages whose English source changed after translation.
 docs-stale:
@@ -218,17 +186,16 @@ forks-init:
 
 # The code graph of this repository (picasso's code-graph, graphify's schema): build/graph/graph.html.
 graph:
-    code-graph extract . --out build/graph --exclude vendor --exclude forks --exclude target --exclude build --exclude scripts --exclude verbs --title alerts
+    code-graph extract . --out build/graph --exclude vendor --exclude forks --exclude dist-newstyle --exclude build --exclude scripts --exclude verbs --title alerts
     @echo "graph: build/graph/graph.html"
 
 # Build the static site into site/serve/ (Gleam on JavaScript, picasso's gleam-website toolchain), with
-# the Obsidian plugin in alerts/obsidian/ and a feed with one test alert in alerts/feed.atom.
-site: obsidian
+# a feed with one test alert in alerts/feed.atom.
+site:
     nix develop --no-update-lock-file .#site --command just --justfile site/justfile --working-directory site build
-    mkdir -p site/serve/alerts/obsidian
-    cp target/obsidian/piabrota-alerts/main.js target/obsidian/piabrota-alerts/manifest.json site/serve/alerts/obsidian/
+    mkdir -p site/serve/alerts
     # The site gets the feed only: an empty DISCORD_WEBHOOK_URL wins over .env and counts as not set.
-    env DISCORD_WEBHOOK_URL= FEED_PATH=site/serve/alerts/feed.atom FEED_ID=https://piabrota.art/alerts/feed.atom cargo run -q -p alerts -- test-message
+    env DISCORD_WEBHOOK_URL= FEED_PATH=site/serve/alerts/feed.atom FEED_ID=https://piabrota.art/alerts/feed.atom cabal run -v0 --offline alerts -- test-message
 
 # Publish the site to Codeberg Pages: build it, check it has no AI trace, and push it as one
 # commit to the `pages` branch of REMOTE (default: the public repository piabrota/pages). The
@@ -236,7 +203,7 @@ site: obsidian
 deploy-site remote="https://codeberg.org/piabrota/pages.git": site
     #!/usr/bin/env bash
     set -euo pipefail
-    cargo run -q --manifest-path scripts/export-codeberg/Cargo.toml -- --check site/serve
+    cabal run -v0 --offline export-codeberg -- --check site/serve
     tmp=$(mktemp -d)
     cp -r site/serve/. "$tmp/"
     git -C "$tmp" init -q -b pages
@@ -258,104 +225,10 @@ pins:
     [ "$(wc -l <<<"$revs")" = 1 ] || { echo "pins: picasso revisions differ: $revs" >&2; exit 1; }
     echo "pins: picasso ${revs:0:7}"
 
-# Write the README drawing (docs/drawings/wave.svg) and its Desmos state (wave.desmos.json).
-wave:
-    cargo run -q -p alerts-drawings --bin wave > docs/drawings/wave.svg
-    cargo run -q -p alerts-drawings --bin wave desmos > docs/drawings/wave.desmos.json
-
-# Write the domain facts as RDF and the invariants as SMT (docs/proofs/). Read docs/PROOFS.md.
 # In `just check`: type-check the Agda specification (spec/, --safe, no postulates).
 spec:
     cd spec && LC_ALL=C.UTF-8 agda Everything.agda
 
-# In `just check`: build the Haskell code and replay the theorems of the spec on it.
-hs-test:
-    cd haskell/alerts-core && cabal test --offline
-
-proofs:
-    cargo run -q -p alerts-proofs
-
-# In `just check`: the exhaustive Rust checks hold and docs/proofs/ is the output of the code.
-proofs-check:
-    cargo run -q -p alerts-proofs -- --check
-
-# Prove every statement of docs/proofs/*.smt2 with z3 (in the dev shell), by refutation: one line
-# per statement. `unsat` proves it; a statement marked `expect: sat` must have a counterexample.
-prove:
-    cargo run -q --release -p alerts-proofs -- --prove
-
-# Record Ammonite by Harry Chen (Desmos) as docs/drawings/ammonite-harry-chen.gif. Needs Chrome or
-# Chromium (CHROME names the binary) and access to desmos.com.
-desmos-gif *args:
-    cargo run -q --release -p alerts-desmos -- --out docs/drawings/ammonite-harry-chen.gif {{ args }}
-
-# New resource, source, stage or channel. Only `scaffold` exists today: `just generate scaffold rivers
-# slug:slug name:string level:int` writes the model, the controller and the migration of alerts-crud.
-generate kind *args:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    case "{{ kind }}" in
-        scaffold) cargo run -q -p alerts-scaffold --bin scaffold -- {{ args }}; cargo fmt -p alerts-crud;;
-        *) echo "generate: only scaffold exists; see the generate skill for the other kinds" >&2; exit 2;;
-    esac
-
-# The desktop map's files, in desktop/ui/vendor (ignored by git): MapLibre GL JS, pinned and checked by
-# npm, and the IBGE UF borders (malhas API, minimal quality), fetched once with the honest User-Agent.
-desktop-vendor:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    dir=desktop/ui/vendor/maplibre; tmp=$(mktemp -d)
-    (cd "$tmp" && npm pack --silent maplibre-gl@5.24.0 >/dev/null && tar -xzf maplibre-gl-5.24.0.tgz)
-    mkdir -p "$dir" && cp "$tmp"/package/dist/maplibre-gl.{js,css} "$tmp"/package/LICENSE.txt "$dir"/
-    rm -rf "$tmp"; echo "desktop-vendor: $dir (maplibre-gl 5.24.0)"
-    ibge=desktop/ui/vendor/ibge; mkdir -p "$ibge"
-    if [ ! -s "$ibge/ufs.geojson" ]; then
-        version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "alerts-core") | .version')
-        curl -fsS --retry 2 -A "piabrota-alerts/$version (+https://github.com/piabrota/alerts)" -o "$ibge/ufs.geojson.tmp" \
-            'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo%2Bjson&qualidade=minima&intrarregiao=UF'
-        jq -e '.features | length == 27' "$ibge/ufs.geojson.tmp" >/dev/null
-        mv "$ibge/ufs.geojson.tmp" "$ibge/ufs.geojson"
-    fi
-    echo "desktop-vendor: $ibge/ufs.geojson (IBGE, 27 UFs)"
-    trilhas=desktop/ui/vendor/trilhas; mkdir -p "$trilhas"
-    cargo run -q -p alerts-trilhas -- geojson < data/raw/trilhas/osm.tsv > "$trilhas/trilhas.geojson"
-    echo "desktop-vendor: $trilhas/trilhas.geojson (OpenStreetMap, $(($(wc -l < data/raw/trilhas/osm.tsv) - 1)) trilhas)"
-
-# Fetch the OpenStreetMap trails of ssa, rio and fln from Overpass into data/raw/trilhas/osm.tsv.
-trilhas-osm:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "alerts-core") | .version')
-    out=data/raw/trilhas/osm.tsv; tmp=$(mktemp)
-    printf 'cidade\tpraia\tosm\tkm\tnome\tlinha\n' > "$tmp"
-    for cidade in ssa rio fln; do
-        cargo run -q -p alerts-trilhas -- osm-query "$cidade" \
-            | curl -fsS --retry 2 -A "piabrota-alerts/$version (+https://github.com/piabrota/alerts)" \
-                --data-urlencode data@- https://overpass-api.de/api/interpreter \
-            | cargo run -q -p alerts-trilhas -- osm "$cidade" >> "$tmp"
-    done
-    mv "$tmp" "$out"
-    echo "trilhas-osm: $out ($(($(wc -l < "$out") - 1)) trilhas, © OpenStreetMap contributors, ODbL)"
-
-# Run the desktop app with live reload: trunk serves the interface on :1420, Tauri opens it.
-desktop-dev: desktop-vendor
-    #!/usr/bin/env bash
-    set -euo pipefail
-    (cd desktop/ui && trunk serve) & trap "kill $!" EXIT
-    cargo run --manifest-path desktop/Cargo.toml -p alerts-desktop
-
-# Build the desktop binary with the interface inside: desktop/target/release/alerts-desktop.
-desktop-build: desktop-vendor
-    cd desktop/ui && trunk build --release
-    cargo build --release --manifest-path desktop/Cargo.toml -p alerts-desktop --features custom-protocol
-
-# The gate of desktop/: format, lints (the interface for wasm32), licenses. Part of `just check`.
-desktop-check:
-    cargo fmt --manifest-path desktop/Cargo.toml --all --check
-    cargo clippy --manifest-path desktop/Cargo.toml -p alerts-ui --target wasm32-unknown-unknown -- -D warnings
-    cargo clippy --manifest-path desktop/Cargo.toml -p alerts-desktop --all-targets -- -D warnings
-    cargo deny --manifest-path desktop/Cargo.toml check
-
 # Build the Codeberg copy without AI trace into OUT (empty, or only .git). Commit it as the author.
 export-codeberg out ref="HEAD":
-    cargo run -q --manifest-path scripts/export-codeberg/Cargo.toml -- {{ out }} {{ ref }}
+    cabal run -v0 --offline export-codeberg -- {{ out }} {{ ref }}

@@ -1,0 +1,4 @@
+-- The Haskell source of alerts. `just hs-test` builds and tests every package.
+packages: haskell/alerts-core
+          haskell/alerts
+          scripts/export-codeberg

@@ -16,15 +16,15 @@ import System.Exit (exitFailure)
 alert :: [Uf] -> Severity -> Alert
 alert us s =
   Alert
-    { alertId = "t-1"
-    , source = "test"
-    , hazard = Flood
-    , severity = s
-    , ufs = us
-    , headline = "Teste."
-    , area = "Porto Alegre"
-    , sent = "2026-10-22T12:00:00-03:00"
-    , url = Nothing
+    { alertId = "t-1",
+      source = "test",
+      hazard = Flood,
+      severity = s,
+      ufs = us,
+      headline = "Teste.",
+      area = "Porto Alegre",
+      sent = "2026-10-22T12:00:00-03:00",
+      url = Nothing
     }
 
 -- Every alert shape the finite checks walk: no UF, one UF, two UFs.
@@ -39,7 +39,7 @@ main = do
         putStrLn ("FAIL " <> name)
         modifyIORef failures (+ 1)
 
-  -- the unit tests of crates/alerts-core
+  -- the unit tests of the previous alerts-core
   check "uf_round_trip" (all (\u -> parseUf (ufText u) == Just u) allUfs)
   check "uf_round_trip: trim and case" (parseUf " rs " == Just RS && isNothing (parseUf "XX"))
   check "uf_round_trip: 27 UFs" (length allUfs == 27)
@@ -62,11 +62,11 @@ main = do
   -- P3, the harness
   check "run-empty" (all (\a -> run emptyHarness a == Just a) alerts)
   let hs =
-        [ []
-        , [onlyUfs v0]
-        , [minSeverity Severe]
-        , [onlyUfs [SP], minSeverity Moderate]
-        , [\a -> Just a {headline = "x"}]
+        [ [],
+          [onlyUfs v0],
+          [minSeverity Severe],
+          [onlyUfs [SP], minSeverity Moderate],
+          [\a -> Just a {headline = "x"}]
         ]
   check "run-++" $
     and [run (stages (h <> k)) a == (run (stages h) a >>= run (stages k)) | h <- hs, k <- hs, a <- alerts]
@@ -76,7 +76,9 @@ main = do
   check "stages-commute" $
     and
       [ run (stages [onlyUfs ks, minSeverity m]) a == run (stages [minSeverity m, onlyUfs ks]) a
-      | ks <- [[], v0, [SP], allUfs], m <- allSeverities, a <- alerts
+      | ks <- [[], v0, [SP], allUfs],
+        m <- allSeverities,
+        a <- alerts
       ]
   check "keepIf-same" (and [maybe True (== a) (keepIf p a) | p <- keeps, a <- alerts])
   check "parity" $
@@ -90,8 +92,11 @@ main = do
   check "upward-closed" $
     and
       [ isJust (minSeverity m (alert [RS] s2))
-      | m <- allSeverities, s <- allSeverities, s2 <- allSeverities
-      , isJust (minSeverity m (alert [RS] s)), s <= s2
+      | m <- allSeverities,
+        s <- allSeverities,
+        s2 <- allSeverities,
+        isJust (minSeverity m (alert [RS] s)),
+        s <= s2
       ]
   check "minor-passes-all" (all (\a -> minSeverity Minor a == Just a) alerts)
 

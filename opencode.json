@@ -4,7 +4,7 @@
   "mcp": {
     "alerts": {
       "type": "local",
-      "command": ["nix", "develop", "--command", "cargo", "run", "-q", "-p", "alerts-mcp"],
+      "command": ["nix", "develop", "--command", "cabal", "run", "-v0", "--offline", "alerts-mcp"],
       "enabled": true
     }
   }

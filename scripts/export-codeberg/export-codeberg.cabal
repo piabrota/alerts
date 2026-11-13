@@ -1,0 +1,30 @@
+cabal-version:      3.0
+name:               export-codeberg
+version:            0.0.0
+synopsis:           Builds the Codeberg copy of alerts with no trace of AI tools
+license:            MPL-2.0
+author:             M.Hoffmann and the alerts contributors
+build-type:         Simple
+
+common warnings
+  ghc-options:      -Wall -Wcompat
+  default-language: GHC2021
+
+library
+  import:           warnings
+  hs-source-dirs:   src
+  exposed-modules:  Export
+  build-depends:    base >=4.18 && <5, directory, filepath, process
+
+executable export-codeberg
+  import:           warnings
+  hs-source-dirs:   app
+  main-is:          Main.hs
+  build-depends:    base, export-codeberg
+
+test-suite export-codeberg-test
+  import:           warnings
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          Main.hs
+  build-depends:    base, export-codeberg

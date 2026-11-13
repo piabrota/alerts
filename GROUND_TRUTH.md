@@ -20,38 +20,34 @@ sources, filters them, and delivers them.
   (OASIS). Open standards, no company attached. Every alert that reaches Discord also reaches the
   feed, with the same pt-BR text. A new channel reads the same harness output: never filter or
   rewrite alerts per channel.
-- **Python interface now:** `alerts-py` is a pip package from day one. The long-term
-  consumer is an AstrBot plugin (for example, `astrbot_plugin_disaster_warning`).
 - **South extensions in `forks/`:** `forks/br_south_disaster` and `forks/br_south_waterq` are git
   submodules pinned to a commit, and they are the planned sources of `alerts` for the South. The
   path is the extension id, because the host loads an extension only from a directory with that
   name. Their Python stays in their own repositories: this repo holds the submodule links, never a
-  copied `.py` file. The code that both repeat lives in Rust: `alerts-ext`, which `alerts-py` gives
-  to Python as `piabrota_alerts.ext`. Python calls Rust, so no crate embeds an interpreter. The
-  extensions keep the HTTP session of the host, and `piabrota_alerts.ext` never reads the network.
-  No extension uses it yet. `docs/br-south/index.html` shows how they load, and
-  `docs/br-south/modulo-comum.html` lists what the migration needs. `just forks-init` gets them.
+  copied `.py` file. The shared module that the Rust gave them (`piabrota_alerts.ext`) left with
+  the Rust: no extension used it, and a Haskell replacement needs a decision ⚠.
+  `docs/br-south/index.html` shows how they load. `just forks-init` gets them.
 - **Codeberg mirror without AI trace:** `codeberg.org/piabrota/alerts` holds the code with no
   trace of AI tools. No agent file (`AGENTS.md`, `verbs/` as skills, `scripts/`, `opencode.json`,
   `.mcp.json`), no AI co-author trailer, and no AI tool name in a commit message. Build the copy
-  only with `just export-codeberg <out-dir>` (Rust, `scripts/export-codeberg/`): it fails when a
+  only with `just export-codeberg <out-dir>` (Haskell, `scripts/export-codeberg/`): it fails when a
   trace remains.
   Commit the result with a plain message as the author. Never push this repo's history there.
 
 ## Hard rules
 
-- **Haskell is the source, Agda is the specification.** New code for `alerts` is Haskell
-  (`haskell/`), and its meaning is the Agda specification in `spec/` (`--safe`, no postulate). A
-  Haskell module states which Agda definitions it implements, and its test suite replays the
-  theorems of the spec on the code, one check per theorem name (`just spec`, `just hs-test`, in
-  `just check`). A change of behavior changes the spec first. The Rust in `crates/` and
-  `desktop/` is the previous implementation: it stays until its Haskell port lands, crate by crate
-  (`docs/SPEC.md` lists the stages), and it gets only fixes, never new features. Never commit a
-  `.py` file: Python enters only as a third-party dependency. One exception stays:
-  `crates/alerts-obsidian/plugin/main.js`, because Obsidian loads only JavaScript. It is only the
-  bridge to the Obsidian API. Never add logic to that file.
-- **No CI.** Do not add `.github/workflows` or any other CI. `just check` is the gate, run by hand
-  before a PR.
+- **Haskell is the source, Agda is the specification.** Every program, script and tool of
+  `alerts` is Haskell (`haskell/`, `scripts/export-codeberg/`), and its meaning is the Agda
+  specification in `spec/` (`--safe`, no postulate). A Haskell module states which Agda
+  definitions it implements, and its test suite replays the theorems of the spec on the code, one
+  check per theorem name (`just spec`, `just test`, in `just check`). A change of behavior changes
+  the spec first. Never commit a `.rs` or a `.py` file. A shell recipe in the `justfile` may call
+  tools, but a recipe that needs logic becomes a Haskell program.
+- **No mobile and no desktop app.** `alerts` is a service, a feed and an MCP server. The Rust
+  desktop app, the Obsidian plugin, the pip package and the app store plans left with the Rust; a
+  new interface needs a human decision first.
+- **No new CI.** `.github/workflows/haskell.yml` builds and tests the Haskell; do not add another
+  workflow. `just check` is the gate, run by hand before a PR.
 - **Every PR delivers a test alert to the official Marola Discord.** `just marola-discord` (in
   `just check`) posts one test alert (CAP status Test, headline `TESTE: ...`) to the webhook in
   `MAROLA_DISCORD_WEBHOOK_URL`. It fails when the variable is missing, when the URL is not a Discord
@@ -62,20 +58,23 @@ sources, filters them, and delivers them.
   new work for an open PR goes into that PR.
 - **A PR that changes an image uses the `open-pr-images` verb** (bipri): the `open-pr` body plus
   before and after images, committed in `docs/screenshots/<topic>/`.
-- **Identify honestly.** Every HTTP request sends `alerts_core::USER_AGENT`
+- **Identify honestly.** Every HTTP request goes through `Alerts.Http` and sends `Alerts.Core.userAgent`
   (`piabrota-alerts/<version> (+repo URL)`). Never send a browser User-Agent and never copy another
   client's name, not even as a fallback. When a source refuses the honest name, stop and tell a
   human: the fix is to ask the agency, not to disguise the client.
-- **FOSS first.** A new dependency must pass `just deny` (license allowlist in `deny.toml`).
-  Do not use paid resources or paid APIs without explicit human confirmation.
+- **FOSS first.** A new dependency must carry one of these licenses: MIT, Apache-2.0, MPL-2.0,
+  BSD-2-Clause, BSD-3-Clause, ISC. Check it on Hackage before you add it, and add it to the
+  `ghcWithPackages` list of `flake.nix`, so `cabal --offline` builds from the pinned nixpkgs. Do not
+  use paid resources or paid APIs without explicit human confirmation.
 - **No secrets in the repo.** The Discord webhooks come from `DISCORD_WEBHOOK_URL` (the alerts
   server) and `MAROLA_DISCORD_WEBHOOK_URL` (the official Marola server). The source tokens are BYOT:
-  each person brings their own in `ALERTS_TOKEN_<ID>` (`alerts-catalog` names the variable). They
+  each person brings their own in `ALERTS_TOKEN_<ID>` (`Alerts.Catalog` names the variable). They
   live in the environment or in `.env`, which git ignores; only the empty `.env.example` is
-  committed. Never print a token: `alerts::tokens::Token` hides it in `Debug` and `Display`.
+  committed. Never print a token: `Alerts.Tokens.Token` hides it in `Show`.
 - **Official sources only.** An alert comes from an authoritative agency. Never invent an alert,
   an area, a time or an action that the source does not state.
-- **No `unwrap` or `expect`** outside tests (workspace clippy lints). `unsafe` is denied.
+- **No partial functions** (`head`, `fromJust`, `error`) outside tests, and no `unsafePerformIO`.
+  `just build` builds with `-Wall -Werror`.
 - **`⚠` marks a claim that nobody checked.** Never remove a `⚠` without doing the check.
 - **The GitHub Wiki is deployed only after the repo is public** (issue #1). Until then the pages
   live in `wiki/`.
@@ -95,49 +94,28 @@ sources, filters them, and delivers them.
 ```bash
 nix develop        # the toolchain is pinned in flake.lock
 just               # list recipes
-just check         # fmt, clippy, tests, cargo-deny, stale translations
+just check         # format, build (-Werror), tests, Agda, stale translations, the Marola test
+just spec          # type-check the Agda specification
+just test          # cabal test all: the spec theorems on the Haskell code, the service, the export
 just test-message  # publish one test alert to DISCORD_WEBHOOK_URL and/or FEED_PATH
 just marola-discord # the hard-rule test: one test alert to MAROLA_DISCORD_WEBHOOK_URL
 just mock-alerts    # deliver the mock alerts (TESTE) to DISCORD_WEBHOOK_URL and/or FEED_PATH
 just poll          # read the sources of ALERTS_SOURCES (for example cemaden) and deliver new alerts
 just sources       # search the catalog of official sources; BYOT tokens in ALERTS_TOKEN_<ID>
-just obsidian      # build the Obsidian plugin into target/obsidian/piabrota-alerts
 just mcp           # run the MCP server on stdio
-just py-build      # build the Python wheel
 ```
 
 ## Repo layout
 
-The Agda specification is `spec/` (`spec/Alerts/Core.agda`, `spec/Alerts/Properties.agda`), and the
-Haskell source is `haskell/`, one cabal package per directory: `haskell/alerts-core` is the port of
-`alerts-core` and of the CAP identifier of `alerts-feed`. `docs/SPEC.md` maps each theorem to its
-z3 statement and to its Haskell check.
+The Agda specification is `spec/` (`spec/Alerts/Core.agda`, `spec/Alerts/Properties.agda`).
+`docs/SPEC.md` maps each theorem to its Haskell check. The Haskell source is a cabal project
+(`cabal.project` at the root), one package per directory:
 
-The previous implementation is a Cargo workspace. Each crate is a directory in `crates/`. Shared dependency versions and lints
-live in the root `Cargo.toml` (`[workspace.dependencies]`, `[workspace.lints]`).
-
-| Crate | Kind | Role |
+| Package | Kind | Role |
 |---|---|---|
-| `alerts-core` | lib | Domain types (`Alert`, `Uf`, `Severity`, `Hazard`) and the FP harness. Knows nothing about Discord, Python or MCP. |
-| `alerts` | bin + lib | The service: publishes to Discord and to the feed. `tests/marola_discord.rs` is the Marola Discord test. |
-| `alerts-obsidian` | cdylib (wasm32) | WeatherDisaster, the Obsidian plugin (id `piabrota-alerts`): an Atom/RSS feed of CAP alerts becomes one note per alert. Read `docs/OBSIDIAN.md`. |
-| `alerts-feed` | lib | The Atom + CAP 1.2 channel. The CAP output must validate against the OASIS CAP 1.2 XSD. A test alert is always `<status>Test</status>`. |
-| `alerts-ext` | lib | The logic that the South extensions have in common, with no Python and no I/O. |
-| `alerts-py` | cdylib, rlib | Python bindings (PyO3 + maturin, abi3 for Python 3.10+): `import piabrota_alerts`. `piabrota_alerts.ext` gives `alerts-ext` and the host helpers to the extensions. Its tests run Python in an interpreter inside the test binary, so `cargo test` needs Python. |
-| `alerts-mcp` | bin | MCP server (rmcp, stdio) for agents. Configured in `.mcp.json` and `opencode.json`. |
-| `alerts-drawings` | bin | `wave`: the README drawing as SVG and as a Desmos state (`just wave`). |
-| `alerts-desmos` | bin | `desmos-gif`: records a Desmos animation as a GIF (`just desmos-gif`). |
-| `alerts-proofs` | bin | `proofs`: the domain facts as RDF (`docs/proofs/facts.ttl`) and the routing, severity and parity invariants as SMT conjectures, checked exhaustively in Rust (`just proofs-check`, in `just check`) and proved with z3 (`just prove`), and statements about the code of `alerts-rss`, `alerts-feed` and `alerts-obsidian` (P4 to P6), each counterexample replayed through the real Rust. Read `docs/PROOFS.md`. No I/O beyond `docs/proofs/` and the z3 process of `just prove`. |
-| `alerts-crud` | lib | Loco-style models, controllers and migrations (SQLite) of the desktop app. `controllers::dispatch` is the one entry point. |
-| `alerts-rss` | lib | The RSS combinator: RSS and Atom items, a rule algebra (union, intersect, diff, filter, map, dedupe, take) and a pure evaluator. No I/O. See `docs/RSS.md`. |
-| `alerts-scaffold` | bin | `scaffold`: writes a new `alerts-crud` resource (`just generate scaffold`). |
-| `alerts-catalog` | lib | The curated catalog of official alert sources, in Brazil and in the world, and its search (`alerts sources`, MCP `search_sources`). A source that needs a token is BYOT: `ALERTS_TOKEN_<ID>`, never in the repo. No I/O. |
-| `alerts-source-cemaden` | lib | The CEMADEN source: the municipal alerts of `painelalertas.cemaden.gov.br/wsAlertas2` (`alerts poll cemaden`). An unknown field fails loudly. No I/O. |
-| `alerts-source-mock` | lib | The mock source: simulated test alerts (headline `TESTE:`, CAP status Test) for `alerts poll mock` and `just mock-alerts`. Never an agency. |
-
-`desktop/` is its own Cargo workspace, outside `crates/`: `desktop/app` (Tauri 2) and `desktop/ui` (Leptos,
-wasm32). It needs WebKitGTK on Linux, and `just desktop-check` (in `just check`) is its gate. Read
-`docs/DESKTOP.md` before you work on it.
+| `haskell/alerts-core` | lib | Domain types (`Alert`, `Uf`, `Severity`, `Hazard`), the FP harness and the CAP identifier: the twin of `spec/Alerts/Core.agda`. Knows nothing about Discord, HTTP or MCP. `test/Spec.hs` replays every theorem of the spec. |
+| `haskell/alerts` | lib + 2 exe | The service and its parts, one module each: `Alerts.Feed` (the Atom + CAP 1.2 channel; a test alert is always `<status>Test</status>`), `Alerts.Rss.*` (RSS and Atom items, the rule algebra and its evaluator, `docs/RSS.md`), `Alerts.Time` (feed times), `Alerts.Catalog` (the catalog of official sources, BYOT), `Alerts.Source.Cemaden` and `Alerts.Source.Mock` (the sources; an unknown field fails loudly), `Alerts.Store` (SQLite, `ALERTS_DB`), `Alerts.Discord`, `Alerts.Http` (the honest User-Agent), `Alerts.Service` (the poll). Executables: `alerts` (the CLI) and `alerts-mcp` (MCP server, stdio JSON-RPC, configured in `.mcp.json` and `opencode.json`). Only `Alerts.Http`, `Alerts.Store`, `Alerts.Env` and the executables do I/O. |
+| `scripts/export-codeberg` | exe | `export-codeberg`: the Codeberg copy without AI trace. |
 
 Dependencies point to `alerts-core`, never the other way.
 
@@ -152,9 +130,9 @@ Dependencies point to `alerts-core`, never the other way.
 - An undocumented endpoint (CEMADEN `wsAlertas2`, INMET `avisos/ativos`, ClimaRS) can change
   without notice. A module that uses one must fail loudly, never silently.
 
-**Sources are modular.** Brazilian data is scattered, so each source is its own crate,
-`crates/alerts-source-<id>`, that turns the agency's data into `Alert`s. Adding a source,
-or a state, adds a crate. It does not change the core.
+**Sources are modular.** Brazilian data is scattered, so each source is its own module,
+`Alerts.Source.<Id>`, that turns the agency's data into `Alert`s, and one constructor of
+`Alerts.Service.Source`. Adding a source, or a state, adds a module. It does not change the core.
 
 ## The FP harness
 
@@ -163,14 +141,14 @@ functional composition. A position paper on the FP harness lives in the `smart-n
 
 | OO Harness | alerts |
 |---|---|
-| A subclass overrides a method | A new `Stage` wraps the pipeline: `Harness::then` |
+| A subclass overrides a method | A new `Stage` wraps the pipeline: `andThen` |
 | `super()` | The stages before it in the composition |
-| Inheritance chain | Function composition (`try_fold` over the stages) |
+| Inheritance chain | Kleisli composition (`foldr (>=>) Just` over the stages) |
 | Router picks a class | A pure function that matches on an enum and returns a `Harness` |
-| Fall back to the base harness | `Option`/`Result` falls back to the base harness |
+| Fall back to the base harness | `Maybe`/`Either` falls back to the base harness |
 
-A `Stage` is `Fn(Alert) -> Option<Alert>`: pass the alert on, possibly changed, or drop it.
-Specialize by composing a stage. Never add inheritance-like trait hierarchies.
+A `Stage` is `Alert -> Maybe Alert`: pass the alert on, possibly changed, or drop it.
+Specialize by composing a stage. Never add inheritance-like class hierarchies.
 
 **LLM inside, later.** Over time some sources (free-text bulletins, messy formats) need a
 language model. Use an open-weight model run locally first. A paid API is an optional plug-in,
@@ -191,30 +169,28 @@ Two local runtimes, both FOSS, each reached over its local HTTP API. Each one is
 - Before adding any NLP tool or model, read `docs/SURVEY_NLP.md`: use the cheapest tier that
   does the job, and record real alerts as eval cases first.
 
-## Apps and maps
+## Apps
 
-An app is one deployment: sources, a harness and channels for one audience. The conventions follow
-[Loco](https://loco.rs) (generators, doctor, scheduler, tasks), without the ORM (`alerts-crud` writes
-plain SQL), the accounts and the server-side HTML. Read the skills before you work on these parts:
+An app is one deployment: sources, a harness and channels for one audience. Read the skills
+before you work on these parts:
 
 | Skill | Job |
 |---|---|
-| `manage-apps` | What an app is, where its parts go, the planned `just` recipes |
-| `generate` | New app, source crate, stage or channel |
+| `manage-apps` | What an app is, where its parts go |
+| `generate` | New source, stage or channel |
 | `diagnose` | Check that an app can run |
 | `schedule` | Poll rates, delivery once per id, one-off tasks |
-| `map` | Alert areas on a map, CAP 1.2 to GeoJSON, FOSS tiles only |
+| `map` | Alert areas as GeoJSON from CAP 1.2, FOSS tiles only |
 
-The desktop app (`docs/DESKTOP.md`) is the first interface: a CRUD page per `alerts-crud` resource and
-a map page. The interface never creates an alert.
+The store has no interface: `alerts feed-add` and `alerts rule-add` write the feeds and the rules,
+and no command creates an alert.
 
 ## Why Haskell and Agda
 
 The choice is for a compiler, safety and long-term robustness (antifragility), with a proof of
 what the code means. Haskell gives algebraic types, pattern matching and pure functions by default:
 the FP harness is Kleisli composition (`>=>`) in the language itself. Agda states the semantics and
-proves the invariants for every input, where the z3 statements of `docs/proofs/` and the checks of
-`alerts-proofs` cover finite domains. The Haskell keeps the names of the Agda definitions, so a
+proves the invariants for every input, where tests cover only the inputs that ran. The Haskell keeps the names of the Agda definitions, so a
 reader can put a theorem next to the code it is about.
 
 ## Documentation
@@ -254,10 +230,9 @@ ptbr-writer pins (`5da5237`). `just pins` fails when the three flake inputs diff
 | code-graph (graphify's schema) | `just graph` | The code graph of this repo: `build/graph/graph.html` |
 | gleam-website (Gleam, node, esbuild) | `just site`, `just site-serve`, `just deploy-site` | The static site in `site/`: the home of piabrota.art and alerts under `/alerts/`, on Codeberg Pages |
 
-- The Desmos support stays: `just wave` (the Rust binary `wave`, crate `alerts-drawings`)
-  writes `wave.svg` and `wave.desmos.json`, and `just desmos-gif` records a Desmos animation
-  as a GIF (crate `alerts-desmos`).
-  Archify draws diagrams; it does not replace the drawing.
+- The README drawing (`docs/drawings/wave.svg`, `wave.desmos.json`) and the Desmos GIF stay as
+  files. Their Rust generators left with the Rust. Archify draws diagrams; it does not replace the
+  drawing.
 - Every Archify figure has an English twin, `docs/archify/en/<slug>.json`, with the same lanes,
   nodes and edges. `README.pt-BR.md` embeds `docs/img/<slug>.png`; `README.md` embeds
   `docs/img/en/<slug>.png`.

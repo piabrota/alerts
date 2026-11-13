@@ -1,9 +1,9 @@
 <!-- reading-time: 2 min -->
 # Fontes
 
-Os dados do Brasil estão espalhados. No alerts, cada fonte é um crate próprio,
-`crates/alerts-source-<id>`. Esse crate transforma os dados do órgão em alertas. Uma fonte
-nova ou um estado novo adiciona um crate e não muda o núcleo.
+Os dados do Brasil estão espalhados. No alerts, cada fonte é um módulo próprio,
+`Alerts.Source.<Id>` em `haskell/alerts/src/Alerts/Source/`. Esse módulo transforma os dados do
+órgão em alertas. Uma fonte nova ou um estado novo adiciona um módulo e não muda o núcleo.
 
 A conferência é de 2026-10-22. Cada endpoint foi acessado de dentro do Brasil (`curl`) e de fora
 do Brasil (um cliente HTTP num servidor no exterior). Nenhuma fonte bloqueia acesso por país. O
